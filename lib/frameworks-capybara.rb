@@ -15,7 +15,7 @@ class CapybaraSetup
     when 'headless' then
       @driver = register_celerity_driver(false,ENV['PROXY_URL'])
     when 'remote' then
-      @driver = register_remote_driver(ENV['PROXY_URL'], ENV['PLATFORM'],ENV['BROWSER_VM'],ENV['REMOTE_URL'], ENV['FIREFOX_PROFILE'])
+      @driver = register_remote_driver(ENV['PROXY_URL'], ENV['REMOTE_BROWSER_PROXY'], ENV['PLATFORM'],ENV['BROWSER_VM'],ENV['REMOTE_URL'], ENV['FIREFOX_PROFILE'])
     else
       @driver = register_selenium_driver
     end
@@ -38,13 +38,13 @@ class CapybaraSetup
       env_vars_remote = [ENV['PLATFORM'],ENV['REMOTE_URL'], ENV['BROWSER_VM']]
       env_vars_remote.each{ |var|
         if(var==nil)
-          abort 'Please ensure the following environment variables are set PLATFORM, REMOTE_URL, BROWSER_VM (browser to use on remote machine) and PROXY_URL (if required)'
+          abort 'Please ensure the following environment variables are set PLATFORM, REMOTE_URL, BROWSER_VM (browser to use on remote machine), PROXY_URL (if required) and REMOTE_BROWSER_PROXY (if required)'
         end
       }
     end
   end
 
-  def register_remote_driver(proxy, platform, browser, remote_url, profile)
+  def register_remote_driver(proxy, remote_browser_proxy, platform, browser, remote_url, profile)
     Capybara.register_driver :remote do |app|
       #create remote driver client instance
       client = Selenium::WebDriver::Remote::Http::Default.new
@@ -54,7 +54,7 @@ class CapybaraSetup
         client.proxy = Selenium::WebDriver::Proxy.new(:http => proxy)
       end
 
-      caps = Selenium::WebDriver::Remote::Capabilities.new({:platform => platform, :browser_name => browser, :proxy => Selenium::WebDriver::Proxy.new(:http => proxy)})
+      caps = Selenium::WebDriver::Remote::Capabilities.new({:platform => platform, :browser_name => browser, :proxy => Selenium::WebDriver::Proxy.new(:http => remote_browser_proxy)})
 
       Capybara::Driver::Selenium.new(app,
                                      :browser => :remote,
