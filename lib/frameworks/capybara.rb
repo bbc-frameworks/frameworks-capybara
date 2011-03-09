@@ -15,9 +15,9 @@ class CapybaraSetup
     when 'headless' then
       @driver = register_celerity_driver(false,ENV['PROXY_URL'])
     when 'remote' then
-      @driver = register_remote_driver(ENV['PROXY_URL'], ENV['REMOTE_BROWSER_PROXY'], ENV['PLATFORM'],ENV['BROWSER_VM'],ENV['REMOTE_URL'], ENV['FIREFOX_PROFILE'])
+      @driver = register_remote_driver(ENV['PROXY_URL'], ENV['REMOTE_BROWSER_PROXY'], ENV['PLATFORM'],ENV['REMOTE_BROWSER'],ENV['REMOTE_URL'], ENV['FIREFOX_PROFILE'])
     else
-      @driver = register_selenium_driver
+      @driver = register_selenium_driver(ENV['BROWSER'], ENV['FIREFOX_PROFILE'])
     end
   end
 
@@ -35,10 +35,10 @@ class CapybaraSetup
 
     #if running  remote test check for correct env variables
     if(ENV['BROWSER']=='remote')
-      env_vars_remote = [ENV['PLATFORM'],ENV['REMOTE_URL'], ENV['BROWSER_VM']]
+      env_vars_remote = [ENV['PLATFORM'],ENV['REMOTE_URL'], ENV['REMOTE_BROWSER']]
       env_vars_remote.each{ |var|
         if(var==nil)
-          abort 'Please ensure the following environment variables are set PLATFORM, REMOTE_URL, BROWSER_VM (browser to use on remote machine), PROXY_URL (if required) and REMOTE_BROWSER_PROXY (if required)'
+          abort 'Please ensure the following environment variables are set PLATFORM, REMOTE_URL, REMOTE_BROWSER (browser to use on remote machine), PROXY_URL (if required) and REMOTE_BROWSER_PROXY (if required)'
         end
       }
     end
@@ -68,15 +68,19 @@ class CapybaraSetup
 
   def register_celerity_driver (js_enabled, proxy)
     Capybara.register_driver :celerity do |app|
+      #remove http:// from proxy URL for Celerity
+      if(proxy)
+        proxy = proxy.gsub(/http:\/\//,'')
+      end
       Capybara::Driver::Celerity.new(app, {:javascript_enabled=>js_enabled,:proxy=>proxy})
     end
     :celerity
   end
 
-  def register_selenium_driver
+  def register_selenium_driver (browser, ff_profile)
     Capybara.register_driver :selenium do |app|
       #need to convert string to label to set browser for Selenium - hence .intern
-      Capybara::Driver::Selenium.new(app,:browser => ENV['BROWSER'].intern)
+      Capybara::Driver::Selenium.new(app,:browser => browser.intern, :profile => ff_profile)
     end
     :selenium
   end

@@ -1,6 +1,40 @@
 = frameworks-capybara
 
-Description goes here.
+Gem to simplify the configuration of Capybara when using multiple drivers, also exposes other useful utility methods.
+
+Although utilising Capybara's API to run tests is extremely simple the configuration and setup of the tool can be a little confusing, particularly if you want to avoid ending up with a spaghetti like env.rb file
+
+The principle behind this gem is to factor out all the common setup code for registering Capybara drivers and allow the user to pass all configuration options through Cucumber's command line interface (and typically using cucumber.yml to make this even easier).
+
+Below are the current drivers that can be registered:
+
+* Selenium-Webdriver (Selenium2) - LOCAL: This can be used to drive 'in-browser' tests runnong on your local machine in IE, Firefox and Chrome (and any other browsers as and when they are added into the Selenium-Webdriver project)
+
+
+* Selenium-Webdriver (Selenium2) - REMOTE: This can be used to drive 'in-browser' tests on a remote macine, this could be another macine on your local network which is running a Selenium-Webdriver server or indeed a cloud service such as 'Sauce Labs'
+
+* Celerity: This can be used to drive 'headless' tests.  Celerity is a ruby wrapper for HTMLUnit and as such provides support for Javascript, though this is commonly quite fragile.
+
+To be added in the near future:
+
+* Mechanize-Caybara: There is a Caybara driver for mechanize which has recent;y surfaced on Github.  Many people still enjoy using Mechanize as despite its lack of support for Javascrit, it offers a much faster 'headless' option over Celerity.  Once we have tested this driver and checked its robustness we will add an option to use it via this gem.
+
+How to use this gem in your project:
+
+In your env.rb simply add:
+  
+ require 'frameworks/capybara' 
+
+The following environment variables can be set to configure your tests:
+
+  ENVIRONMENT - this must be one of either 'sandbox', 'int', 'test', 'stage', 'live'
+  BROWSER - this must be one of either 'ie', 'firefox', 'chrome', 'headless', 'remote'
+  PROXY_URL - url of proxy if required e.g. 'http://proxyhost:80'
+  PLATFORM - used when specifying remote test on a grid that provides a choice of platforms, this must be one of either 'WINDOWS' or 'LINUX'
+  REMOTE_BROWSER - used when specifying remote test, must be one of either 'ie', 'firefox', 'chrome', 'headless', 'remote'
+  REMOTE_BROWSER_PROXY - used when specifying remote test, sets proxy on remote browser (Firefox only at present, other browsers must have proxies set appropriately on remote machine)
+  REMOTE_URL - URL of remote Selenium-Webdriver server e.g. http://yourremotehost:4444/wd/hub
+  FIREFOX_PROFILE - specify a firefox profile to use when running in-browser tests (local or remote)
 
 == Contributing to frameworks-capybara
  
