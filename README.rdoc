@@ -36,6 +36,12 @@ The following environment variables can be set to configure your tests:
   REMOTE_URL - URL of remote Selenium-Webdriver server e.g. http://yourremotehost:4444/wd/hub
   FIREFOX_PROFILE - specify a firefox profile to use when running in-browser tests (local or remote)
 
+This gem also sets up a number of 'base urls' for you to use in your tests, these are set based on the ENVIRONMENT variable you set when running cucumber tests (either from the comand line or in cucumber.yml), the following URLs are set:
+  
+  @base_url
+  @base_static_url
+  @base_open_url
+
 == Contributing to frameworks-capybara
  
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet
