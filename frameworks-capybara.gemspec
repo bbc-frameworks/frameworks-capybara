@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{frameworks-capybara}
-  s.version = "0.0.3"
+  s.version = "0.0.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["mcrmfc"]
-  s.date = %q{2011-03-10}
+  s.date = %q{2011-03-11}
   s.description = %q{gem ti aid setup of Capybara for testing bbc sites}
   s.email = %q{mcrobbins@gmail.com}
   s.extra_rdoc_files = [
