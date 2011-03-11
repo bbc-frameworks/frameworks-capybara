@@ -26,8 +26,8 @@ module Frameworks
       end
     end
 
-  end
-end
+  end #EnvHelper
+end #Frameworks
 
 #Set Capybara Driver - using capybara.rb 
 Capybara.default_driver = CapybaraSetup.new.driver
