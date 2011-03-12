@@ -23,7 +23,7 @@ How to use this gem in your project:
 
 In your env.rb simply add:
   
- require 'frameworks/capybara' 
+ require 'frameworks-capybara' 
 
 The following environment variables can be set to configure your tests:
 
