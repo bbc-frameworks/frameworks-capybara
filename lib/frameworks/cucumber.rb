@@ -19,7 +19,7 @@ module Frameworks
         @base_url = WWW_PREFIX + BBC_DOMAIN
         @static_base_url = STATIC_PREFIX + BBC_DOMAIN
         @open_base_url = OPEN_PREFIX + BBC_DOMAIN
-       else
+      else
         @base_url = WWW_PREFIX + ENV['ENVIRONMENT'] + BBC_DOMAIN
         @static_base_url = STATIC_PREFIX + ENV['ENVIRONMENT'] + BBC_DOMAIN
         @open_base_url = OPEN_PREFIX + ENV['ENVIRONMENT'] + BBC_DOMAIN
@@ -29,8 +29,11 @@ module Frameworks
   end #EnvHelper
 end #Frameworks
 
-#Set Capybara Driver - using capybara.rb 
-Capybara.default_driver = CapybaraSetup.new.driver
+if(!ENV['CAPYBARA_DISABLED'])
+  require 'capybara/cucumber'
+  #Set Capybara Driver - using capybara.rb 
+  Capybara.default_driver = CapybaraSetup.new.driver
+end
 
 #Add module into world to ensure visibility of instance variables within Cucumber
 World(Frameworks::EnvHelper)
