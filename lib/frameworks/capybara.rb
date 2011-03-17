@@ -2,22 +2,27 @@ require 'selenium-webdriver'
 
 class CapybaraSetup
 
+  ERROR_MSG1 = 'Please ensure following environment variables are set ENVIRONMENT [int|test|stage|live], BROWSER[headless|ie|chrome|firefox] and PROXY_URL'
+  ERROR_MSG2 = 'Please ensure the following environment variables are set PLATFORM, REMOTE_URL, REMOTE_BROWSER (browser to use on remote machine), PROXY_URL (if required), REMOTE_BROWSER_PROXY (if required) and BROWSER_VERSION (if required)'
+
+
   attr_accessor :driver
 
   def initialize
+
+    capybara_opts = {:environment => ENV['ENVIRONMENT'], :proxy => ENV['PROXY_URL'], :remote_browser_proxy_url => ENV['REMOTE_BROWSER_PROXY'], :platform => ENV['PLATFORM'], :browser_name => ENV['REMOTE_BROWSER'], :version => ENV['BROWSER_VERSION'], :url => ENV['REMOTE_URL'], :profile => ENV['FIREFOX_PROFILE'], :browser => ENV['BROWSER'].intern, :javascript_enabled => ENV['CELERITY_JS_ENABLED']}
+
     #validate environment variables set using cucumber.yml or passed via command line
-    validate_env_vars
+    validate_env_vars(capybara_opts)
 
     #Disable rack server
     Capybara.run_server = false
 
-    capybara_opts = {:proxy => ENV['PROXY_URL'], :platform => ENV['PLATFORM'], :browser_name => ENV['REMOTE_BROWSER'], :version => ENV['BROWSER_VERSION'], :url => ENV['REMOTE_URL'], :profile => ENV['FIREFOX_PROFILE'], :browser => ENV['BROWSER'].intern, :javascript_enabled => ENV['CELERITY_JS_ENABLED']}
-
     #remove nil options
     capybara_opts.delete_if {|k,v| v.nil?}
-
-    case ENV['BROWSER']
-    when 'headless' then
+    
+    case capybara_opts[:browser] 
+    when :headless then
       @driver = register_celerity_driver(capybara_opts)
     else
       @driver = register_selenium_driver(capybara_opts)
@@ -26,32 +31,25 @@ class CapybaraSetup
 
   private
 
-  def validate_env_vars
-    #v basic check for correct env variables
-    env_vars = [ENV['ENVIRONMENT'],ENV['BROWSER']]
+  def validate_env_vars(opts)
+    [:environment, :browser].each do |item|
+      opts.has_key?(item) && opts[item]==nil ? abort(ERROR_MSG1) : ''
+    end
 
-      
-    env_vars.each { |var|
-      if(var==nil)
-        abort 'Please ensure following environment variables are set ENVIRONMENT [int|test|stage|live], BROWSER[headless|ie|chrome|firefox] and PROXY_URL'
+    #delete environment, only add to opts for conveniance when validating 
+    opts.delete(:environment)
+
+    if(opts[:browser]=='remote')
+      [:platform, :remote_url, :browser_name].each do |item|
+        opts.has_key?(item) && opts[item]==nil ? abort(ERROR_MSG2) : '' 
       end
-    }
-
-    #if running  remote test check for correct env variables
-    if(ENV['BROWSER']=='remote')
-      env_vars_remote = [ENV['PLATFORM'],ENV['REMOTE_URL'], ENV['REMOTE_BROWSER']]
-      env_vars_remote.each{ |var|
-        if(var==nil)
-          abort 'Please ensure the following environment variables are set PLATFORM, REMOTE_URL, REMOTE_BROWSER (browser to use on remote machine), PROXY_URL (if required), REMOTE_BROWSER_PROXY (if required) and BROWSER_VERSION (if required)'
-        end
-      }
     end
   end
 
   def register_selenium_driver(opts)
     Capybara.register_driver :selenium do |app|
 
-      if(opts[:browser] == :remote)
+      if(opts[:browser] == 'remote')
         #create remote driver client instance
         client = Selenium::WebDriver::Remote::Http::Default.new
 
@@ -62,10 +60,11 @@ class CapybaraSetup
         end
 
         #set proxy for remote browser (only supported for ff at present)
-        if(ENV['REMOTE_BROWSER_PROXY'])
-          opts[:proxy] = Selenium::WebDriver::Proxy.new(:http => ENV['REMOTE_BROWSER_PROXY'])
+        if(opts[:remote_browser_proxy_url])
+          opts[:proxy] = Selenium::WebDriver::Proxy.new(:http => opts[:remote_browser_proxy_url])
+          opts.delete :remote_browser_proxy_url
         end
-        
+
         #note, we should probably not be passing all the options to the capabilities, fragile
         caps = Selenium::WebDriver::Remote::Capabilities.new(opts)
         #remove options that would have been added to caps
