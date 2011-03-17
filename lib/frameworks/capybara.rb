@@ -11,13 +11,16 @@ class CapybaraSetup
     #Disable rack server
     Capybara.run_server = false
 
+    capybara_opts = {:proxy => ENV['PROXY_URL'], :platform => ENV['PLATFORM'], :browser_name => ENV['REMOTE_BROWSER'], :version => ENV['BROWSER_VERSION'], :url => ENV['REMOTE_URL'], :profile => ENV['FIREFOX_PROFILE'], :browser => ENV['BROWSER'].intern, :javascript_enabled => ENV['CELERITY_JS_ENABLED']}
+
+    #remove nil options
+    capybara_opts.delete_if {|k,v| v.nil?}
+
     case ENV['BROWSER']
     when 'headless' then
-      @driver = register_celerity_driver(false,ENV['PROXY_URL'])
-    when 'remote' then
-      @driver = register_remote_driver(ENV['PROXY_URL'], ENV['REMOTE_BROWSER_PROXY'], ENV['PLATFORM'],ENV['REMOTE_BROWSER'], ENV['BROWSER_VERSION'], ENV['REMOTE_URL'], ENV['FIREFOX_PROFILE'])
+      @driver = register_celerity_driver(capybara_opts)
     else
-      @driver = register_selenium_driver(ENV['BROWSER'], ENV['FIREFOX_PROFILE'])
+      @driver = register_selenium_driver(capybara_opts)
     end
   end
 
@@ -27,6 +30,7 @@ class CapybaraSetup
     #v basic check for correct env variables
     env_vars = [ENV['ENVIRONMENT'],ENV['BROWSER']]
 
+      
     env_vars.each { |var|
       if(var==nil)
         abort 'Please ensure following environment variables are set ENVIRONMENT [int|test|stage|live], BROWSER[headless|ie|chrome|firefox] and PROXY_URL'
@@ -44,45 +48,47 @@ class CapybaraSetup
     end
   end
 
-  def register_remote_driver(proxy, remote_browser_proxy, platform, browser, version, remote_url, profile)
-    Capybara.register_driver :remote do |app|
-      #create remote driver client instance
-      client = Selenium::WebDriver::Remote::Http::Default.new
+  def register_selenium_driver(opts)
+    Capybara.register_driver :selenium do |app|
 
-      #set proxy on client connection if required
-      if(proxy)
-        client.proxy = Selenium::WebDriver::Proxy.new(:http => proxy)
+      if(opts[:browser] == :remote)
+        #create remote driver client instance
+        client = Selenium::WebDriver::Remote::Http::Default.new
+
+        #set proxy on client connection if required
+        if(opts[:proxy])
+          client.proxy = Selenium::WebDriver::Proxy.new(:http => opts[:proxy])
+          opts.delete :proxy
+        end
+
+        #set proxy for remote browser (only supported for ff at present)
+        if(ENV['REMOTE_BROWSER_PROXY'])
+          opts[:proxy] = Selenium::WebDriver::Proxy.new(:http => ENV['REMOTE_BROWSER_PROXY'])
+        end
+        
+        #note, we should probably not be passing all the options to the capabilities, fragile
+        caps = Selenium::WebDriver::Remote::Capabilities.new(opts)
+        #remove options that would have been added to caps
+        opts.delete_if {|k,v| [:browser_name, :platform, :profile, :version].include? k}
+        opts[:desired_capabilities] = caps
+        opts[:http_client] = client
       end
-
-      caps = Selenium::WebDriver::Remote::Capabilities.new({:platform => platform, :browser_name => browser, :version => version, :proxy => Selenium::WebDriver::Proxy.new(:http => remote_browser_proxy)})
-
-      Capybara::Driver::Selenium.new(app,
-                                     :browser => :remote,
-                                     :http_client => client,
-                                     :url => remote_url,
-                                     :desired_capabilities => caps)
+      Capybara::Driver::Selenium.new(app,opts)
     end   
-    :remote
-
+    :selenium
   end
 
-  def register_celerity_driver (js_enabled, proxy)
+  def register_celerity_driver (opts)
     Capybara.register_driver :celerity do |app|
+      #delete browser from options as value with  be 'headless'
+      opts.delete :browser
       #remove http:// from proxy URL for Celerity
-      if(proxy)
-        proxy = proxy.gsub(/http:\/\//,'')
+      if(opts[:proxy])
+        opts[:proxy] = opts[:proxy].gsub(/http:\/\//,'')
       end
-      Capybara::Driver::Celerity.new(app, {:javascript_enabled=>js_enabled,:proxy=>proxy})
+      Capybara::Driver::Celerity.new(app,opts)
     end
     :celerity
-  end
-
-  def register_selenium_driver (browser, ff_profile)
-    Capybara.register_driver :selenium do |app|
-      #need to convert string to label to set browser for Selenium - hence .intern
-      Capybara::Driver::Selenium.new(app,:browser => browser.intern, :profile => ff_profile)
-    end
-    :selenium
   end
 end
 
