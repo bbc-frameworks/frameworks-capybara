@@ -17,13 +17,13 @@ class CapybaraSetup
 
     #update :browser value to be a symbol, required for Selenium
     capybara_opts[:browser] = capybara_opts[:browser].intern
-capybara_opts[:browser_name] = capybara_opts[:browser_name].intern
+    capybara_opts[:browser_name] = capybara_opts[:browser_name].intern
     #Disable rack server
     Capybara.run_server = false
 
     #remove nil options
     capybara_opts.delete_if {|k,v| v.nil?}
-    
+
     case capybara_opts[:browser] 
     when :headless then
       @driver = register_celerity_driver(capybara_opts)
@@ -67,9 +67,12 @@ capybara_opts[:browser_name] = capybara_opts[:browser_name].intern
           opts[:proxy] = Selenium::WebDriver::Proxy.new(:http => opts[:remote_browser_proxy_url])
           opts.delete :remote_browser_proxy_url
         end
-p opts
+        #temp workaround - needs refactoring
+        cap_opts = opts.clone
+        cap_opts.delete :profile
+        cap_opts.delete :browser
         #note, we should probably not be passing all the options to the capabilities, fragile
-        caps = Selenium::WebDriver::Remote::Capabilities.new(opts)
+        caps = Selenium::WebDriver::Remote::Capabilities.new(cap_opts)
         #remove options that would have been added to caps
         opts.delete_if {|k,v| [:browser_name, :platform, :profile, :version].include? k}
         opts[:desired_capabilities] = caps
