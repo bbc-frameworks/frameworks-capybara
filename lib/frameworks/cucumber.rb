@@ -30,7 +30,7 @@ module Frameworks
 end #Frameworks
 
 if(!ENV['CAPYBARA_DISABLED'])
-  require 'capybara/cucumber'
+   require 'capybara/cucumber'
   #Set Capybara Driver - using capybara.rb 
   Capybara.default_driver = CapybaraSetup.new.driver
 end
