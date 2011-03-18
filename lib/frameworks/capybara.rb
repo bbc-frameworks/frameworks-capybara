@@ -10,7 +10,7 @@ class CapybaraSetup
 
   def initialize
 
-    capybara_opts = {:environment => ENV['ENVIRONMENT'], :proxy => ENV['PROXY_URL'], :remote_browser_proxy_url => ENV['REMOTE_BROWSER_PROXY'], :platform => ENV['PLATFORM'], :browser_name => ENV['REMOTE_BROWSER'], :version => ENV['BROWSER_VERSION'], :url => ENV['REMOTE_URL'], :profile => ENV['FIREFOX_PROFILE'], :browser => ENV['BROWSER'].intern, :javascript_enabled => ENV['CELERITY_JS_ENABLED']}
+    capybara_opts = {:environment => ENV['ENVIRONMENT'], :proxy => ENV['PROXY_URL'], :remote_browser_proxy_url => ENV['REMOTE_BROWSER_PROXY_URL'], :platform => ENV['PLATFORM'], :browser_name => ENV['REMOTE_BROWSER'], :version => ENV['REMOTE_BROWSER_VERSION'], :url => ENV['REMOTE_URL'], :profile => ENV['FIREFOX_PROFILE'], :browser => ENV['BROWSER'].intern, :javascript_enabled => ENV['CELERITY_JS_ENABLED']}
 
     #validate environment variables set using cucumber.yml or passed via command line
     validate_env_vars(capybara_opts)
