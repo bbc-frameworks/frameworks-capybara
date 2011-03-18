@@ -17,7 +17,7 @@ class CapybaraSetup
 
     #update :browser value to be a symbol, required for Selenium
     capybara_opts[:browser] = capybara_opts[:browser].intern
-
+capybara_opts[:browser_name] = capybara_opts[:browser_name].intern
     #Disable rack server
     Capybara.run_server = false
 
@@ -52,7 +52,7 @@ class CapybaraSetup
   def register_selenium_driver(opts)
     Capybara.register_driver :selenium do |app|
 
-      if(opts[:browser] == 'remote')
+      if(opts[:browser] == :remote)
         #create remote driver client instance
         client = Selenium::WebDriver::Remote::Http::Default.new
 
@@ -67,7 +67,7 @@ class CapybaraSetup
           opts[:proxy] = Selenium::WebDriver::Proxy.new(:http => opts[:remote_browser_proxy_url])
           opts.delete :remote_browser_proxy_url
         end
-
+p opts
         #note, we should probably not be passing all the options to the capabilities, fragile
         caps = Selenium::WebDriver::Remote::Capabilities.new(opts)
         #remove options that would have been added to caps
