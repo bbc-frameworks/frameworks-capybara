@@ -17,7 +17,7 @@ class CapybaraSetup
 
     #update :browser value to be a symbol, required for Selenium
     capybara_opts[:browser] = capybara_opts[:browser].intern
-    capybara_opts[:browser_name] = capybara_opts[:browser_name].intern
+    capybara_opts[:browser_name] = capybara_opts[:browser_name].intern if capybara_opts[:browser_name]
     #Disable rack server
     Capybara.run_server = false
 
@@ -87,6 +87,8 @@ class CapybaraSetup
     Capybara.register_driver :celerity do |app|
       #delete browser from options as value with  be 'headless'
       opts.delete :browser
+      #set boolean for js_enabled
+      opts[:javascript_enabled] == 'true' ? opts[:javascript_enabled] = true : opts[:javascript_enabled] = false
       #remove http:// from proxy URL for Celerity
       if(opts[:proxy])
         opts[:proxy] = opts[:proxy].gsub(/http:\/\//,'')
