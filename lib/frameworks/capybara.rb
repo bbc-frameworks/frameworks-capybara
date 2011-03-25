@@ -77,6 +77,9 @@ class CapybaraSetup
         opts.delete_if {|k,v| [:browser_name, :platform, :profile, :version].include? k}
         opts[:desired_capabilities] = caps
         opts[:http_client] = client
+      else
+        #may want to pass env variables that are not relevant for in browser 'non-remote' tests e.g. proxy, so delete these before setting up driver
+        opts.delete_if {|k,v| [:proxy].include? k}
       end
       Capybara::Driver::Selenium.new(app,opts)
     end   
