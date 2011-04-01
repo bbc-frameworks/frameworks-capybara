@@ -1,4 +1,5 @@
 require 'frameworks/capybara'
+require 'monkey-patches/cucumber-patches'
 
 module Frameworks
   module EnvHelper
