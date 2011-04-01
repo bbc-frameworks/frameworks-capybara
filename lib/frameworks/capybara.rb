@@ -1,3 +1,5 @@
+require 'monkey-patches/webdriver-patches'
+require 'monkey-patches/capybara-patches'
 require 'selenium-webdriver'
 
 class CapybaraSetup
@@ -10,18 +12,16 @@ class CapybaraSetup
 
   def initialize
 
-    capybara_opts = {:environment => ENV['ENVIRONMENT'], :proxy => ENV['PROXY_URL'], :remote_browser_proxy_url => ENV['REMOTE_BROWSER_PROXY_URL'], :platform => ENV['PLATFORM'], :browser_name => ENV['REMOTE_BROWSER'], :version => ENV['REMOTE_BROWSER_VERSION'], :url => ENV['REMOTE_URL'], :profile => ENV['FIREFOX_PROFILE'], :browser => ENV['BROWSER'], :javascript_enabled => ENV['CELERITY_JS_ENABLED']}
+    capybara_opts = {:environment => ENV['ENVIRONMENT'], :proxy => ENV['PROXY_URL'], :remote_browser_proxy_url => ENV['REMOTE_BROWSER_PROXY_URL'], :platform => ENV['PLATFORM'], :browser_name => ENV['REMOTE_BROWSER'], :version => ENV['REMOTE_BROWSER_VERSION'], :url => ENV['REMOTE_URL'], :profile => ENV['FIREFOX_PROFILE'], :browser => ENV['BROWSER'], :javascript_enabled => ENV['CELERITY_JS_ENABLED'], :job_name => ENV['JOB_NAME']}
 
-    #validate environment variables set using cucumber.yml or passed via command line
-    validate_env_vars(capybara_opts)
+    validate_env_vars(capybara_opts) #validate environment variables set using cucumber.yml or passed via command line
 
-    #update :browser value to be a symbol, required for Selenium
-    capybara_opts[:browser] = capybara_opts[:browser].intern
+
+    capybara_opts[:browser] = capybara_opts[:browser].intern #update :browser value to be a symbol, required for Selenium
     capybara_opts[:browser_name] = capybara_opts[:browser_name].intern if capybara_opts[:browser_name]
-    #Disable rack server
-    Capybara.run_server = false
 
-    #remove nil options
+    Capybara.run_server = false #Disable rack server
+
     capybara_opts.delete_if {|k,v| v.nil?}
 
     case capybara_opts[:browser] 
@@ -39,10 +39,10 @@ class CapybaraSetup
       opts.has_key?(item) && opts[item]==nil ? abort(ERROR_MSG1) : ''
     end
 
-    #delete environment, only add to opts for conveniance when validating 
-    opts.delete(:environment)
+    opts.delete(:environment) #delete environment, only add to opts for conveniance when validating 
 
-    if(opts[:browser]=='remote')
+
+    if opts[:browser]=='remote'
       [:platform, :remote_url, :browser_name].each do |item|
         opts.has_key?(item) && opts[item]==nil ? abort(ERROR_MSG2) : '' 
       end
@@ -52,34 +52,36 @@ class CapybaraSetup
   def register_selenium_driver(opts)
     Capybara.register_driver :selenium do |app|
 
-      if(opts[:browser] == :remote)
-        #create remote driver client instance
+      if opts[:browser] == :remote
         client = Selenium::WebDriver::Remote::Http::Default.new
 
         #set proxy on client connection if required
-        if(opts[:proxy])
+        if opts[:proxy]
           client.proxy = Selenium::WebDriver::Proxy.new(:http => opts[:proxy])
           opts.delete :proxy
         end
 
         #set proxy for remote browser (only supported for ff at present)
-        if(opts[:remote_browser_proxy_url])
+        if opts[:remote_browser_proxy_url]
           opts[:proxy] = Selenium::WebDriver::Proxy.new(:http => opts[:remote_browser_proxy_url])
           opts.delete :remote_browser_proxy_url
         end
-        #temp workaround - needs refactoring
+
+        #TODO: temp workaround - needs refactoring
         cap_opts = opts.clone
         cap_opts.delete :profile
         cap_opts.delete :browser
-        #note, we should probably not be passing all the options to the capabilities, fragile
+
         caps = Selenium::WebDriver::Remote::Capabilities.new(cap_opts)
-        #remove options that would have been added to caps
-        opts.delete_if {|k,v| [:browser_name, :platform, :profile, :version].include? k}
+
+        if opts[:job_name] then caps.custom_capabilities({:'job-name' => opts.delete(:job_name)}) end #set custom job name for sauce-labs 
+
+        opts.delete_if {|k,v| [:browser_name, :platform, :profile, :version].include? k}  #remove options that would have been added to caps
+
         opts[:desired_capabilities] = caps
         opts[:http_client] = client
       else
-        #may want to pass env variables that are not relevant for in browser 'non-remote' tests e.g. proxy, so delete these before setting up driver
-        opts.delete_if {|k,v| [:proxy].include? k}
+        opts.delete_if {|k,v| [:proxy].include? k} #may want to pass env variables that are not relevant for in browser 'non-remote' tests e.g. proxy, so delete these before setting up driver
       end
       Capybara::Driver::Selenium.new(app,opts)
     end   
@@ -88,12 +90,9 @@ class CapybaraSetup
 
   def register_celerity_driver (opts)
     Capybara.register_driver :celerity do |app|
-      #delete browser from options as value with  be 'headless'
-      opts.delete :browser
-      #set boolean for js_enabled
+      opts.delete :browser #delete browser from options as value with  be 'headless'
       opts[:javascript_enabled] == 'true' ? opts[:javascript_enabled] = true : opts[:javascript_enabled] = false
-      #remove http:// from proxy URL for Celerity
-      if(opts[:proxy])
+      if opts[:proxy]
         opts[:proxy] = opts[:proxy].gsub(/http:\/\//,'')
       end
       Capybara::Driver::Celerity.new(app,opts)
