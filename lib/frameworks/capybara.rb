@@ -1,5 +1,6 @@
 require 'monkey-patches/webdriver-patches'
 require 'monkey-patches/capybara-patches'
+require 'monkey-patches/send-keys'
 require 'selenium-webdriver'
 
 class CapybaraSetup
