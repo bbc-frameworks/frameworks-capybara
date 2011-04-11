@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{frameworks-capybara}
-  s.version = "0.0.20"
+  s.version = "0.0.22"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["mcrmfc"]
@@ -30,6 +30,7 @@ Gem::Specification.new do |s|
     "lib/frameworks/cucumber.rb",
     "lib/monkey-patches/capybara-patches.rb",
     "lib/monkey-patches/cucumber-patches.rb",
+    "lib/monkey-patches/send-keys.rb",
     "lib/monkey-patches/webdriver-patches.rb",
     "test/helper.rb",
     "test/test_frameworks-capybara.rb"
