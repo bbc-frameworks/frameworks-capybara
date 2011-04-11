@@ -74,7 +74,7 @@ class CapybaraSetup
 
         caps = Selenium::WebDriver::Remote::Capabilities.new(cap_opts)
 
-        if opts[:job_name] then caps.custom_capabilities({:'job-name' => opts.delete(:job_name)}) end #set custom job name for sauce-labs 
+        caps.custom_capabilities({:'job-name' => opts.delete(:job_name)}) if opts[:job_name] #set custom job name for sauce-labs 
 
         opts.delete_if {|k,v| [:browser_name, :platform, :profile, :version].include? k}  #remove options that would have been added to caps
 
