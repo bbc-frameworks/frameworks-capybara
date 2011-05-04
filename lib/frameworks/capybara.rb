@@ -17,7 +17,7 @@ class CapybaraSetup
 
     validate_env_vars(capybara_opts) #validate environment variables set using cucumber.yml or passed via command line
 
-
+    @proxy_host =  capybara_opts[:proxy].gsub(/http:\/\//,'').gsub(/:80/,'') unless capybara_opts[:proxy].nil?
     capybara_opts[:browser] = capybara_opts[:browser].intern #update :browser value to be a symbol, required for Selenium
     capybara_opts[:browser_name] = capybara_opts[:browser_name].intern if capybara_opts[:browser_name]
 
@@ -53,6 +53,17 @@ class CapybaraSetup
   def register_selenium_driver(opts)
     Capybara.register_driver :selenium do |app|
 
+      if(opts[:profile] == 'BBC_INTERNAL')
+        profile = Selenium::WebDriver::Firefox::Profile.new
+        profile["network.proxy.type"] = 1
+        profile["network.proxy.no_proxies_on"] = "*.sandbox.dev.bbc.co.uk"
+        profile["network.proxy.http"] = @proxy_host 
+        profile["network.proxy.https"] = @proxy_host 
+        profile["network.proxy.http_port"] = 80
+        profile["network.proxy.https_port"] = 80
+        opts[:profile] = profile
+      end
+
       if opts[:browser] == :remote
         client = Selenium::WebDriver::Remote::Http::Default.new
 
@@ -63,10 +74,10 @@ class CapybaraSetup
         end
 
         #set proxy for remote browser (only supported for ff at present)
-        if opts[:remote_browser_proxy_url]
-          opts[:proxy] = Selenium::WebDriver::Proxy.new(:http => opts[:remote_browser_proxy_url])
-          opts.delete :remote_browser_proxy_url
-        end
+        #if opts[:remote_browser_proxy_url]
+        #  opts[:proxy] = Selenium::WebDriver::Proxy.new(:http => opts[:remote_browser_proxy_url])
+        #  opts.delete :remote_browser_proxy_url
+        #end
 
         #TODO: temp workaround - needs refactoring
         cap_opts = opts.clone
@@ -93,9 +104,7 @@ class CapybaraSetup
     Capybara.register_driver :celerity do |app|
       opts.delete :browser #delete browser from options as value with  be 'headless'
       opts[:javascript_enabled] == 'true' ? opts[:javascript_enabled] = true : opts[:javascript_enabled] = false
-      if opts[:proxy]
-        opts[:proxy] = opts[:proxy].gsub(/http:\/\//,'')
-      end
+      opts[:proxy] = "#{@proxy_host}:80" unless opts[:proxy].nil?
       Capybara::Driver::Celerity.new(app,opts)
     end
     :celerity
