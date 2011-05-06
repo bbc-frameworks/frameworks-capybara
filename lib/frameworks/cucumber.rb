@@ -31,11 +31,7 @@ module Frameworks
   end #EnvHelper
 end #Frameworks
 
-if(!ENV['CAPYBARA_DISABLED'])
-  require 'capybara/cucumber'
-  #Set Capybara Driver - using capybara.rb 
-  Capybara.default_driver = CapybaraSetup.new.driver
-end
+CapybaraSetup.new unless ENV['CAPYBARA_DISABLED']
 
 #Add module into world to ensure visibility of instance variables within Cucumber
 World(Frameworks::EnvHelper)

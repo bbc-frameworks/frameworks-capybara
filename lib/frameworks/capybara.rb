@@ -1,3 +1,4 @@
+require 'capybara/cucumber'
 require 'monkey-patches/webdriver-patches'
 require 'monkey-patches/capybara-patches'
 require 'monkey-patches/send-keys'
@@ -28,8 +29,16 @@ class CapybaraSetup
     case capybara_opts[:browser] 
     when :headless then
       @driver = register_celerity_driver(capybara_opts)
+    when :mechanize then
+      @driver = register_mechanize_driver(capybara_opts)
     else
       @driver = register_selenium_driver(capybara_opts)
+    end
+
+    Capybara.default_driver = @driver
+
+    if capybara_opts[:browser] == :mechanize and capybara_opts[:proxy]
+      Capybara.current_session.driver.agent.set_proxy(@proxy_host, 80)
     end
   end
 
@@ -73,12 +82,6 @@ class CapybaraSetup
           opts.delete :proxy
         end
 
-        #set proxy for remote browser (only supported for ff at present)
-        #if opts[:remote_browser_proxy_url]
-        #  opts[:proxy] = Selenium::WebDriver::Proxy.new(:http => opts[:remote_browser_proxy_url])
-        #  opts.delete :remote_browser_proxy_url
-        #end
-
         #TODO: temp workaround - needs refactoring
         cap_opts = opts.clone
         cap_opts.delete :profile
@@ -109,4 +112,15 @@ class CapybaraSetup
     end
     :celerity
   end
+
+  def register_mechanize_driver (opts)
+    require 'capybara/mechanize/cucumber' 
+    Capybara.register_driver :mechanize do |app|
+      opts.delete :browser #delete browser from options as value with  be 'headless'
+      Capybara.app_host = "http://www.int.bbc.co.uk"
+      Capybara::Driver::Mechanize.new(app)
+    end
+    :mechanize
+  end
+
 end
