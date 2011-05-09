@@ -1,8 +1,10 @@
 require 'capybara/cucumber'
 require 'monkey-patches/webdriver-patches'
 require 'monkey-patches/capybara-patches'
+require 'monkey-patches/capybara-mechanize-patches'
 require 'monkey-patches/send-keys'
 require 'selenium-webdriver'
+require 'capybara/mechanize/cucumber' 
 
 class CapybaraSetup
 
@@ -114,7 +116,6 @@ class CapybaraSetup
   end
 
   def register_mechanize_driver (opts)
-    require 'capybara/mechanize/cucumber' 
     Capybara.register_driver :mechanize do |app|
       opts.delete :browser #delete browser from options as value with  be 'headless'
       Capybara.app_host = "http://www.int.bbc.co.uk"
