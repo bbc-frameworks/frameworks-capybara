@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{frameworks-capybara}
-  s.version = "0.0.25"
+  s.version = "0.0.27"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["mcrmfc"]
-  s.date = %q{2011-05-06}
+  s.date = %q{2011-05-09}
   s.description = %q{gem ti aid setup of Capybara for testing bbc sites}
   s.email = %q{mcrobbins@gmail.com}
   s.extra_rdoc_files = [
@@ -28,6 +28,7 @@ Gem::Specification.new do |s|
     "lib/frameworks-capybara.rb",
     "lib/frameworks/capybara.rb",
     "lib/frameworks/cucumber.rb",
+    "lib/monkey-patches/capybara-mechanize-patches.rb",
     "lib/monkey-patches/capybara-patches.rb",
     "lib/monkey-patches/cucumber-patches.rb",
     "lib/monkey-patches/send-keys.rb",
