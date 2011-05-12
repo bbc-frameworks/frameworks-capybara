@@ -21,6 +21,8 @@ module Frameworks
         @base_url = WWW_PREFIX + BBC_DOMAIN
         @static_base_url = STATIC_PREFIX + BBC_DOMAIN
         @open_base_url = OPEN_PREFIX + BBC_DOMAIN
+      elsif (ENV['ENVIRONMENT'].split('.')[0].include? 'pal') #address specific box
+        @base_url = "http://#{ENV[ENVIRONMENT]}" 
       else
         @base_url = WWW_PREFIX + ENV['ENVIRONMENT'] + BBC_DOMAIN
         @static_base_url = STATIC_PREFIX + ENV['ENVIRONMENT'] + BBC_DOMAIN
