@@ -3,12 +3,12 @@ require 'monkey-patches/cucumber-patches'
 
 module Frameworks
   module EnvHelper
-
+    
     WWW_PREFIX = 'http://www.'
     STATIC_PREFIX = 'http://static.'
     OPEN_PREFIX = 'http://open.'
     BBC_DOMAIN = '.bbc.co.uk'
-    STATIC_BBC_DOMAIN = '.bbci.co.uk'
+    STATIC_BBC_DOMAIN = '.bbc.co.uk'
     SANDBOX = 'http://pal.sandbox.dev'
     STATIC_SANDBOX = 'http://static.sandbox.dev'
 
