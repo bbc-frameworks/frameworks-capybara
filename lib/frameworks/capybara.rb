@@ -73,6 +73,10 @@ class CapybaraSetup
         profile["network.proxy.http_port"] = 80
         profile["network.proxy.https_port"] = 80
         opts[:profile] = profile
+      elsif(opts[:profile] == 'default')
+        profile = Selenium::WebDriver::Firefox::Profile.from_name "default"
+        profile.native_events = true
+        opts[:profile] = profile
       end
 
       if opts[:browser] == :remote
@@ -86,9 +90,8 @@ class CapybaraSetup
 
         #TODO: temp workaround - needs refactoring
         cap_opts = opts.clone
-        cap_opts.delete :profile
+        cap_opts[:firefox_profile] = cap_opts.delete :profile
         cap_opts.delete :browser
-
         caps = Selenium::WebDriver::Remote::Capabilities.new(cap_opts)
 
         caps.custom_capabilities({:'job-name' => opts.delete(:job_name)}) if opts[:job_name] #set custom job name for sauce-labs 
