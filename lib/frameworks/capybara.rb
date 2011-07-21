@@ -16,7 +16,7 @@ class CapybaraSetup
 
   def initialize
 
-    capybara_opts = {:environment => ENV['ENVIRONMENT'], :proxy => ENV['PROXY_URL'], :remote_browser_proxy_url => ENV['REMOTE_BROWSER_PROXY_URL'], :platform => ENV['PLATFORM'], :browser_name => ENV['REMOTE_BROWSER'], :version => ENV['REMOTE_BROWSER_VERSION'], :url => ENV['REMOTE_URL'], :profile => ENV['FIREFOX_PROFILE'], :browser => ENV['BROWSER'], :javascript_enabled => ENV['CELERITY_JS_ENABLED'], :job_name => ENV['SAUCE_JOB_NAME']}
+    capybara_opts = {:environment => ENV['ENVIRONMENT'], :proxy => ENV['PROXY_URL'], :remote_browser_proxy_url => ENV['REMOTE_BROWSER_PROXY_URL'], :platform => ENV['PLATFORM'], :browser_name => ENV['REMOTE_BROWSER'], :version => ENV['REMOTE_BROWSER_VERSION'], :url => ENV['REMOTE_URL'], :profile => ENV['FIREFOX_PROFILE'], :browser => ENV['BROWSER'], :javascript_enabled => ENV['CELERITY_JS_ENABLED'], :job_name => ENV['SAUCE_JOB_NAME'], :max_duration => ENV['SAUCE_MAX_DURATION']}
 
     validate_env_vars(capybara_opts) #validate environment variables set using cucumber.yml or passed via command line
 
@@ -55,7 +55,7 @@ class CapybaraSetup
 
 
     if opts[:browser]=='remote'
-      [:platform, :remote_url, :browser_name].each do |item|
+      [:remote_url, :browser_name].each do |item|
         opts.has_key?(item) && opts[item]==nil ? abort(ERROR_MSG2) : '' 
       end
     end
@@ -93,8 +93,7 @@ class CapybaraSetup
         cap_opts[:firefox_profile] = cap_opts.delete :profile
         cap_opts.delete :browser
         caps = Selenium::WebDriver::Remote::Capabilities.new(cap_opts)
-
-        caps.custom_capabilities({:'job-name' => opts.delete(:job_name)}) if opts[:job_name] #set custom job name for sauce-labs 
+        caps.custom_capabilities({:'job-name' => opts.delete(:job_name) || 'frameworks-unamed-job', :'max-duration' => opts.delete(:max_duration) || 1800}) if opts[:url].include? 'saucelabs' #set sauce specific parameters - will this scupper other on sauce remote jobs? 
 
         opts.delete_if {|k,v| [:browser_name, :platform, :profile, :version].include? k}  #remove options that would have been added to caps
 
