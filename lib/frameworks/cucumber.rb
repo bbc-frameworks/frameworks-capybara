@@ -1,9 +1,19 @@
 require 'frameworks/capybara'
 require 'monkey-patches/cucumber-patches'
 
+if(ENV['XVFB']=='true')
+  puts "You have chosed to use XVFB - ensure you have yum installed Xvfb Xorg and firefox"
+  require 'headless'
+  headless = Headless.new
+  headless.start
+  at_exit do
+    headless.destroy
+  end
+end
+
 module Frameworks
   module EnvHelper
-    
+
     WWW_PREFIX = 'http://www.'
     STATIC_PREFIX = 'http://static.'
     OPEN_PREFIX = 'http://open.'

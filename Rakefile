@@ -16,13 +16,14 @@ Jeweler::Tasks.new do |gem|
   gem.homepage = "http://github.com/mcrmfc/frameworks-capybara"
   gem.license = "MIT"
   gem.summary = %Q{gem to aid setup of Capybara for testing bbc sites}
-  gem.description = %Q{gem ti aid setup of Capybara for testing bbc sites}
+  gem.description = %Q{gem to aid setup of Capybara for testing bbc sites}
   gem.email = "mcrobbins@gmail.com"
   gem.authors = ["mcrmfc"]
   # Include your dependencies below. Runtime dependencies are required when using your gem,
   # and development dependencies are only needed for development (ie running rake tasks, tests, etc)
   gem.add_runtime_dependency 'capybara', '>=0'
   gem.add_runtime_dependency 'capybara-mechanize', '>=0'
+  gem.add_runtime_dependency 'headless', '>=0'
   #  gem.add_development_dependency 'rspec', '> 1.2.3'
 end
 Jeweler::RubygemsDotOrgTasks.new
