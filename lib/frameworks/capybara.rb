@@ -2,6 +2,7 @@ require 'capybara/cucumber'
 require 'monkey-patches/webdriver-patches'
 require 'monkey-patches/capybara-patches'
 require 'monkey-patches/capybara-mechanize-patches'
+require 'monkey-patches/mechanize-patches'
 require 'monkey-patches/send-keys'
 require 'selenium-webdriver'
 require 'capybara/mechanize/cucumber' 
@@ -16,7 +17,7 @@ class CapybaraSetup
 
   def initialize
 
-    capybara_opts = {:environment => ENV['ENVIRONMENT'], :proxy => ENV['PROXY_URL'], :remote_browser_proxy_url => ENV['REMOTE_BROWSER_PROXY_URL'], :platform => ENV['PLATFORM'], :browser_name => ENV['REMOTE_BROWSER'], :version => ENV['REMOTE_BROWSER_VERSION'], :url => ENV['REMOTE_URL'], :profile => ENV['FIREFOX_PROFILE'], :browser => ENV['BROWSER'], :javascript_enabled => ENV['CELERITY_JS_ENABLED'], :job_name => ENV['SAUCE_JOB_NAME'], :max_duration => ENV['SAUCE_MAX_DURATION']}
+    capybara_opts = {:environment => ENV['ENVIRONMENT'], :proxy => ENV['PROXY_URL'], :remote_browser_proxy_url => ENV['REMOTE_BROWSER_PROXY_URL'], :platform => ENV['PLATFORM'], :browser_name => ENV['REMOTE_BROWSER'], :version => ENV['REMOTE_BROWSER_VERSION'], :url => ENV['REMOTE_URL'], :profile => ENV['FIREFOX_PROFILE'], :browser => ENV['BROWSER'], :javascript_enabled => ENV['CELERITY_JS_ENABLED'], :job_name => ENV['SAUCE_JOB_NAME'], :max_duration => ENV['SAUCE_MAX_DURATION'], :proxy_on => ENV['PROXY_ON']}
 
     validate_env_vars(capybara_opts) #validate environment variables set using cucumber.yml or passed via command line
 
@@ -82,11 +83,11 @@ class CapybaraSetup
       if opts[:browser] == :remote
         client = Selenium::WebDriver::Remote::Http::Default.new
 
-        #set proxy on client connection if required
-        if opts[:proxy]
+        #set proxy on client connection if required, note you may use ENV['PROXY_URL'] for setting in browser (ff profile) but not for client conection, hence allow for PROXY_ON=false
+        if opts[:proxy] && opts[:proxy_on] != 'false'
           client.proxy = Selenium::WebDriver::Proxy.new(:http => opts[:proxy])
-          opts.delete :proxy
         end
+        opts.delete_if {|k,v| [:proxy, :proxy_on].include? k} 
 
         #TODO: temp workaround - needs refactoring
         cap_opts = opts.clone
@@ -100,7 +101,7 @@ class CapybaraSetup
         opts[:desired_capabilities] = caps
         opts[:http_client] = client
       else
-        opts.delete_if {|k,v| [:proxy].include? k} #may want to pass env variables that are not relevant for in browser 'non-remote' tests e.g. proxy, so delete these before setting up driver
+        opts.delete_if {|k,v| [:proxy, :proxy_on].include? k} #may want to pass env variables that are not relevant for in browser 'non-remote' tests e.g. proxy, so delete these before setting up driver
       end
       Capybara::Driver::Selenium.new(app,opts)
     end   

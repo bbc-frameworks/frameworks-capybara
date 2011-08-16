@@ -2,7 +2,7 @@ require 'frameworks/capybara'
 require 'monkey-patches/cucumber-patches'
 
 if(ENV['XVFB']=='true')
-  puts "You have chosed to use XVFB - ensure you have yum installed Xvfb Xorg and firefox"
+  puts "You have chosen to use XVFB - ensure you have yum installed Xvfb Xorg and firefox"
   require 'headless'
   headless = Headless.new
   headless.start
@@ -14,13 +14,15 @@ end
 module Frameworks
   module EnvHelper
 
-    WWW_PREFIX = 'http://www.'
-    STATIC_PREFIX = 'http://static.'
-    OPEN_PREFIX = 'http://open.'
+    ENV['SCHEME']=='https' ? scheme = 'https' : scheme = 'http'
+
+    WWW_PREFIX = "#{scheme}://www."
+    STATIC_PREFIX = "#{scheme}://static."
+    OPEN_PREFIX = "#{scheme}://open."
     BBC_DOMAIN = '.bbc.co.uk'
     STATIC_BBC_DOMAIN = '.bbc.co.uk'
-    SANDBOX = 'http://pal.sandbox.dev'
-    STATIC_SANDBOX = 'http://static.sandbox.dev'
+    SANDBOX = "#{scheme}://pal.sandbox.dev"
+    STATIC_SANDBOX = "#{scheme}://static.sandbox.dev"
 
     #Generate base urls to use in Cucumber step defs
     def generate_base_urls 
@@ -32,7 +34,7 @@ module Frameworks
         @static_base_url = STATIC_PREFIX + BBC_DOMAIN
         @open_base_url = OPEN_PREFIX + BBC_DOMAIN
       elsif (ENV['ENVIRONMENT'].split('.')[0].include? 'pal') #address specific box
-        @base_url = "http://#{ENV['ENVIRONMENT']}" 
+        @base_url = "#{scheme}://#{ENV['ENVIRONMENT']}" 
       else
         @base_url = WWW_PREFIX + ENV['ENVIRONMENT'] + BBC_DOMAIN
         @static_base_url = STATIC_PREFIX + ENV['ENVIRONMENT'] + BBC_DOMAIN

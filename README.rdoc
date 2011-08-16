@@ -15,9 +15,7 @@ Below are the current drivers that can be registered:
 
 * Celerity: This can be used to drive 'headless' tests.  Celerity is a ruby wrapper for HTMLUnit and as such provides support for Javascript, though this is commonly quite fragile.
 
-To be added in the near future:
-
-* Mechanize-Caybara: There is a Caybara driver for mechanize which has recently surfaced on Github.  Many people still enjoy using Mechanize as despite its lack of support for Javascrit, it offers a much faster 'headless' option over Celerity.  Once we have tested this driver and checked its robustness we will add an option to use it via this gem.
+* Mechanize-Caybara: This can be used, by setting BROWSER=mechanize
 
 How to use this gem in your project:
 
@@ -37,6 +35,7 @@ The following environment variables can be set to configure your tests:
   REMOTE_URL - URL of remote Selenium-Webdriver server e.g. http://yourremotehost:4444/wd/hub
   FIREFOX_PROFILE - specify a firefox profile to use when running in-browser tests (local or remote)
   CELERITY_JS_ENABLED (string - 'true', 'false') - determines whether Celerity (HTMLUnit) attempts to execute javascript 
+  XVFB - (string - 'true', 'false') - determines whether XVFB is used to run browser (i.e. headless Firefox on *nix platform)
 
 Here is a sample cucumber.yml:
 
