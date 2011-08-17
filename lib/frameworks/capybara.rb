@@ -17,7 +17,7 @@ class CapybaraSetup
 
   def initialize
 
-    capybara_opts = {:environment => ENV['ENVIRONMENT'], :proxy => ENV['PROXY_URL'], :remote_browser_proxy_url => ENV['REMOTE_BROWSER_PROXY_URL'], :platform => ENV['PLATFORM'], :browser_name => ENV['REMOTE_BROWSER'], :version => ENV['REMOTE_BROWSER_VERSION'], :url => ENV['REMOTE_URL'], :profile => ENV['FIREFOX_PROFILE'], :browser => ENV['BROWSER'], :javascript_enabled => ENV['CELERITY_JS_ENABLED'], :job_name => ENV['SAUCE_JOB_NAME'], :max_duration => ENV['SAUCE_MAX_DURATION'], :proxy_on => ENV['PROXY_ON']}
+    capybara_opts = {:environment => ENV['ENVIRONMENT'], :proxy => ENV['PROXY_URL'], :remote_browser_proxy_url => ENV['REMOTE_BROWSER_PROXY_URL'], :platform => ENV['PLATFORM'], :browser_name => ENV['REMOTE_BROWSER'], :version => ENV['REMOTE_BROWSER_VERSION'], :url => ENV['REMOTE_URL'], :profile => ENV['FIREFOX_PROFILE'], :browser => ENV['BROWSER'], :javascript_enabled => ENV['CELERITY_JS_ENABLED'], :job_name => ENV['SAUCE_JOB_NAME'], :max_duration => ENV['SAUCE_MAX_DURATION'], :proxy_on => ENV['PROXY_ON'], :cert_location => ENV['CERT_LOCATION']}
 
     validate_env_vars(capybara_opts) #validate environment variables set using cucumber.yml or passed via command line
 
@@ -42,6 +42,10 @@ class CapybaraSetup
 
     if capybara_opts[:browser] == :mechanize and capybara_opts[:proxy]
       Capybara.current_session.driver.agent.set_proxy(@proxy_host, 80)
+    end
+  
+    if capybara_opts[:browser] == :mechanize and capybara_opts[:cert_location]
+      Capybara.current_session.driver.agent.set_ssl_client_certification(ENV['CERT_LOCATION'], ENV['CERT_LOCATION'])
     end
   end
 
