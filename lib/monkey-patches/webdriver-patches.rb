@@ -36,7 +36,7 @@ end
 #on the ci box and then check in symlinks to these files.
 #
 #I think this should be fixed in Webdriver itself
-#TODO: File bug with selenium-webdriver
+#http://code.google.com/p/selenium/issues/detail?id=2416
 module Selenium
   module WebDriver
     module Zipper
