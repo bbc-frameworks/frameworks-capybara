@@ -76,7 +76,7 @@ class CapybaraSetup
         profile["network.proxy.https_port"] = 80
         profile.native_events = true
         opts[:profile] = profile
-      else
+      elsif(opts[:profile])
         profile = Selenium::WebDriver::Firefox::Profile.from_name opts[:profile]
         profile.native_events = true
         opts[:profile] = profile
