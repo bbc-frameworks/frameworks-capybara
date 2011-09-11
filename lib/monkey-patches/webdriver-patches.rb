@@ -60,7 +60,6 @@ module Selenium
             end
           }
 
-          FileUtils.copy(zip_path, "/Users/robbim02/workspace/matty4.zip")
           File.open(zip_path, "rb") { |io| Base64.strict_encode64 io.read }
         ensure
           FileUtils.rm_rf tmp_dir
