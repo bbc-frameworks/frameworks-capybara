@@ -71,9 +71,9 @@ class CapybaraSetup
         profile["network.proxy.type"] = 1
         profile["network.proxy.no_proxies_on"] = "*.sandbox.dev.bbc.co.uk"
         profile["network.proxy.http"] = @proxy_host 
-        profile["network.proxy.https"] = @proxy_host 
+        profile["network.proxy.ssl"] = @proxy_host 
         profile["network.proxy.http_port"] = 80
-        profile["network.proxy.https_port"] = 80
+        profile["network.proxy.ssl_port"] = 80
         profile.native_events = true
         opts[:profile] = profile
       elsif(opts[:profile])
