@@ -1,11 +1,16 @@
-require 'capybara/cucumber'
+if Object.const_defined?(:Cucumber) && Object.respond_to?(:World)
+  require 'capybara/cucumber'
+  require 'capybara/mechanize/cucumber' 
+end
+
+#require 'capybara/cucumber'
 require 'monkey-patches/webdriver-patches'
 require 'monkey-patches/capybara-patches'
 require 'monkey-patches/capybara-mechanize-patches'
 require 'monkey-patches/mechanize-patches'
 require 'monkey-patches/send-keys'
 require 'selenium-webdriver'
-require 'capybara/mechanize/cucumber' 
+#require 'capybara/mechanize/cucumber' 
 
 class CapybaraSetup
 

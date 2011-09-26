@@ -1,5 +1,9 @@
 require 'selenium-webdriver'
-require 'capybara/cucumber'
+#require 'capybara/cucumber'
+if Object.const_defined?(:Cucumber) && Object.respond_to?(:World)
+  require 'capybara/envjs/cucumber'
+end
+
 
 ##
 #Monkey Patch's - Use with care!
