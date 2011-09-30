@@ -9,10 +9,9 @@ require 'capybara/mechanize/cucumber'
 
 class CapybaraSetup
 
-  attr_accessor :driver
+  attr_reader :driver
 
   def initialize
-
     capybara_opts = {:environment => ENV['ENVIRONMENT'], :proxy => ENV['PROXY_URL'], :remote_browser_proxy_url => ENV['REMOTE_BROWSER_PROXY_URL'], :platform => ENV['PLATFORM'], :browser_name => ENV['REMOTE_BROWSER'], :version => ENV['REMOTE_BROWSER_VERSION'], :url => ENV['REMOTE_URL'], :profile => ENV['FIREFOX_PROFILE'], :browser => ENV['BROWSER'], :javascript_enabled => ENV['CELERITY_JS_ENABLED'], :job_name => ENV['SAUCE_JOB_NAME'], :max_duration => ENV['SAUCE_MAX_DURATION'], :proxy_on => ENV['PROXY_ON']}
 
     validate_env_vars(capybara_opts) #validate environment variables set using cucumber.yml or passed via command line
@@ -35,11 +34,6 @@ class CapybaraSetup
     end
 
     Capybara.default_driver = @driver
-
-    if capybara_opts[:browser] == :mechanize
-      Capybara.current_session.driver.agent.set_proxy(@proxy_host, 80) if capybara_opts[:proxy]
-      Capybara.current_session.driver.agent.set_ssl_client_certification(ENV['CERT_LOCATION'], ENV['CERT_LOCATION'], ENV['CA_CERT_LOCATION']) if ENV['CERT_LOCATION']
-    end
   end
 
   private
@@ -124,7 +118,10 @@ class CapybaraSetup
     Capybara.register_driver :mechanize do |app|
       opts.delete :browser #delete browser from options as value with  be 'headless'
       Capybara.app_host = "http://www.int.bbc.co.uk"
-      Capybara::Driver::Mechanize.new(app)
+      driver = Capybara::Driver::Mechanize.new(app)
+      driver.agent.set_proxy(@proxy_host, 80) unless opts[:proxy].nil?
+      driver.agent.set_ssl_client_certification(ENV['CERT_LOCATION'], ENV['CERT_LOCATION'], ENV['CA_CERT_LOCATION']) if ENV['CERT_LOCATION']
+      driver 
     end
     :mechanize
   end

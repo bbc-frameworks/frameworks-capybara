@@ -53,6 +53,22 @@ describe CapybaraSetup do
           Capybara.current_session.driver.options[:browser].should == :firefox
         end
       end
+
+      context "with Selenium driver and default firefox profile (from profiles.ini)" do
+        before do
+          ENV['BROWSER'] = 'firefox'
+          ENV['ENVIRONMENT'] = 'test'
+          ENV['FIREFOX_PROFILE'] = 'default'
+        end
+
+        it "should be initialized correctly" do 
+          CapybaraSetup.new.driver.should == :selenium
+          Capybara.current_session.driver.kind_of? Capybara::Driver::Selenium
+          Capybara.current_session.driver.options[:browser].should == :firefox
+          p Capybara.current_session.driver
+        end
+      end
+
     end
 
     describe "should allow Mechanize driver to be created" do
@@ -65,6 +81,20 @@ describe CapybaraSetup do
         it "should be initialized correctly" do 
           CapybaraSetup.new.driver.should == :mechanize
           Capybara.current_session.driver.kind_of? Capybara::Driver::Mechanize
+        end
+        context "with maximal Mechanize driver" do
+          before do
+            ENV['BROWSER'] = 'mechanize'
+            ENV['ENVIRONMENT'] = 'test'
+            ENV['PROXY_URL'] = 'http://example.cache.co.uk:80'
+          end
+
+          it "should be initialized correctly" do
+            CapybaraSetup.new.driver.should == :mechanize
+            Capybara.current_session.driver.kind_of? Capybara::Driver::Mechanize
+            Capybara.current_session.driver.agent.proxy_addr.should == 'example.cache.co.uk'
+            Capybara.current_session.driver.agent.proxy_port.should == 80
+          end
         end
       end
 
@@ -87,12 +117,14 @@ describe CapybaraSetup do
             ENV['BROWSER'] = 'headless'
             ENV['ENVIRONMENT'] = 'test'
             ENV['CELERITY_JS_ENABLED'] = 'true'
+            ENV['PROXY_URL'] = 'http://example.cache.co.uk:80'
           end
 
           it "should be initialized correctly" do
             CapybaraSetup.new.driver.should == :celerity
             Capybara.current_session.driver.kind_of? Capybara::Driver::Celerity
             Capybara.current_session.driver.options[:javascript_enabled].should == true
+            Capybara.current_session.driver.options[:proxy].should == 'example.cache.co.uk:80'
           end
         end
       end
