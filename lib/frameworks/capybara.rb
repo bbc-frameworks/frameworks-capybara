@@ -1,22 +1,13 @@
-if Object.const_defined?(:Cucumber) && Object.respond_to?(:World)
-  require 'capybara/cucumber'
-  require 'capybara/mechanize/cucumber' 
-end
-
-#require 'capybara/cucumber'
+require 'capybara/cucumber'
 require 'monkey-patches/webdriver-patches'
 require 'monkey-patches/capybara-patches'
 require 'monkey-patches/capybara-mechanize-patches'
 require 'monkey-patches/mechanize-patches'
 require 'monkey-patches/send-keys'
 require 'selenium-webdriver'
-#require 'capybara/mechanize/cucumber' 
+require 'capybara/mechanize/cucumber' 
 
 class CapybaraSetup
-
-  ERROR_MSG1 = 'Please ensure following environment variables are set ENVIRONMENT [int|test|stage|live], BROWSER[headless|ie|chrome|firefox] and PROXY_URL'
-  ERROR_MSG2 = 'Please ensure the following environment variables are set PLATFORM, REMOTE_URL, REMOTE_BROWSER (browser to use on remote machine), PROXY_URL (if required), REMOTE_BROWSER_PROXY (if required) and BROWSER_VERSION (if required)'
-
 
   attr_accessor :driver
 
@@ -54,8 +45,12 @@ class CapybaraSetup
   private
 
   def validate_env_vars(opts)
+
+  msg1 = 'Please ensure following environment variables are set ENVIRONMENT [int|test|stage|live], BROWSER[headless|ie|chrome|firefox] and PROXY_URL'
+  msg2 = 'Please ensure the following environment variables are set PLATFORM, REMOTE_URL, REMOTE_BROWSER (browser to use on remote machine), PROXY_URL (if required), REMOTE_BROWSER_PROXY (if required) and BROWSER_VERSION (if required)'
+
     [:environment, :browser].each do |item|
-      opts.has_key?(item) && opts[item]==nil ? abort(ERROR_MSG1) : ''
+      opts.has_key?(item) && opts[item]==nil ? raise("#{msg1}") : '' 
     end
 
     opts.delete(:environment) #delete environment, only add to opts for conveniance when validating 
@@ -63,7 +58,7 @@ class CapybaraSetup
 
     if opts[:browser]=='remote'
       [:remote_url, :browser_name].each do |item|
-        opts.has_key?(item) && opts[item]==nil ? abort(ERROR_MSG2) : '' 
+        opts.has_key?(item) && opts[item]==nil ? raise(msg2) : '' 
       end
     end
   end
@@ -117,7 +112,7 @@ class CapybaraSetup
 
   def register_celerity_driver (opts)
     Capybara.register_driver :celerity do |app|
-      opts.delete :browser #delete browser from options as value with  be 'headless'
+      opts.delete(:browser) #delete browser from options as value with  be 'headless'
       opts[:javascript_enabled] == 'true' ? opts[:javascript_enabled] = true : opts[:javascript_enabled] = false
       opts[:proxy] = "#{@proxy_host}:80" unless opts[:proxy].nil?
       Capybara::Driver::Celerity.new(app,opts)

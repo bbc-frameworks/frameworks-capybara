@@ -1,8 +1,4 @@
-#require 'capybara/mechanize/cucumber' 
-if Object.const_defined?(:Cucumber) && Object.respond_to?(:World)
-  require 'capybara/mechanize/cucumber'
-end
-
+require 'capybara/mechanize/cucumber' 
 require 'uri'
 
 class Capybara::Driver::Mechanize
