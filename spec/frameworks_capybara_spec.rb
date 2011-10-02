@@ -50,7 +50,7 @@ describe CapybaraSetup do
 
         it "should be initialized correctly" do 
           CapybaraSetup.new.driver.should == :selenium
-          Capybara.current_session.driver.kind_of? Capybara::Driver::Selenium
+          Capybara.current_session.driver.should be_a_kind_of Capybara::Driver::Selenium
           Capybara.current_session.driver.options[:browser].should == :firefox
         end
       end
@@ -65,9 +65,10 @@ describe CapybaraSetup do
         it "should be initialized correctly" do 
           Selenium::WebDriver::Firefox::ProfilesIni.new
           CapybaraSetup.new.driver.should == :selenium
-          Capybara.current_session.driver.kind_of? Capybara::Driver::Selenium
+          Capybara.current_session.driver.should be_a_kind_of Capybara::Driver::Selenium
           Capybara.current_session.driver.options[:browser].should == :firefox
-          Capybara.current_session.driver.options[:profile].kind_of? Selenium::WebDriver::Firefox::Profile
+          Capybara.current_session.driver.options[:profile].should be_a_kind_of Selenium::WebDriver::Firefox::Profile
+          Capybara.current_session.driver.options[:profile].instance_variable_get(:@model).should include "default"
         end
       end
 
@@ -82,7 +83,7 @@ describe CapybaraSetup do
 
         it "should be initialized correctly" do 
           CapybaraSetup.new.driver.should == :mechanize
-          Capybara.current_session.driver.kind_of? Capybara::Driver::Mechanize
+          Capybara.current_session.driver.should be_a_kind_of Capybara::Driver::Mechanize
         end
         context "with maximal Mechanize driver" do
           before do
@@ -93,7 +94,7 @@ describe CapybaraSetup do
 
           it "should be initialized correctly" do
             CapybaraSetup.new.driver.should == :mechanize
-            Capybara.current_session.driver.kind_of? Capybara::Driver::Mechanize
+            Capybara.current_session.driver.should be_a_kind_of Capybara::Driver::Mechanize
             Capybara.current_session.driver.agent.proxy_addr.should == 'example.cache.co.uk'
             Capybara.current_session.driver.agent.proxy_port.should == 80
           end
@@ -109,7 +110,7 @@ describe CapybaraSetup do
 
           it "should be initialized correctly" do
             CapybaraSetup.new.driver.should == :celerity
-            Capybara.current_session.driver.kind_of? Capybara::Driver::Celerity
+            Capybara.current_session.driver.should be_a_kind_of Capybara::Driver::Celerity
             Capybara.current_session.driver.options[:javascript_enabled].should == false
           end
         end
@@ -124,7 +125,7 @@ describe CapybaraSetup do
 
           it "should be initialized correctly" do
             CapybaraSetup.new.driver.should == :celerity
-            Capybara.current_session.driver.kind_of? Capybara::Driver::Celerity
+            Capybara.current_session.driver.should be_a_kind_of Capybara::Driver::Celerity
             Capybara.current_session.driver.options[:javascript_enabled].should == true
             Capybara.current_session.driver.options[:proxy].should == 'example.cache.co.uk:80'
           end
