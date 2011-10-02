@@ -40,12 +40,14 @@ describe CapybaraSetup do
   end
 
   describe "should allow Capybara drivers to be created" do
+    before do
+      ENV['ENVIRONMENT'] = 'test'
+    end
 
     describe "should allow Selenium driver to be created" do
       context "with minimal Selenium driver" do
         before do
           ENV['BROWSER'] = 'firefox'
-          ENV['ENVIRONMENT'] = 'test'
         end
 
         it "should be initialized correctly" do 
@@ -58,7 +60,6 @@ describe CapybaraSetup do
       context "with Selenium driver and default firefox profile (from profiles.ini)" do
         before do
           ENV['BROWSER'] = 'firefox'
-          ENV['ENVIRONMENT'] = 'test'
           ENV['FIREFOX_PROFILE'] = 'default'
         end
 
@@ -78,7 +79,6 @@ describe CapybaraSetup do
       context "with minimal Mechanize driver" do
         before do
           ENV['BROWSER'] = 'mechanize'
-          ENV['ENVIRONMENT'] = 'test'
         end
 
         it "should be initialized correctly" do 
@@ -105,7 +105,6 @@ describe CapybaraSetup do
         context "with minimal Celerity driver" do
           before do
             ENV['BROWSER'] = 'headless'
-            ENV['ENVIRONMENT'] = 'test'
           end
 
           it "should be initialized correctly" do
@@ -118,7 +117,6 @@ describe CapybaraSetup do
         context "with maximal Celerity driver" do
           before do
             ENV['BROWSER'] = 'headless'
-            ENV['ENVIRONMENT'] = 'test'
             ENV['CELERITY_JS_ENABLED'] = 'true'
             ENV['PROXY_URL'] = 'http://example.cache.co.uk:80'
           end
