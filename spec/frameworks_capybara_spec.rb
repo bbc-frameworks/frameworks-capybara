@@ -24,6 +24,7 @@ describe CapybaraSetup do
   before do
     ENV.clear
     Capybara.delete_session
+    ENV['HOME'] = '/home/matt' #TODO: home is used by sel-webdriver to locate app specific settings e.g. Firefox profile location, see Selenium::Webdriver::Common::Platform - not sure how this gets set when running via normal route as clearly we don't normally have to set this.
   end
 
   describe "should validate options" do
@@ -62,10 +63,11 @@ describe CapybaraSetup do
         end
 
         it "should be initialized correctly" do 
+          Selenium::WebDriver::Firefox::ProfilesIni.new
           CapybaraSetup.new.driver.should == :selenium
           Capybara.current_session.driver.kind_of? Capybara::Driver::Selenium
           Capybara.current_session.driver.options[:browser].should == :firefox
-          p Capybara.current_session.driver
+          Capybara.current_session.driver.options[:profile].kind_of? Selenium::WebDriver::Firefox::Profile
         end
       end
 
