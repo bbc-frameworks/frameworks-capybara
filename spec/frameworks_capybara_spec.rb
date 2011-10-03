@@ -14,17 +14,13 @@ module Capybara
   end
 end
 
-shared_examples_for "driver" do
-  it "should exist" do
-  end
-end
-
 describe CapybaraSetup do
 
   before do
+    home = ENV['HOME']
     ENV.clear
+    ENV['HOME'] = home #Want to clear some env variables but HOME is used by Webdriver, therefore need to preserve it
     Capybara.delete_session
-    ENV['HOME'] = '/home/matt' #TODO: home is used by sel-webdriver to locate app specific settings e.g. Firefox profile location, see Selenium::Webdriver::Common::Platform - not sure how this gets set when running via normal route as clearly we don't normally have to set this.
   end
 
   describe "should validate options" do
