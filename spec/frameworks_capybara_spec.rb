@@ -25,12 +25,26 @@ describe CapybaraSetup do
 
   describe "should validate options" do
     it "should require as a minimum ENVIRONMENT and BROWSER" do
-      lambda {CapybaraSetup.new}.should raise_error(RuntimeError,'Please ensure following environment variables are set ENVIRONMENT [int|test|stage|live], BROWSER[headless|ie|chrome|firefox] and PROXY_URL')
+      lambda {CapybaraSetup.new}.should raise_error(RuntimeError,'Please ensure following environment variables are set ENVIRONMENT [int|test|stage|live], BROWSER[headless|ie|chrome|firefox] and PROXY_URL (if required)')
+    end
+
+    it "should require as a minimum ENVIRONMENT, BROWSER and REMOTE_BROWSER if running a Remote Selenium Instance" do
+      ENV['BROWSER'] = 'remote'
+      ENV['ENVIRONMENT'] = 'test'
+      lambda {CapybaraSetup.new}.should raise_error(RuntimeError,'Please ensure the following environment variables are set PLATFORM, REMOTE_URL, REMOTE_BROWSER (browser to use on remote machine), PROXY_URL (if required), REMOTE_BROWSER_PROXY (if required) and BROWSER_VERSION (if required)')
     end
 
     it "should not error if ENVIRONMENT and BROWSER are provided" do
       ENV['BROWSER'] = 'headless'
       ENV['ENVIRONMENT'] = 'test'
+      lambda {CapybaraSetup.new}.should_not raise_error
+    end
+
+    it "should not error if ENVIRONMENT, BROWSER and REMOTE_BROSWER are provided if running a Remote Selenium Instance" do
+      ENV['BROWSER'] = 'remote'
+      ENV['ENVIRONMENT'] = 'test'
+      ENV['REMOTE_BROWSER'] = 'test'
+      ENV['REMOTE_URL'] = 'test'
       lambda {CapybaraSetup.new}.should_not raise_error
     end
   end
@@ -69,6 +83,47 @@ describe CapybaraSetup do
         end
       end
 
+      context "with Selenium driver and programtically cretated profile" do
+        before do
+          ENV['BROWSER'] = 'firefox'
+          ENV['FIREFOX_PROFILE'] = 'BBC_INTERNAL'
+          ENV['PROXY_URL'] = 'http://example.cache.co.uk:80'
+        end
+
+        it "should be initialized correctly" do 
+          CapybaraSetup.new.driver.should == :selenium
+          Capybara.current_session.driver.should be_a_kind_of Capybara::Driver::Selenium
+          Capybara.current_session.driver.options[:browser].should == :firefox
+          Capybara.current_session.driver.options[:profile].should be_a_kind_of Selenium::WebDriver::Firefox::Profile
+          Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['network.proxy.type'].should == '1'
+          Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['network.proxy.no_proxies_on'].should == '"*.sandbox.dev.bbc.co.uk"'
+          Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['network.proxy.http'].should == '"example.cache.co.uk"'
+          Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['network.proxy.http_port'].should == '80'
+          Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['network.proxy.ssl'].should == '"example.cache.co.uk"'
+          Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['network.proxy.ssl_port'].should == '80'
+        end
+      end
+
+      context "with Remote Selenium driver" do
+        before do
+          ENV['BROWSER'] = 'remote'
+          ENV['REMOTE_BROWSER'] = 'firefox'
+          ENV['FIREFOX_PROFILE'] = 'default'
+          ENV['REMOTE_URL'] = 'http://example.com'
+        end
+
+        it "should be initialized correctly" do 
+          CapybaraSetup.new.driver.should == :selenium
+          Capybara.current_session.driver.should be_a_kind_of Capybara::Driver::Selenium
+          Capybara.current_session.driver.options[:browser].should == :remote
+          Capybara.current_session.driver.options[:url].should == 'http://example.com'
+          Capybara.current_session.driver.options[:proxy].should == nil 
+          Capybara.current_session.driver.options[:desired_capabilities].should be_a_kind_of Selenium::WebDriver::Remote::Capabilities 
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:browser_name].should == :firefox
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].should be_a_kind_of Selenium::WebDriver::Firefox::Profile
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].instance_variable_get(:@model).should include 'default'
+        end
+      end
     end
 
     describe "should allow Mechanize driver to be created" do
