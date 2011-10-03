@@ -104,6 +104,7 @@ describe CapybaraSetup do
         end
       end
 
+
       context "with Remote Selenium driver" do
         before do
           ENV['BROWSER'] = 'remote'
@@ -117,11 +118,55 @@ describe CapybaraSetup do
           Capybara.current_session.driver.should be_a_kind_of Capybara::Driver::Selenium
           Capybara.current_session.driver.options[:browser].should == :remote
           Capybara.current_session.driver.options[:url].should == 'http://example.com'
-          Capybara.current_session.driver.options[:proxy].should == nil 
+          Capybara.current_session.driver.options[:http_client].should be_a_kind_of Selenium::WebDriver::Remote::Http::Default 
+          Capybara.current_session.driver.options[:http_client].instance_variable_get(:@proxy).should == nil
           Capybara.current_session.driver.options[:desired_capabilities].should be_a_kind_of Selenium::WebDriver::Remote::Capabilities 
           Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:browser_name].should == :firefox
           Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].should be_a_kind_of Selenium::WebDriver::Firefox::Profile
           Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].instance_variable_get(:@model).should include 'default'
+        end
+      end
+
+      context "with Remote Selenium driver and client proxy" do
+        before do
+          ENV['BROWSER'] = 'remote'
+          ENV['REMOTE_BROWSER'] = 'firefox'
+          ENV['FIREFOX_PROFILE'] = 'default'
+          ENV['REMOTE_URL'] = 'http://example.com'
+          ENV['PROXY_URL'] = 'http://example.cache.co.uk:80'
+        end
+
+        it "should be initialized correctly" do 
+          CapybaraSetup.new.driver.should == :selenium
+          Capybara.current_session.driver.should be_a_kind_of Capybara::Driver::Selenium
+          Capybara.current_session.driver.options[:browser].should == :remote
+          Capybara.current_session.driver.options[:url].should == 'http://example.com'
+          Capybara.current_session.driver.options[:http_client].should be_a_kind_of Selenium::WebDriver::Remote::Http::Default 
+          Capybara.current_session.driver.options[:http_client].instance_variable_get(:@proxy).should be_a_kind_of Selenium::WebDriver::Proxy
+          Capybara.current_session.driver.options[:http_client].instance_variable_get(:@proxy).instance_variable_get(:@http).should == 'http://example.cache.co.uk:80'
+        end
+      end
+
+      context "with Remote Selenium driver, programtically cretated Firefox profile using proxy but client not using proxy" do
+        before do
+          ENV['BROWSER'] = 'firefox'
+          ENV['FIREFOX_PROFILE'] = 'BBC_INTERNAL'
+          ENV['PROXY_URL'] = 'http://example.cache.co.uk:80'
+          ENV['PROXY_ON'] = 'false'
+        end
+
+        it "should be initialized correctly" do 
+          CapybaraSetup.new.driver.should == :selenium
+          Capybara.current_session.driver.should be_a_kind_of Capybara::Driver::Selenium
+          Capybara.current_session.driver.options[:browser].should == :firefox
+          p Capybara.current_session.driver.options
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].should be_a_kind_of Selenium::WebDriver::Firefox::Profile
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile]['network.proxy.type'].should == '1'
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile]['network.proxy.no_proxies_on'].should == '"*.sandbox.dev.bbc.co.uk"'
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile]['network.proxy.http'].should == '"example.cache.co.uk"'
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile]['network.proxy.http_port'].should == '80'
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile]['network.proxy.ssl'].should == '"example.cache.co.uk"'
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile]['network.proxy.ssl_port'].should == '80'
         end
       end
     end
