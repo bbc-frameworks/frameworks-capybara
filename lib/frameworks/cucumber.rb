@@ -45,7 +45,6 @@ module Frameworks
   end #EnvHelper
 end #Frameworks
 
-CapybaraSetup.new unless ENV['CAPYBARA_DISABLED']
 
 #Add module into world to ensure visibility of instance variables within Cucumber
 World(Frameworks::EnvHelper)

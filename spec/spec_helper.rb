@@ -12,3 +12,4 @@ $LOAD_PATH.unshift "#{dir}/../lib"
 Cucumber::RbSupport::RbLanguage.new(Cucumber::Runtime.new) #Need to load Cucumber runtime, so World is available 
 
 require 'frameworks/capybara'
+require 'frameworks/cucumber'
