@@ -90,7 +90,10 @@ class CapybaraSetup
         cap_opts[:firefox_profile] = cap_opts.delete :profile
         cap_opts.delete :browser
         caps = Selenium::WebDriver::Remote::Capabilities.new(cap_opts)
-        caps.custom_capabilities({:'job-name' => opts.delete(:job_name) || 'frameworks-unamed-job', :'max-duration' => opts.delete(:max_duration) || 1800}) if opts[:url].include? 'saucelabs' #set sauce specific parameters - will this scupper other on sauce remote jobs? 
+
+        sauce_time_limit = opts.delete(:max_duration).to_i #note nil.to_i == 0 
+
+        caps.custom_capabilities({:'job-name' => opts.delete(:job_name) || 'frameworks-unamed-job', :'max-duration' => ((sauce_time_limit if sauce_time_limit != 0) || 1800)}) if opts[:url].include? 'saucelabs' #set sauce specific parameters - will this scupper other on sauce remote jobs? 
 
         opts.delete_if {|k,v| [:browser_name, :platform, :profile, :version].include? k}  #remove options that would have been added to caps
 

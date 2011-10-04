@@ -13,33 +13,33 @@ end
 
 module Frameworks
   module EnvHelper
-
-    ENV['SCHEME']=='https' ? scheme = 'https' : scheme = 'http'
-
-    WWW_PREFIX = "#{scheme}://www."
-    STATIC_PREFIX = "#{scheme}://static."
-    OPEN_PREFIX = "#{scheme}://open."
-    BBC_DOMAIN = '.bbc.co.uk'
-    STATIC_BBC_DOMAIN = '.bbc.co.uk'
-    SANDBOX = "#{scheme}://pal.sandbox.dev"
-    STATIC_SANDBOX = "#{scheme}://static.sandbox.dev"
-
     #Generate base urls to use in Cucumber step defs
     def generate_base_urls 
+      set_scheme
       if(ENV['ENVIRONMENT']=='sandbox')
-        @base_url = SANDBOX + BBC_DOMAIN 
-        @static_base_url = STATIC_SANDBOX + BBC_DOMAIN
+        @base_url = @sandbox + @bbc_domain 
+        @static_base_url = @static_sandbox + @bbc_domain
       elsif (ENV['ENVIRONMENT']=='live' && ENV['WWW_LIVE']=='false')
-        @base_url = WWW_PREFIX + BBC_DOMAIN
-        @static_base_url = STATIC_PREFIX + BBC_DOMAIN
-        @open_base_url = OPEN_PREFIX + BBC_DOMAIN
+        @base_url = @www_prefix.chop + @bbc_domain
+        @static_base_url = @static_prefix.chop + @bbc_domain
+        @open_base_url = @open_prefix.chop + @bbc_domain
       elsif (ENV['ENVIRONMENT'].split('.')[0].include? 'pal') #address specific box
         @base_url = "#{scheme}://#{ENV['ENVIRONMENT']}" 
       else
-        @base_url = WWW_PREFIX + ENV['ENVIRONMENT'] + BBC_DOMAIN
-        @static_base_url = STATIC_PREFIX + ENV['ENVIRONMENT'] + BBC_DOMAIN
-        @open_base_url = OPEN_PREFIX + ENV['ENVIRONMENT'] + BBC_DOMAIN
+        @base_url = @www_prefix + ENV['ENVIRONMENT'] + @bbc_domain
+        @static_base_url = @static_prefix + ENV['ENVIRONMENT'] + @bbc_domain
+        @open_base_url = @open_prefix + ENV['ENVIRONMENT'] + @bbc_domain
       end
+    end
+
+    def set_scheme  
+      ENV['SCHEME']=='https' ? scheme = 'https' : scheme = 'http'
+      @www_prefix = "#{scheme}://www."
+      @static_prefix = "#{scheme}://static."
+      @open_prefix = "#{scheme}://open."
+      @bbc_domain = '.bbc.co.uk'
+      @sandbox = "#{scheme}://pal.sandbox.dev"
+      @static_sandbox = "#{scheme}://static.sandbox.dev"
     end
 
   end #EnvHelper

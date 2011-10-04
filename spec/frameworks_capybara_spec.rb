@@ -161,7 +161,6 @@ describe CapybaraSetup do
           CapybaraSetup.new.driver.should == :selenium
           Capybara.current_session.driver.should be_a_kind_of Capybara::Driver::Selenium
           Capybara.current_session.driver.options[:browser].should == :remote
-          p Capybara.current_session.driver.options
           Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].should be_a_kind_of Selenium::WebDriver::Firefox::Profile
           Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].instance_variable_get(:@additional_prefs)['network.proxy.type'].should == '1'
           Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].instance_variable_get(:@additional_prefs)['network.proxy.no_proxies_on'].should == '"*.sandbox.dev.bbc.co.uk"'
@@ -171,6 +170,62 @@ describe CapybaraSetup do
           Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].instance_variable_get(:@additional_prefs)['network.proxy.ssl_port'].should == '80'
           Capybara.current_session.driver.options[:http_client].should be_a_kind_of Selenium::WebDriver::Remote::Http::Default 
           Capybara.current_session.driver.options[:http_client].instance_variable_get(:@proxy).should == nil
+        end
+      end
+
+      context "with Remote Selenium driver (specifying platform and browser version) and default Custom Capabilites (e.g. for Sauce Labs)" do
+        before do
+          ENV['BROWSER'] = 'remote'
+          ENV['REMOTE_BROWSER'] = 'firefox'
+          ENV['PLATFORM'] = 'windows'
+          ENV['REMOTE_BROWSER_VERSION'] = '4'
+          ENV['FIREFOX_PROFILE'] = 'default'
+          ENV['REMOTE_URL'] = 'http://saucelabs.com'
+        end
+
+        it "should be initialized correctly" do 
+          CapybaraSetup.new.driver.should == :selenium
+          Capybara.current_session.driver.should be_a_kind_of Capybara::Driver::Selenium
+          p Capybara.current_session.driver.options
+          Capybara.current_session.driver.options[:browser].should == :remote
+          Capybara.current_session.driver.options[:url].should == 'http://saucelabs.com'
+          Capybara.current_session.driver.options[:http_client].should be_a_kind_of Selenium::WebDriver::Remote::Http::Default 
+          Capybara.current_session.driver.options[:http_client].instance_variable_get(:@proxy).should == nil
+          Capybara.current_session.driver.options[:desired_capabilities].should be_a_kind_of Selenium::WebDriver::Remote::Capabilities 
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@custom_capabilities)[:'job-name'].should == 'frameworks-unamed-job' 
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@custom_capabilities)[:'max-duration'].should == 1800 
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:browser_name].should == :firefox
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:version].should == '4' 
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:platform].should == 'windows'
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].should be_a_kind_of Selenium::WebDriver::Firefox::Profile
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].instance_variable_get(:@model).should include 'default'
+        end
+      end
+
+      context "with Remote Selenium driver and specified Custom Capabilites (e.g. for Sauce Labs)" do
+        before do
+          ENV['BROWSER'] = 'remote'
+          ENV['REMOTE_BROWSER'] = 'firefox'
+          ENV['SAUCE_JOB_NAME'] = 'myjobname'
+          ENV['SAUCE_MAX_DURATION'] = '2000'
+          ENV['REMOTE_BROWSER_VERSION'] = '4'
+          ENV['FIREFOX_PROFILE'] = 'default'
+          ENV['REMOTE_URL'] = 'http://saucelabs.com'
+        end
+
+        it "should be initialized correctly" do 
+          CapybaraSetup.new.driver.should == :selenium
+          Capybara.current_session.driver.should be_a_kind_of Capybara::Driver::Selenium
+          Capybara.current_session.driver.options[:browser].should == :remote
+          Capybara.current_session.driver.options[:url].should == 'http://saucelabs.com'
+          Capybara.current_session.driver.options[:http_client].should be_a_kind_of Selenium::WebDriver::Remote::Http::Default 
+          Capybara.current_session.driver.options[:http_client].instance_variable_get(:@proxy).should == nil
+          Capybara.current_session.driver.options[:desired_capabilities].should be_a_kind_of Selenium::WebDriver::Remote::Capabilities 
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@custom_capabilities)[:'job-name'].should == 'myjobname' 
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@custom_capabilities)[:'max-duration'].should == 2000 
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:browser_name].should == :firefox
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].should be_a_kind_of Selenium::WebDriver::Firefox::Profile
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].instance_variable_get(:@model).should include 'default'
         end
       end
     end
