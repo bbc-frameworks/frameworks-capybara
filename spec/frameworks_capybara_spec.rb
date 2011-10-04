@@ -186,7 +186,6 @@ describe CapybaraSetup do
         it "should be initialized correctly" do 
           CapybaraSetup.new.driver.should == :selenium
           Capybara.current_session.driver.should be_a_kind_of Capybara::Driver::Selenium
-          p Capybara.current_session.driver.options
           Capybara.current_session.driver.options[:browser].should == :remote
           Capybara.current_session.driver.options[:url].should == 'http://saucelabs.com'
           Capybara.current_session.driver.options[:http_client].should be_a_kind_of Selenium::WebDriver::Remote::Http::Default 
