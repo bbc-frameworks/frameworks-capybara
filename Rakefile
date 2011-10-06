@@ -24,25 +24,9 @@ Jeweler::Tasks.new do |gem|
   gem.add_runtime_dependency 'capybara', '>=0'
   gem.add_runtime_dependency 'capybara-mechanize', '>=0'
   gem.add_runtime_dependency 'headless', '>=0'
-  #  gem.add_development_dependency 'rspec', '> 1.2.3'
+  gem.add_development_dependency 'rspec', '>=2.6.0'
 end
 Jeweler::RubygemsDotOrgTasks.new
-
-require 'rake/testtask'
-Rake::TestTask.new(:test) do |test|
-  test.libs << 'lib' << 'test'
-  test.pattern = 'test/**/test_*.rb'
-  test.verbose = true
-end
-
-require 'rcov/rcovtask'
-Rcov::RcovTask.new do |test|
-  test.libs << 'test'
-  test.pattern = 'test/**/test_*.rb'
-  test.verbose = true
-end
-
-task :default => :test
 
 require 'rake/rdoctask'
 Rake::RDocTask.new do |rdoc|
@@ -53,3 +37,8 @@ Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
+
+require 'rspec/core/rake_task'
+RSpec::Core::RakeTask.new(:spec)
+
+task :default => :spec
