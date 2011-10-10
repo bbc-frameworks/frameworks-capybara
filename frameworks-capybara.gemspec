@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{frameworks-capybara}
-  s.version = "0.0.43"
+  s.version = "0.1.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["mcrmfc"]
-  s.date = %q{2011-09-26}
+  s.date = %q{2011-10-10}
   s.description = %q{gem to aid setup of Capybara for testing bbc sites}
   s.email = %q{mcrobbins@gmail.com}
   s.extra_rdoc_files = [
@@ -18,6 +18,7 @@ Gem::Specification.new do |s|
   ]
   s.files = [
     ".document",
+    ".rspec",
     "Gemfile",
     "Gemfile.lock",
     "LICENSE.txt",
@@ -40,8 +41,9 @@ Gem::Specification.new do |s|
     "schemas/xhtml-symbol.ent",
     "schemas/xhtml1-strict.dtd",
     "schemas/xhtml1-transitional.dtd",
-    "test/helper.rb",
-    "test/test_frameworks-capybara.rb"
+    "spec/frameworks_capybara_spec.rb",
+    "spec/frameworks_cucumber_spec.rb",
+    "spec/spec_helper.rb"
   ]
   s.homepage = %q{http://github.com/mcrmfc/frameworks-capybara}
   s.licenses = ["MIT"]
@@ -49,8 +51,9 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.6.0}
   s.summary = %q{gem to aid setup of Capybara for testing bbc sites}
   s.test_files = [
-    "test/helper.rb",
-    "test/test_frameworks-capybara.rb"
+    "spec/frameworks_capybara_spec.rb",
+    "spec/frameworks_cucumber_spec.rb",
+    "spec/spec_helper.rb"
   ]
 
   if s.respond_to? :specification_version then
@@ -61,26 +64,44 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.5.2"])
       s.add_development_dependency(%q<rcov>, [">= 0"])
+      s.add_development_dependency(%q<rspec>, [">= 0"])
+      s.add_development_dependency(%q<capybara>, ["< 1.0.0"])
+      s.add_development_dependency(%q<capybara-mechanize>, [">= 0"])
+      s.add_development_dependency(%q<cucumber>, [">= 0"])
+      s.add_development_dependency(%q<selenium-webdriver>, [">= 0"])
       s.add_runtime_dependency(%q<capybara>, [">= 0"])
       s.add_runtime_dependency(%q<capybara-mechanize>, [">= 0"])
       s.add_runtime_dependency(%q<headless>, [">= 0"])
+      s.add_development_dependency(%q<rspec>, [">= 2.6.0"])
     else
       s.add_dependency(%q<shoulda>, [">= 0"])
       s.add_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_dependency(%q<jeweler>, ["~> 1.5.2"])
       s.add_dependency(%q<rcov>, [">= 0"])
+      s.add_dependency(%q<rspec>, [">= 0"])
+      s.add_dependency(%q<capybara>, ["< 1.0.0"])
+      s.add_dependency(%q<capybara-mechanize>, [">= 0"])
+      s.add_dependency(%q<cucumber>, [">= 0"])
+      s.add_dependency(%q<selenium-webdriver>, [">= 0"])
       s.add_dependency(%q<capybara>, [">= 0"])
       s.add_dependency(%q<capybara-mechanize>, [">= 0"])
       s.add_dependency(%q<headless>, [">= 0"])
+      s.add_dependency(%q<rspec>, [">= 2.6.0"])
     end
   else
     s.add_dependency(%q<shoulda>, [">= 0"])
     s.add_dependency(%q<bundler>, ["~> 1.0.0"])
     s.add_dependency(%q<jeweler>, ["~> 1.5.2"])
     s.add_dependency(%q<rcov>, [">= 0"])
+    s.add_dependency(%q<rspec>, [">= 0"])
+    s.add_dependency(%q<capybara>, ["< 1.0.0"])
+    s.add_dependency(%q<capybara-mechanize>, [">= 0"])
+    s.add_dependency(%q<cucumber>, [">= 0"])
+    s.add_dependency(%q<selenium-webdriver>, [">= 0"])
     s.add_dependency(%q<capybara>, [">= 0"])
     s.add_dependency(%q<capybara-mechanize>, [">= 0"])
     s.add_dependency(%q<headless>, [">= 0"])
+    s.add_dependency(%q<rspec>, [">= 2.6.0"])
   end
 end
 
