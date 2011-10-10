@@ -88,9 +88,7 @@ class CapybaraSetup
   end
 
   def set_client_proxy(opts)
-    proxy = Selenium::WebDriver::Proxy.new(:http => opts[:proxy]) if opts[:proxy] && opts[:proxy_on] != 'false' #set proxy on client connection if required, note you may use ENV['PROXY_URL'] for setting in browser (ff profile) but not for client conection, hence allow for PROXY_ON=false
-    clean_opts(opts, :proxy, :proxy_on)
-    proxy 
+    Selenium::WebDriver::Proxy.new(:http => opts[:proxy]) if opts[:proxy] && opts[:proxy_on] != 'false' #set proxy on client connection if required, note you may use ENV['PROXY_URL'] for setting in browser (ff profile) but not for client conection, hence allow for PROXY_ON=false
   end
 
   def create_profile(profile_name)
