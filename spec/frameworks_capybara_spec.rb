@@ -26,6 +26,7 @@ shared_examples_for "Selenium Driver Options Array" do
     Capybara.current_session.driver.options[:browser_name].should == nil
     Capybara.current_session.driver.options[:version].should == nil
     Capybara.current_session.driver.options[:job_name].should == nil
+    Capybara.current_session.driver.options[:chrome_switches].should == nil
     Capybara.current_session.driver.options[:max_duration].should == nil
     Capybara.current_session.driver.options[:profile].should_not be_a_kind_of String
     Capybara.current_session.driver.options[:browser].should_not be_a_kind_of String
@@ -129,6 +130,22 @@ describe CapybaraSetup do
           Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['network.proxy.http_port'].should == '80'
           Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['network.proxy.ssl'].should == '"example.cache.co.uk"'
           Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['network.proxy.ssl_port'].should == '80'
+        end
+        it_behaves_like "Selenium Driver Options Array"
+      end
+
+      context "with Selenium driver and custom chrome options" do
+        before do
+          ENV['BROWSER'] = 'chrome'
+          ENV['CHROME_SWITCHES'] = '--user-agent=Mozilla/5.0 (iPad; U; CPU OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B334b Safari/531.21.10'
+        end
+
+        it "should be initialized correctly" do 
+          Capybara.delete_session
+          CapybaraSetup.new.driver.should == :selenium
+          Capybara.current_session.driver.should be_a_kind_of Capybara::Driver::Selenium
+          Capybara.current_session.driver.options[:browser].should == :chrome
+          Capybara.current_session.driver.options[:switches].should == ['--user-agent=Mozilla/5.0 (iPad; U; CPU OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B334b Safari/531.21.10']
         end
         it_behaves_like "Selenium Driver Options Array"
       end
@@ -238,6 +255,30 @@ describe CapybaraSetup do
         it_behaves_like "Selenium Driver Options Array"
       end
 
+      context "with Remote Selenium driver and specified Chrome Switches" do
+        before do
+          ENV['BROWSER'] = 'remote'
+          ENV['REMOTE_BROWSER'] = 'chrome'
+          ENV['REMOTE_URL'] = 'http://saucelabs.com'
+          ENV['CHROME_SWITCHES'] = '--user-agent=Mozilla/5.0 (iPad; U; CPU OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B334b Safari/531.21.10'
+        end
+
+        it "should be initialized correctly" do 
+          Capybara.delete_session
+          CapybaraSetup.new.driver.should == :selenium
+          Capybara.current_session.driver.should be_a_kind_of Capybara::Driver::Selenium
+          Capybara.current_session.driver.options[:browser].should == :remote
+          Capybara.current_session.driver.options[:switches].should == nil
+          Capybara.current_session.driver.options[:url].should == 'http://saucelabs.com'
+          Capybara.current_session.driver.options[:http_client].should be_a_kind_of Selenium::WebDriver::Remote::Http::Default 
+          Capybara.current_session.driver.options[:http_client].instance_variable_get(:@proxy).should == nil
+          Capybara.current_session.driver.options[:desired_capabilities].should be_a_kind_of Selenium::WebDriver::Remote::Capabilities 
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:browser_name].should == :chrome
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)['chrome.switches'].should == ['--user-agent=Mozilla/5.0 (iPad; U; CPU OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B334b Safari/531.21.10'] 
+        end
+        it_behaves_like "Selenium Driver Options Array"
+      end
+
       context "with Remote Selenium driver and specified Custom Capabilites (e.g. for Sauce Labs)" do
         before do
           ENV['BROWSER'] = 'remote'
@@ -266,6 +307,8 @@ describe CapybaraSetup do
         end
         it_behaves_like "Selenium Driver Options Array"
       end
+
+
     end
 
     describe "should allow Mechanize driver to be created" do

@@ -12,7 +12,7 @@ class CapybaraSetup
   attr_reader :driver
 
   def initialize
-    capybara_opts = {:environment => ENV['ENVIRONMENT'], :proxy => ENV['PROXY_URL'], :profile => ENV['FIREFOX_PROFILE'], :browser => ENV['BROWSER'], :javascript_enabled => ENV['CELERITY_JS_ENABLED'], :proxy_on => ENV['PROXY_ON'],:url => ENV['REMOTE_URL']}
+    capybara_opts = {:environment => ENV['ENVIRONMENT'], :proxy => ENV['PROXY_URL'], :profile => ENV['FIREFOX_PROFILE'], :browser => ENV['BROWSER'], :javascript_enabled => ENV['CELERITY_JS_ENABLED'], :proxy_on => ENV['PROXY_ON'],:url => ENV['REMOTE_URL'], :chrome_switches => ENV['CHROME_SWITCHES']}
     selenium_remote_opts = {:platform => ENV['PLATFORM'], :browser_name => ENV['REMOTE_BROWSER'], :version => ENV['REMOTE_BROWSER_VERSION'], :url => ENV['REMOTE_URL']}
     custom_opts = {:job_name => ENV['SAUCE_JOB_NAME'], :max_duration => ENV['SAUCE_MAX_DURATION']}
 
@@ -63,12 +63,14 @@ class CapybaraSetup
     Capybara.register_driver :selenium do |app|
 
       opts[:profile] = create_profile(opts[:profile]) if(opts[:profile])
+      opts[:switches] = [opts.delete(:chrome_switches)] if(opts[:chrome_switches])
 
       if opts[:browser] == :remote
         client = Selenium::WebDriver::Remote::Http::Default.new
         client.proxy = set_client_proxy(opts)
 
-        remote_opts[:firefox_profile] = opts.delete :profile
+        remote_opts[:firefox_profile] = opts.delete :profile if opts[:profile]
+        remote_opts['chrome.switches'] = opts.delete :switches if opts[:switches]
         caps = Selenium::WebDriver::Remote::Capabilities.new(remote_opts)
 
         add_custom_caps(caps, custom_opts) if remote_opts[:url].include? 'saucelabs' #set sauce specific parameters - will this scupper other on sauce remote jobs? 
