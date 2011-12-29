@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{frameworks-capybara}
-  s.version = "0.1.3"
+  s.version = "0.1.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["mcrmfc"]
-  s.date = %q{2011-12-20}
+  s.date = %q{2011-12-29}
   s.description = %q{gem to aid setup of Capybara for testing bbc sites}
   s.email = %q{mcrobbins@gmail.com}
   s.extra_rdoc_files = [
@@ -40,7 +40,9 @@ Gem::Specification.new do |s|
     "schemas/xhtml-special.ent",
     "schemas/xhtml-symbol.ent",
     "schemas/xhtml1-strict.dtd",
+    "schemas/xhtml1-strict.xsd",
     "schemas/xhtml1-transitional.dtd",
+    "schemas/xml.xsd",
     "spec/frameworks_capybara_spec.rb",
     "spec/frameworks_cucumber_spec.rb",
     "spec/spec_helper.rb"
@@ -48,7 +50,7 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/mcrmfc/frameworks-capybara}
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.7}
+  s.rubygems_version = %q{1.6.0}
   s.summary = %q{gem to aid setup of Capybara for testing bbc sites}
   s.test_files = [
     "spec/frameworks_capybara_spec.rb",
@@ -57,7 +59,6 @@ Gem::Specification.new do |s|
   ]
 
   if s.respond_to? :specification_version then
-    current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
