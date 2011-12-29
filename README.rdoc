@@ -37,6 +37,7 @@ The following environment variables can be set to configure your tests:
   CELERITY_JS_ENABLED (string - 'true', 'false') - determines whether Celerity (HTMLUnit) attempts to execute javascript 
   XVFB - (string - 'true', 'false') - determines whether XVFB is used to run browser (i.e. headless Firefox on *nix platform)
   FW_CERT_LOCATION - path to client certificate (combined pem)
+  CHROME_SWITCHES - pass in any allowed switches for the Selenium chrome driver (http://peter.sh/experiments/chromium-command-line-switches/) e.g. CHROME_SWITCHES="--user-agent=Mozilla/5.0 (PLAYSTATION 3; 3.55)"
 
 Here is a sample cucumber.yml:
 
