@@ -54,13 +54,13 @@ end
 
 task :run_local do
   if(RUBY_PLATFORM == 'java')
-    abort color("This script only works if you are running on MRI Ruby....sorry....", :color => :red) 
+    abort color("This script only works if you are running on MRI ('normal') Ruby....sorry....", :color => :red) 
   end
   puts color('*********************************************',:color => :green)
   puts color('*                                           *',:color => :green)
   puts color('* Cucumber Acceptance Tests                 *',:color => :green)
   puts color('* Pre-Requisites:                           *',:color => :green)
-  puts color('* jruby, bundler, rake                      *',:color => :green)
+  puts color('* ruby 1.8.7, bundler, rake                 *',:color => :green)
   puts color('*                                           *',:color => :green)
   puts color('*********************************************',:color => :green)
   Rake::Task[:list_profiles].invoke
