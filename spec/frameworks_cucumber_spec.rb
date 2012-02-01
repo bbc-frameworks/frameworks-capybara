@@ -24,6 +24,14 @@ describe Frameworks::EnvHelper do
       @open_base_url.should == 'http://open.foo.bbc.co.uk'
     end
 
+    it "should set correct static base for www.live.bbc.co.uk" do
+      ENV['ENVIRONMENT'] = 'live'
+      generate_base_urls
+      @base_url.should == 'http://www.live.bbc.co.uk'
+      @static_base_url.should == 'http://static.bbc.co.uk'
+      @open_base_url.should == 'http://open.live.bbc.co.uk'
+    end
+
     it "should be able to set a 'classic' live url" do
       ENV['ENVIRONMENT'] = 'live'
       ENV['WWW_LIVE'] = 'false' 

@@ -28,6 +28,7 @@ module Frameworks
       else
         @base_url = @www_prefix + ENV['ENVIRONMENT'] + @bbc_domain
         @static_base_url = @static_prefix + ENV['ENVIRONMENT'] + @bbc_domain
+        @static_base_url = @static_prefix.chop + @bbc_domain if ENV['ENVIRONMENT'] == 'live'
         @open_base_url = @open_prefix + ENV['ENVIRONMENT'] + @bbc_domain
       end
     end
