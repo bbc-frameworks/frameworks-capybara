@@ -49,5 +49,14 @@ describe Frameworks::EnvHelper do
       @static_base_url.should == 'https://static.foo.bbc.co.uk'
       @open_base_url.should == 'https://open.foo.bbc.co.uk'
     end
+
+=begin
+#don't want to push proxy addr online
+    it "should be able to validate xhtml online" do
+      @proxy_host = ''
+      xhtml = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"><head><title>a</title></head><body><p>a</p></body></html>'
+      validate_online(xhtml)
+    end
+=end
   end
 end
