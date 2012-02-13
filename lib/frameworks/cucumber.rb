@@ -48,7 +48,7 @@ module Frameworks
         results.errors.each do |err|
           puts err.to_s
         end
-        raise "W3C Validation of " + url + " failed."
+        raise "W3C Validation of " + current_url + " failed."
       end
     end
 
