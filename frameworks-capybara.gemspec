@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{frameworks-capybara}
-  s.version = "0.1.12"
+  s.version = "0.1.13"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["mcrmfc"]
@@ -75,6 +75,7 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<selenium-webdriver>, [">= 0"])
       s.add_runtime_dependency(%q<capybara>, [">= 0"])
       s.add_runtime_dependency(%q<capybara-mechanize>, [">= 0"])
+      s.add_runtime_dependency(%q<w3c_validators>, [">= 0"])
       s.add_runtime_dependency(%q<headless>, [">= 0"])
       s.add_development_dependency(%q<rspec>, [">= 2.6.0"])
     else
@@ -90,6 +91,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<selenium-webdriver>, [">= 0"])
       s.add_dependency(%q<capybara>, [">= 0"])
       s.add_dependency(%q<capybara-mechanize>, [">= 0"])
+      s.add_dependency(%q<w3c_validators>, [">= 0"])
       s.add_dependency(%q<headless>, [">= 0"])
       s.add_dependency(%q<rspec>, [">= 2.6.0"])
     end
@@ -106,6 +108,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<selenium-webdriver>, [">= 0"])
     s.add_dependency(%q<capybara>, [">= 0"])
     s.add_dependency(%q<capybara-mechanize>, [">= 0"])
+    s.add_dependency(%q<w3c_validators>, [">= 0"])
     s.add_dependency(%q<headless>, [">= 0"])
     s.add_dependency(%q<rspec>, [">= 2.6.0"])
   end
