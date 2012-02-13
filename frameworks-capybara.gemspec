@@ -74,6 +74,7 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<cucumber>, [">= 0"])
       s.add_development_dependency(%q<selenium-webdriver>, [">= 0"])
       s.add_runtime_dependency(%q<capybara>, [">= 0"])
+      s.add_runtime_dependency(%q<w3c_validators>, [">= 0"])
       s.add_runtime_dependency(%q<capybara-mechanize>, [">= 0"])
       s.add_runtime_dependency(%q<headless>, [">= 0"])
       s.add_development_dependency(%q<rspec>, [">= 2.6.0"])
