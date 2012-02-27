@@ -34,7 +34,7 @@ module Frameworks
         @open_base_url = @open_prefix + ENV['ENVIRONMENT'] + @bbc_domain
       end
       proxy = ENV['http_proxy'] || ENV['HTTP_PROXY'] 
-      @proxy_host = ENV['http_proxy'].scan(/http:\/\/(.*):80/).to_s if proxy
+      @proxy_host = proxy.scan(/http:\/\/(.*):80/).to_s if proxy
     end
 
     def validate_online(src)

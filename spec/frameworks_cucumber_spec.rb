@@ -50,6 +50,18 @@ describe Frameworks::EnvHelper do
       @open_base_url.should == 'https://open.foo.bbc.co.uk'
     end
 
+    it "should be able to set proxy host correctly to use in tests using HTTP_PROXY env variable" do
+      ENV['HTTP_PROXY'] = 'http://mycache.co.uk:80'
+      generate_base_urls
+      @proxy_host.should == "mycache.co.uk"
+    end
+
+    it "should be able to set proxy host correctly to use in tests using http_proxy env variable" do
+      ENV['http_proxy'] = 'http://mycache.co.uk:80'
+      generate_base_urls
+      @proxy_host.should == "mycache.co.uk"
+    end
+
 =begin
 #don't want to push proxy addr online
     it "should be able to validate xhtml online" do
