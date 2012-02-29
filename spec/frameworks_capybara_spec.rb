@@ -37,8 +37,10 @@ describe CapybaraSetup do
 
   before(:each) do
     home = ENV['HOME']
+    appdata = ENV['APPDATA']
     ENV.clear
     ENV['HOME'] = home #Want to clear some env variables but HOME is used by Webdriver, therefore need to preserve it
+    ENV['APPDATA'] = appdata
   end
 
   describe "should validate options" do
@@ -110,7 +112,7 @@ describe CapybaraSetup do
 
       end
 
-      context "with Selenium driver and programtically cretated profile" do
+      context "with Selenium driver and programtically created profile" do
         before do
           ENV['BROWSER'] = 'firefox'
           ENV['FIREFOX_PROFILE'] = 'BBC_INTERNAL'
@@ -130,6 +132,24 @@ describe CapybaraSetup do
           Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['network.proxy.http_port'].should == '80'
           Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['network.proxy.ssl'].should == '"example.cache.co.uk"'
           Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['network.proxy.ssl_port'].should == '80'
+        end
+        it_behaves_like "Selenium Driver Options Array"
+      end
+
+
+      context "with Selenium driver and programtically created profile with referer disabled" do
+        before do
+          ENV['BROWSER'] = 'firefox'
+          ENV['FIREFOX_PROFILE'] = 'DISABLED_REFERER'
+        end
+
+        it "should be initialized correctly" do 
+          Capybara.delete_session
+          CapybaraSetup.new.driver.should == :selenium
+          Capybara.current_session.driver.should be_a_kind_of Capybara::Driver::Selenium
+          Capybara.current_session.driver.options[:browser].should == :firefox
+          Capybara.current_session.driver.options[:profile].should be_a_kind_of Selenium::WebDriver::Firefox::Profile
+          Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['network.http.sendRefererHeader'].should == '0'
         end
         it_behaves_like "Selenium Driver Options Array"
       end

@@ -103,6 +103,10 @@ class CapybaraSetup
       profile["network.proxy.http_port"] = 80
       profile["network.proxy.ssl_port"] = 80
       profile.native_events = true
+    elsif(profile_name == 'DISABLED_REFERER')
+      profile = Selenium::WebDriver::Firefox::Profile.new
+      profile["network.http.sendRefererHeader"] = 0
+      profile.native_events = true
     else
       profile = Selenium::WebDriver::Firefox::Profile.from_name profile_name
       profile.native_events = true
