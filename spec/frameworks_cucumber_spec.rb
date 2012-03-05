@@ -20,7 +20,7 @@ describe Frameworks::EnvHelper do
       ENV['ENVIRONMENT'] = 'foo'
       generate_base_urls
       @base_url.should == 'http://www.foo.bbc.co.uk'
-      @static_base_url.should == 'http://static.foo.bbc.co.uk'
+      @static_base_url.should == 'http://static.foo.bbci.co.uk'
       @open_base_url.should == 'http://open.foo.bbc.co.uk'
     end
 
@@ -28,7 +28,7 @@ describe Frameworks::EnvHelper do
       ENV['ENVIRONMENT'] = 'live'
       generate_base_urls
       @base_url.should == 'http://www.live.bbc.co.uk'
-      @static_base_url.should == 'http://static.bbc.co.uk'
+      @static_base_url.should == 'http://static.bbci.co.uk'
       @open_base_url.should == 'http://open.live.bbc.co.uk'
     end
 
@@ -37,7 +37,7 @@ describe Frameworks::EnvHelper do
       ENV['WWW_LIVE'] = 'false' 
       generate_base_urls
       @base_url.should == 'http://www.bbc.co.uk'
-      @static_base_url.should == 'http://static.bbc.co.uk'
+      @static_base_url.should == 'http://static.bbci.co.uk'
       @open_base_url.should == 'http://open.bbc.co.uk'
     end
 
@@ -46,7 +46,7 @@ describe Frameworks::EnvHelper do
       ENV['ENVIRONMENT'] = 'foo'
       generate_base_urls
       @base_url.should == 'https://www.foo.bbc.co.uk'
-      @static_base_url.should == 'https://static.foo.bbc.co.uk'
+      @static_base_url.should == 'https://static.foo.bbci.co.uk'
       @open_base_url.should == 'https://open.foo.bbc.co.uk'
     end
 

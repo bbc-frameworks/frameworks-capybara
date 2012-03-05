@@ -23,14 +23,14 @@ module Frameworks
         @static_base_url = @static_sandbox + @bbc_domain
       elsif (ENV['ENVIRONMENT']=='live' && ENV['WWW_LIVE']=='false')
         @base_url = @www_prefix.chop + @bbc_domain
-        @static_base_url = @static_prefix.chop + @bbc_domain
+        @static_base_url = @static_prefix.chop + @bbci_domain
         @open_base_url = @open_prefix.chop + @bbc_domain
       elsif (ENV['ENVIRONMENT'].split('.')[0].include? 'pal') #address specific box
         @base_url = "#{scheme}://#{ENV['ENVIRONMENT']}" 
       else
         @base_url = @www_prefix + ENV['ENVIRONMENT'] + @bbc_domain
-        @static_base_url = @static_prefix + ENV['ENVIRONMENT'] + @bbc_domain
-        @static_base_url = @static_prefix.chop + @bbc_domain if ENV['ENVIRONMENT'] == 'live'
+        @static_base_url = @static_prefix + ENV['ENVIRONMENT'] + @bbci_domain
+        @static_base_url = @static_prefix.chop + @bbci_domain if ENV['ENVIRONMENT'] == 'live'
         @open_base_url = @open_prefix + ENV['ENVIRONMENT'] + @bbc_domain
       end
       proxy = ENV['http_proxy'] || ENV['HTTP_PROXY'] 
@@ -59,6 +59,7 @@ module Frameworks
       @static_prefix = "#{scheme}://static."
       @open_prefix = "#{scheme}://open."
       @bbc_domain = '.bbc.co.uk'
+      @bbci_domain = '.bbci.co.uk'
       @sandbox = "#{scheme}://pal.sandbox.dev"
       @static_sandbox = "#{scheme}://static.sandbox.dev"
     end
