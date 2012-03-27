@@ -17,21 +17,22 @@ module Frameworks
     include W3CValidators
     #Generate base urls to use in Cucumber step defs
     def generate_base_urls 
+      environment = ENV['ENVIRONMENT'].downcase #be defensive
       set_scheme
-      if(ENV['ENVIRONMENT']=='sandbox')
+      if(environment =='sandbox')
         @base_url = @sandbox + @bbc_domain 
         @static_base_url = @static_sandbox + @bbc_domain
-      elsif (ENV['ENVIRONMENT']=='live' && ENV['WWW_LIVE']=='false')
+      elsif (environment =='live' && ENV['WWW_LIVE']=='false')
         @base_url = @www_prefix.chop + @bbc_domain
         @static_base_url = @static_prefix.chop + @bbci_domain
         @open_base_url = @open_prefix.chop + @bbc_domain
-      elsif (ENV['ENVIRONMENT'].split('.')[0].include? 'pal') #address specific box
+      elsif (environment.split('.')[0].include? 'pal') #address specific box
         @base_url = "#{scheme}://#{ENV['ENVIRONMENT']}" 
       else
-        @base_url = @www_prefix + ENV['ENVIRONMENT'] + @bbc_domain
-        @static_base_url = @static_prefix + ENV['ENVIRONMENT'] + @bbci_domain
-        @static_base_url = @static_prefix.chop + @bbci_domain if ENV['ENVIRONMENT'] == 'live'
-        @open_base_url = @open_prefix + ENV['ENVIRONMENT'] + @bbc_domain
+        @base_url = @www_prefix + environment + @bbc_domain
+        @static_base_url = @static_prefix + environment + @bbci_domain
+        @static_base_url = @static_prefix.chop + @bbci_domain if environment == 'live'
+        @open_base_url = @open_prefix + environment + @bbc_domain
       end
       proxy = ENV['http_proxy'] || ENV['HTTP_PROXY'] 
       @proxy_host = proxy.scan(/http:\/\/(.*):80/).to_s if proxy

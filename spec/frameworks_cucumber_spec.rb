@@ -32,6 +32,23 @@ describe Frameworks::EnvHelper do
       @open_base_url.should == 'http://open.live.bbc.co.uk'
     end
 
+    it "should be able to set a base url and not be case sensitive" do
+      ENV['ENVIRONMENT'] = 'fOo'
+      generate_base_urls
+      @base_url.should == 'http://www.foo.bbc.co.uk'
+      @static_base_url.should == 'http://static.foo.bbci.co.uk'
+      @open_base_url.should == 'http://open.foo.bbc.co.uk'
+    end
+
+    it "should set correct static base for www.live.bbc.co.uk and not be case sensitive" do
+      ENV['ENVIRONMENT'] = 'LiVe'
+      generate_base_urls
+      @base_url.should == 'http://www.live.bbc.co.uk'
+      @static_base_url.should == 'http://static.bbci.co.uk'
+      @open_base_url.should == 'http://open.live.bbc.co.uk'
+    end
+
+
     it "should be able to set a 'classic' live url" do
       ENV['ENVIRONMENT'] = 'live'
       ENV['WWW_LIVE'] = 'false' 
