@@ -49,8 +49,8 @@ describe Frameworks::EnvHelper do
     end
 
 
-    it "should be able to set a 'classic' live url" do
-      ENV['ENVIRONMENT'] = 'live'
+    it "should be able to set a 'classic' live url and not be case sensitive" do
+      ENV['ENVIRONMENT'] = 'Live'
       ENV['WWW_LIVE'] = 'false' 
       generate_base_urls
       @base_url.should == 'http://www.bbc.co.uk'
