@@ -1,3 +1,4 @@
+require 'celerity' if RUBY_PLATFORM == 'java' #workaround for https://github.com/jarib/celerity/issues/56
 require 'capybara/cucumber'
 require 'monkey-patches/webdriver-patches'
 require 'monkey-patches/capybara-patches'
