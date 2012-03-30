@@ -2,6 +2,7 @@ require 'capybara/mechanize/cucumber'
 require 'uri'
 
 class Capybara::Driver::Mechanize
+=begin
   def process_remote_request(method, url, *options)
     if remote?(url)
       remote_uri = URI.parse(url)
@@ -31,11 +32,11 @@ class Capybara::Driver::Mechanize
       @last_request_remote = true
     end
   end
-  
+=end 
   def cookies
     cookies = []
     
-    agent.cookie_jar.jar.each do |domain|
+    browser.agent.cookie_jar.jar.each do |domain|
       domain[1].each do |path|
         path[1].each do |cookie|
           cookies.push({
@@ -57,11 +58,11 @@ class Capybara::Driver::Mechanize
   end
   
   def delete_cookie(cookie_name)
-    agent.cookie_jar.jar.each do |domain|
+    browser.agent.cookie_jar.jar.each do |domain|
       domain[1].each do |path|
         path[1].each do |cookie|
           if cookie[0] == cookie_name
-            agent.cookie_jar.jar[domain[0]][path[0]].delete(cookie[0])
+            browser.agent.cookie_jar.jar[domain[0]][path[0]].delete(cookie[0])
           end
         end
       end
@@ -69,17 +70,17 @@ class Capybara::Driver::Mechanize
   end
   
   def delete_all_cookies
-    agent.cookie_jar.clear!
+    browser.agent.cookie_jar.clear!
   end
   
  FakeURI = Struct.new(:host)
  def add_cookie(attribs)
     c = Mechanize::Cookie.new(attribs[:name],attribs[:value])
     # remember: mechanize always removes leading '.' from domains
-    c.domain = attribs[:domain].sub!(/^./, '')
+    c.domain = attribs[:domain]
     c.path = '/'
     c.expires = attribs[:expires]
     c.secure = attribs[:secure]
-    agent.cookie_jar.add(FakeURI.new(c.domain),c)
+    browser.agent.cookie_jar.add(FakeURI.new(c.domain),c)
   end
 end

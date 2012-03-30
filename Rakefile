@@ -21,8 +21,8 @@ Jeweler::Tasks.new do |gem|
   gem.authors = ["mcrmfc"]
   # Include your dependencies below. Runtime dependencies are required when using your gem,
   # and development dependencies are only needed for development (ie running rake tasks, tests, etc)
-  gem.add_runtime_dependency 'capybara', '>=0'
-  gem.add_runtime_dependency 'capybara-mechanize', '>=0'
+  gem.add_runtime_dependency 'capybara', '>=1'
+  gem.add_runtime_dependency 'capybara-mechanize', '>=3'
   gem.add_runtime_dependency 'w3c_validators', '>=0'
   gem.add_runtime_dependency 'headless', '>=0'
   gem.add_development_dependency 'rspec', '>=2.6.0'
