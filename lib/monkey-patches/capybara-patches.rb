@@ -5,7 +5,7 @@ require 'capybara/cucumber'
 ##
 #Monkey Patch's - Use with care!
 #
-class Capybara::Driver::Selenium::Node
+class Capybara::Selenium::Node
   def style(prop)
     native.style(prop)
   end
@@ -23,7 +23,7 @@ class Capybara::Driver::Node
   end
 end
 
-class Capybara::Driver::Selenium
+class Capybara::Selenium::Driver
   def cookies
     browser.manage.all_cookies
   end
