@@ -76,7 +76,7 @@ World(Frameworks::EnvHelper)
 Before do
   #This is ugly but unavoidable since Capybara::RackTest::Driver.reset_host! does @browser = nil and wipes all brower level settings
   #it was either this or a monkey patch - need to think about pushing a softer reset change to capybara-mechanize to override this
-  if page.driver.browser.agent.class == Mechanize
+  if page.driver.class == Capybara::Mechanize::Driver
     page.driver.browser.agent.cert, driver.browser.agent.key = ENV['FW_CERT_LOCATION'], ENV['FW_CERT_LOCATION'] if ENV['FW_CERT_LOCATION']
     page.driver.browser.agent.ca_file = ENV['CA_CERT_LOCATION'] if ENV['CA_CERT_LOCATION']
     page.driver.browser.agent.set_proxy('www-cache.reith.bbc.co.uk',80) if ENV['PROXY_URL']
