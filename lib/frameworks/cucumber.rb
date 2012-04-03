@@ -74,14 +74,17 @@ World(Frameworks::EnvHelper)
 
 #Call generate method in Before hook
 Before do
-  generate_base_urls
   #This is ugly but unavoidable since Capybara::RackTest::Driver.reset_host! does @browser = nil and wipes all brower level settings
   #it was either this or a monkey patch - need to think about pushing a softer reset change to capybara-mechanize to override this
   if page.driver.class == Capybara::Mechanize::Driver
     page.driver.browser.agent.cert, page.driver.browser.agent.key = ENV['FW_CERT_LOCATION'], ENV['FW_CERT_LOCATION'] if ENV['FW_CERT_LOCATION']
     page.driver.browser.agent.ca_file = ENV['CA_CERT_LOCATION'] if ENV['CA_CERT_LOCATION']
-    page.driver.browser.agent.set_proxy(@proxy_host,80) if ENV['PROXY_URL']
+    #TODO: Fix proxy logic globally...use system proxy instead of PROXY_URL
+    page.driver.browser.agent.set_proxy(ENV['PROXY_URL'].scan(/http:\/\/(.*):80/).to_s,80) if ENV['PROXY_URL']
+    #This is necessary because Mech2 does not ship with root certs like Mech1 did and boxes may not have the OpenSSL set installed
+    page.driver.browser.agent.verify_mode = OpenSSL::SSL::VERIFY_NONE
   end
 
+  generate_base_urls
 end
 
