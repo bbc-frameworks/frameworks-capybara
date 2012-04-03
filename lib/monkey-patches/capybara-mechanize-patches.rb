@@ -1,41 +1,29 @@
 require 'capybara/mechanize/cucumber' 
 require 'uri'
-
-class Capybara::Driver::Mechanize
-=begin
-  def process_remote_request(method, url, *options)
+class Capybara::Mechanize::Browser
+  #patch to remove catching all Mechanize exceptions (which are nice and specific) and throwing a useless RuntimeError
+  def process_remote_request(method, url, attributes, headers)
     if remote?(url)
-      remote_uri = URI.parse(url)
-    
-      @scheme = remote_uri.scheme if remote_uri.scheme 
+      uri = URI.parse(url)
+      uri = resolve_relative_url(url) if uri.host.nil?
+      @last_remote_uri = uri
+      url = uri.to_s
 
-      if remote_uri.host.nil?
-        #TODO: Ascertain whether this is really true...
-        if(method == :post && url == "" && @prev_url) #patch
-          #require 'uri'
-          #url = "http://#{URI.parse(@prev_url).host}#{URI.parse(@prev_url).path}"
-          #p url
-          url = @prev_url #patch
-        else
-          remote_host = @last_remote_host || Capybara.app_host || Capybara.default_host
-          url = File.join(remote_host, url)
-          #url = "http://#{url}" unless url.include?("http")
-          url = "#{@scheme}://#{url}" unless url.match(/^http.*/)
-        end
-      else
-        @last_remote_host = "#{remote_uri.host}:#{remote_uri.port}"
-      end
-      @prev_url = url #patch
-      reset_cache
-      @agent.send *( [method, url] + options)
-
+      reset_cache!
+      args = []
+      args << attributes unless attributes.empty?
+      args << headers unless headers.empty?
+      @agent.send(method, url, *args)
       @last_request_remote = true
     end
   end
-=end 
+end
+
+class Capybara::Mechanize::Driver
+  #Patch for friendly cookie handling api
   def cookies
     cookies = []
-    
+
     browser.agent.cookie_jar.jar.each do |domain|
       domain[1].each do |path|
         path[1].each do |cookie|
@@ -52,11 +40,11 @@ class Capybara::Driver::Mechanize
     end
     cookies
   end
-  
+
   def cookie_named(name)
     cookies.find { |c| c[:name] == name }
   end
-  
+
   def delete_cookie(cookie_name)
     browser.agent.cookie_jar.jar.each do |domain|
       domain[1].each do |path|
@@ -68,13 +56,13 @@ class Capybara::Driver::Mechanize
       end
     end
   end
-  
+
   def delete_all_cookies
     browser.agent.cookie_jar.clear!
   end
-  
- FakeURI = Struct.new(:host)
- def add_cookie(attribs)
+
+  FakeURI = Struct.new(:host)
+  def add_cookie(attribs)
     c = Mechanize::Cookie.new(attribs[:name],attribs[:value])
     # remember: mechanize always removes leading '.' from domains
     c.domain = attribs[:domain]
