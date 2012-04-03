@@ -89,6 +89,7 @@ describe CapybaraSetup do
           CapybaraSetup.new.driver.should == :selenium
           Capybara.current_session.driver.should be_a_kind_of Capybara::Selenium::Driver
           Capybara.current_session.driver.options[:browser].should == :firefox
+          Capybara.current_session.driver.options[:profile].instance_variable_get(:@native_events).should == true
         end
 
         it_behaves_like "Selenium Driver Options Array"

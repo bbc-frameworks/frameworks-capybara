@@ -64,8 +64,11 @@ class CapybaraSetup
   def register_selenium_driver(opts,remote_opts,custom_opts)
     Capybara.register_driver :selenium do |app|
 
-      opts[:profile] = create_profile(opts[:profile]) if(opts[:profile])
-      opts[:switches] = [opts.delete(:chrome_switches)] if(opts[:chrome_switches])
+      if opts[:profile] or opts[:browser] == :firefox or remote_opts[:browser_name] == :firefox
+        opts[:profile] = create_profile(opts[:profile])
+      elsif opts[:chrome_switches]
+        opts[:switches] = [opts.delete(:chrome_switches)]
+      end
 
       if opts[:browser] == :remote
         client = Selenium::WebDriver::Remote::Http::Default.new
@@ -104,15 +107,15 @@ class CapybaraSetup
       profile["network.proxy.ssl"] = @proxy_host 
       profile["network.proxy.http_port"] = 80
       profile["network.proxy.ssl_port"] = 80
-      profile.native_events = true
     elsif(profile_name == 'DISABLED_REFERER')
       profile = Selenium::WebDriver::Firefox::Profile.new
       profile["network.http.sendRefererHeader"] = 0
-      profile.native_events = true
-    else
+    elsif(profile_name)
       profile = Selenium::WebDriver::Firefox::Profile.from_name profile_name
-      profile.native_events = true
+    else
+      profile = Selenium::WebDriver::Firefox::Profile.new
     end
+    profile.native_events = true
     profile
   end
 
