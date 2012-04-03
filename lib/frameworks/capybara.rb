@@ -8,19 +8,21 @@ require 'monkey-patches/send-keys'
 require 'selenium-webdriver'
 require 'capybara/mechanize/cucumber' 
 require 'capybara/celerity'
+require 'json'
 
 class CapybaraSetup
 
   attr_reader :driver
 
   def initialize
-    capybara_opts = {:environment => ENV['ENVIRONMENT'], :proxy => ENV['PROXY_URL'], :profile => ENV['FIREFOX_PROFILE'], :browser => ENV['BROWSER'], :javascript_enabled => ENV['CELERITY_JS_ENABLED'], :proxy_on => ENV['PROXY_ON'],:url => ENV['REMOTE_URL'], :chrome_switches => ENV['CHROME_SWITCHES']}
+    capybara_opts = {:environment => ENV['ENVIRONMENT'], :proxy => ENV['PROXY_URL'], :profile => ENV['FIREFOX_PROFILE'], :firefox_prefs => ENV['FIREFOX_PREFS'], :browser => ENV['BROWSER'], :javascript_enabled => ENV['CELERITY_JS_ENABLED'], :proxy_on => ENV['PROXY_ON'],:url => ENV['REMOTE_URL'], :chrome_switches => ENV['CHROME_SWITCHES']}
     selenium_remote_opts = {:platform => ENV['PLATFORM'], :browser_name => ENV['REMOTE_BROWSER'], :version => ENV['REMOTE_BROWSER_VERSION'], :url => ENV['REMOTE_URL']}
     custom_opts = {:job_name => ENV['SAUCE_JOB_NAME'], :max_duration => ENV['SAUCE_MAX_DURATION']}
 
     validate_env_vars(capybara_opts.merge(selenium_remote_opts)) #validate environment variables set using cucumber.yml or passed via command line
 
     @proxy_host =  capybara_opts[:proxy].gsub(/http:\/\//,'').gsub(/:80/,'') unless capybara_opts[:proxy].nil?
+    capybara_opts[:firefox_prefs] = JSON.parse(capybara_opts[:firefox_prefs]) if capybara_opts[:firefox_prefs] #parse :firefox_prefs json string
     capybara_opts[:browser] = capybara_opts[:browser].intern #update :browser value to be a symbol, required for Selenium
     selenium_remote_opts[:browser_name] = selenium_remote_opts[:browser_name].intern if selenium_remote_opts[:browser_name]#update :browser value to be a symbol, required for Selenium
 
@@ -65,7 +67,8 @@ class CapybaraSetup
     Capybara.register_driver :selenium do |app|
 
       if opts[:profile] or opts[:browser] == :firefox or remote_opts[:browser_name] == :firefox
-        opts[:profile] = create_profile(opts[:profile])
+        opts[:profile] = create_profile(opts[:profile], opts[:firefox_prefs])
+        opts.delete :firefox_prefs
       elsif opts[:chrome_switches]
         opts[:switches] = [opts.delete(:chrome_switches)]
       end
@@ -98,7 +101,7 @@ class CapybaraSetup
     Selenium::WebDriver::Proxy.new(:http => opts[:proxy]) if opts[:proxy] && opts[:proxy_on] != 'false' #set proxy on client connection if required, note you may use ENV['PROXY_URL'] for setting in browser (ff profile) but not for client conection, hence allow for PROXY_ON=false
   end
 
-  def create_profile(profile_name)
+  def create_profile(profile_name, additional_prefs)
     if(profile_name == 'BBC_INTERNAL')
       profile = Selenium::WebDriver::Firefox::Profile.new
       profile["network.proxy.type"] = 1
@@ -116,6 +119,11 @@ class CapybaraSetup
       profile = Selenium::WebDriver::Firefox::Profile.new
     end
     profile.native_events = true
+    if additional_prefs
+      additional_prefs.each do |k, v|
+        profile[k] = v
+      end
+    end
     profile
   end
 

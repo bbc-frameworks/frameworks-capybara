@@ -28,6 +28,7 @@ shared_examples_for "Selenium Driver Options Array" do
     Capybara.current_session.driver.options[:job_name].should == nil
     Capybara.current_session.driver.options[:chrome_switches].should == nil
     Capybara.current_session.driver.options[:max_duration].should == nil
+    Capybara.current_session.driver.options[:firefox_prefs].should == nil
     Capybara.current_session.driver.options[:profile].should_not be_a_kind_of String
     Capybara.current_session.driver.options[:browser].should_not be_a_kind_of String
   end
@@ -151,6 +152,23 @@ describe CapybaraSetup do
           Capybara.current_session.driver.options[:browser].should == :firefox
           Capybara.current_session.driver.options[:profile].should be_a_kind_of Selenium::WebDriver::Firefox::Profile
           Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['network.http.sendRefererHeader'].should == 0
+        end
+        it_behaves_like "Selenium Driver Options Array"
+      end
+
+      context "with Selenium driver and additional firefox preferences" do
+        before do
+          ENV['BROWSER'] = 'firefox'
+          ENV['FIREFOX_PREFS'] = '{"javascript.enabled": false}'
+        end
+
+        it "should be initialized correctly" do 
+          Capybara.delete_session
+          CapybaraSetup.new.driver.should == :selenium
+          Capybara.current_session.driver.should be_a_kind_of Capybara::Selenium::Driver
+          Capybara.current_session.driver.options[:browser].should == :firefox
+          Capybara.current_session.driver.options[:profile].should be_a_kind_of Selenium::WebDriver::Firefox::Profile
+          Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['javascript.enabled'].should == false
         end
         it_behaves_like "Selenium Driver Options Array"
       end
