@@ -43,7 +43,11 @@ module Frameworks
       @validator = MarkupValidator.new({:proxy_host => @proxy_host,:proxy_port => 80})
 
       @validator.set_doctype!(:xhtml)
-      results = @validator.validate_text(src)
+      begin
+        results = @validator.validate_text(src)
+      rescue Net::HTTPFatalError => e
+        puts "WARNING - OUTGOING NETWORK ERROR FROM FORGE TO W3C - Validation Not Performed"
+      end
 
       if results.errors.length > 0
         results.errors.each do |err|
