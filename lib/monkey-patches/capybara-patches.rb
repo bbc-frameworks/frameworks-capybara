@@ -102,11 +102,11 @@ module Capybara
           errors = doc.validate
         else #this doesn't - nokogiri issues
           require 'open-uri'
-          doc = Nokogiri::XML(open(driver.current_url, :proxy => ENV['PROXY_URL'])) do |config|
+          doc = Nokogiri::XML(open(driver.current_url, :proxy => ENV['HTTP_PROXY'])) do |config|
             config.strict.noent
           end
           #xsd = Nokogiri::XML::Schema(File.read("#{File.dirname( __FILE__)}/../../schemas/xhtml1-strict.xsd"))
-          xsd = Nokogiri::XML::Schema(open('http://www.w3.org/2002/08/xhtml/xhtml1-strict.xsd', :proxy => ENV['PROXY_URL']))
+          xsd = Nokogiri::XML::Schema(open('http://www.w3.org/2002/08/xhtml/xhtml1-strict.xsd', :proxy => ENV['HTTP_PROXY']))
           errors = xsd.validate(doc)
         end
         raise "Page (#{current_url}) failed XHTML vaidation (or Nokogiri Freaked out...please manually check against W3C), errors:#{errors.to_s}" unless errors == []

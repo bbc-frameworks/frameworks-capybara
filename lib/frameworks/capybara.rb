@@ -2,7 +2,6 @@ require 'capybara/cucumber'
 require 'monkey-patches/webdriver-patches'
 require 'monkey-patches/capybara-patches'
 require 'monkey-patches/capybara-mechanize-patches'
-#require 'monkey-patches/net-http-persistent-patches'
 require 'monkey-patches/mechanize-patches'
 require 'monkey-patches/send-keys'
 require 'selenium-webdriver'
@@ -14,12 +13,25 @@ class CapybaraSetup
   attr_reader :driver
 
   def initialize
-    capybara_opts = {:environment => ENV['ENVIRONMENT'], :proxy => ENV['PROXY_URL'], :profile => ENV['FIREFOX_PROFILE'], :browser => ENV['BROWSER'], :javascript_enabled => ENV['CELERITY_JS_ENABLED'], :proxy_on => ENV['PROXY_ON'],:url => ENV['REMOTE_URL'], :chrome_switches => ENV['CHROME_SWITCHES']}
-    selenium_remote_opts = {:platform => ENV['PLATFORM'], :browser_name => ENV['REMOTE_BROWSER'], :version => ENV['REMOTE_BROWSER_VERSION'], :url => ENV['REMOTE_URL']}
-    custom_opts = {:job_name => ENV['SAUCE_JOB_NAME'], :max_duration => ENV['SAUCE_MAX_DURATION']}
+    capybara_opts = {:environment => ENV['ENVIRONMENT'],
+                     :proxy => ENV['HTTP_PROXY'],
+                     :profile => ENV['FIREFOX_PROFILE'],
+                     :browser => ENV['BROWSER'],
+                     :javascript_enabled => ENV['CELERITY_JS_ENABLED'],
+                     :proxy_on => ENV['PROXY_ON'],
+                     :url => ENV['REMOTE_URL'],
+                     :chrome_switches => ENV['CHROME_SWITCHES']}
+
+    selenium_remote_opts = {:platform => ENV['PLATFORM'],
+                            :browser_name => ENV['REMOTE_BROWSER'],
+                            :version => ENV['REMOTE_BROWSER_VERSION'],
+                            :url => ENV['REMOTE_URL']}
+
+    custom_opts = {:job_name => ENV['SAUCE_JOB_NAME'],
+                   :max_duration => ENV['SAUCE_MAX_DURATION']}
 
     validate_env_vars(capybara_opts.merge(selenium_remote_opts)) #validate environment variables set using cucumber.yml or passed via command line
-
+    
     @proxy_host =  capybara_opts[:proxy].gsub(/http:\/\//,'').gsub(/:80/,'') unless capybara_opts[:proxy].nil?
     capybara_opts[:browser] = capybara_opts[:browser].intern #update :browser value to be a symbol, required for Selenium
     selenium_remote_opts[:browser_name] = selenium_remote_opts[:browser_name].intern if selenium_remote_opts[:browser_name]#update :browser value to be a symbol, required for Selenium
@@ -39,7 +51,6 @@ class CapybaraSetup
       @driver = register_selenium_driver(capybara_opts, selenium_remote_opts, custom_opts)
     end
 
-
     Capybara.default_driver = @driver
   end
 
@@ -47,8 +58,8 @@ class CapybaraSetup
 
   def validate_env_vars(opts)
 
-    msg1 = 'Please ensure following environment variables are set ENVIRONMENT [int|test|stage|live], BROWSER[headless|ie|chrome|firefox] and PROXY_URL (if required)'
-    msg2 = 'Please ensure the following environment variables are set PLATFORM, REMOTE_URL, REMOTE_BROWSER (browser to use on remote machine), PROXY_URL (if required), REMOTE_BROWSER_PROXY (if required) and BROWSER_VERSION (if required)'
+    msg1 = 'Please ensure following environment variables are set ENVIRONMENT [int|test|stage|live], BROWSER[headless|ie|chrome|firefox] and HTTP_PROXY (if required)'
+    msg2 = 'Please ensure the following environment variables are set PLATFORM, REMOTE_URL, REMOTE_BROWSER (browser to use on remote machine), HTTP_PROXY (if required), REMOTE_BROWSER_PROXY (if required) and BROWSER_VERSION (if required)'
 
     [:environment, :browser].each do |item|
       !opts.has_key?(item) or opts[item]==nil ? raise(msg1) : '' 
@@ -92,7 +103,7 @@ class CapybaraSetup
   end
 
   def set_client_proxy(opts)
-    Selenium::WebDriver::Proxy.new(:http => opts[:proxy]) if opts[:proxy] && opts[:proxy_on] != 'false' #set proxy on client connection if required, note you may use ENV['PROXY_URL'] for setting in browser (ff profile) but not for client conection, hence allow for PROXY_ON=false
+    Selenium::WebDriver::Proxy.new(:http => opts[:proxy]) if opts[:proxy] && opts[:proxy_on] != 'false' #set proxy on client connection if required, note you may use ENV['HTTP_PROXY'] for setting in browser (ff profile) but not for client conection, hence allow for PROXY_ON=false
   end
 
   def create_profile(profile_name)
