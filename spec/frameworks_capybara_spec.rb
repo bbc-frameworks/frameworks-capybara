@@ -396,6 +396,20 @@ describe CapybaraSetup do
             Capybara.current_session.driver.options[:browser].should == nil
           end
         end
+
+        context "with maximal Celerity driver" do
+          before do
+            ENV['BROWSER'] = 'headless'
+            ENV['CELERITY_JS_ENABLED'] = 'true'
+            ENV['http_proxy'] = 'http://example.cache.co.uk:80'
+          end
+
+          it "should cope with http_proxy and HTTP_PROXY " do
+            Capybara.delete_session
+            Capybara.current_session.driver.options[:proxy].should == 'example.cache.co.uk:80'
+          end
+        end
+
       end
     end
   end

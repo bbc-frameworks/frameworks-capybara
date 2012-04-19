@@ -3,6 +3,7 @@ require 'spec_helper'
 describe Frameworks::EnvHelper do
 
   before do
+    ENV.clear
     ENV['BROWSER'] = 'test' #mandatory data to prevent validation exception
   end
 
@@ -68,12 +69,14 @@ describe Frameworks::EnvHelper do
     end
 
     it "should be able to set proxy host correctly to use in tests using HTTP_PROXY env variable" do
+      ENV['ENVIRONMENT'] = 'foo'
       ENV['HTTP_PROXY'] = 'http://mycache.co.uk:80'
       generate_base_urls
       @proxy_host.should == "mycache.co.uk"
     end
 
     it "should be able to set proxy host correctly to use in tests using http_proxy env variable" do
+      ENV['ENVIRONMENT'] = 'foo'
       ENV['http_proxy'] = 'http://mycache.co.uk:80'
       generate_base_urls
       @proxy_host.should == "mycache.co.uk"

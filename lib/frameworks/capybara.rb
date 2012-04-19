@@ -13,8 +13,10 @@ class CapybaraSetup
   attr_reader :driver
 
   def initialize
-    capybara_opts = {:environment => ENV['ENVIRONMENT'],
-                     :proxy => ENV['HTTP_PROXY'],
+     http_proxy = ENV['HTTP_PROXY'] || ENV['http_proxy']
+
+     capybara_opts = {:environment => ENV['ENVIRONMENT'],
+                     :proxy => http_proxy,
                      :profile => ENV['FIREFOX_PROFILE'],
                      :browser => ENV['BROWSER'],
                      :javascript_enabled => ENV['CELERITY_JS_ENABLED'],
