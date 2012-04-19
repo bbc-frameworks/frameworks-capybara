@@ -75,7 +75,8 @@ Finally this gem contains some useful monkey-patches to core libraries e.g. Capy
 == Release instructions
 
 * Run tests - 'rake'
-* Bump version - e.g. 'rake version:bump:patch'
+* Bump version - manually update file in lib/version.rb
+* Run 'bundle install' to pick up new version in Gemfile
 * Release - 'rake release'
 
 == Contributing to frameworks-capybara
