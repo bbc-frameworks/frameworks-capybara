@@ -13,27 +13,27 @@ class CapybaraSetup
   attr_reader :driver
 
   def initialize
-     http_proxy = ENV['HTTP_PROXY'] || ENV['http_proxy']
+    http_proxy = ENV['HTTP_PROXY'] || ENV['http_proxy']
 
-     capybara_opts = {:environment => ENV['ENVIRONMENT'],
-                     :proxy => http_proxy,
-                     :profile => ENV['FIREFOX_PROFILE'],
-                     :browser => ENV['BROWSER'],
-                     :javascript_enabled => ENV['CELERITY_JS_ENABLED'],
-                     :proxy_on => ENV['PROXY_ON'],
-                     :url => ENV['REMOTE_URL'],
-                     :chrome_switches => ENV['CHROME_SWITCHES']}
+    capybara_opts = {:environment => ENV['ENVIRONMENT'],
+      :proxy => http_proxy,
+      :profile => ENV['FIREFOX_PROFILE'],
+      :browser => ENV['BROWSER'],
+      :javascript_enabled => ENV['CELERITY_JS_ENABLED'],
+      :proxy_on => ENV['PROXY_ON'],
+      :url => ENV['REMOTE_URL'],
+      :chrome_switches => ENV['CHROME_SWITCHES']}
 
     selenium_remote_opts = {:platform => ENV['PLATFORM'],
-                            :browser_name => ENV['REMOTE_BROWSER'],
-                            :version => ENV['REMOTE_BROWSER_VERSION'],
-                            :url => ENV['REMOTE_URL']}
+      :browser_name => ENV['REMOTE_BROWSER'],
+      :version => ENV['REMOTE_BROWSER_VERSION'],
+      :url => ENV['REMOTE_URL']}
 
     custom_opts = {:job_name => ENV['SAUCE_JOB_NAME'],
-                   :max_duration => ENV['SAUCE_MAX_DURATION']}
+      :max_duration => ENV['SAUCE_MAX_DURATION']}
 
     validate_env_vars(capybara_opts.merge(selenium_remote_opts)) #validate environment variables set using cucumber.yml or passed via command line
-    
+
     @proxy_host =  capybara_opts[:proxy].gsub(/http:\/\//,'').gsub(/:80/,'') unless capybara_opts[:proxy].nil?
     capybara_opts[:browser] = capybara_opts[:browser].intern #update :browser value to be a symbol, required for Selenium
     selenium_remote_opts[:browser_name] = selenium_remote_opts[:browser_name].intern if selenium_remote_opts[:browser_name]#update :browser value to be a symbol, required for Selenium
