@@ -1,5 +1,7 @@
 = frameworks-capybara
 
+https://secure.travis-ci.org/mcrmfc/frameworks-capybara.png[https://secure.travis-ci.org/mcrmfc/frameworks-capybara]
+
 Gem to simplify the configuration of Capybara when using multiple drivers, also exposes other useful utility methods.
 
 Although utilising Capybara's API to run tests is extremely simple the configuration and setup of the tool can be a little confusing, particularly if you want to avoid ending up with a spaghetti like env.rb file
