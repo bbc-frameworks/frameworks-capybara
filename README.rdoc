@@ -1,7 +1,6 @@
+= Build Status {<img src="https://secure.travis-ci.org/mcrmfc/frameworks-capybara.png"/>}[https://secure.travis-ci.org/mcrmfc/frameworks-capybara]
+
 = frameworks-capybara
-
-== Build Status {<img src="https://secure.travis-ci.org/mcrmfc/frameworks-capybara.png"/>}[https://secure.travis-ci.org/mcrmfc/frameworks-capybara]
-
 
 Gem to simplify the configuration of Capybara when using multiple drivers, also exposes other useful utility methods.
 
