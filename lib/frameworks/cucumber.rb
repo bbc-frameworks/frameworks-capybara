@@ -44,19 +44,20 @@ module Frameworks
 
       @validator.set_doctype!(:xhtml)
       begin
+
         results = @validator.validate_text(src)
+
+        if results.errors.length > 0
+          results.errors.each do |err|
+            puts err.to_s
+          end
+          raise "W3C Validation of " + current_url + " failed."
+        end
+
       rescue Net::HTTPFatalError => e
         puts "WARNING - OUTGOING NETWORK ERROR FROM FORGE TO W3C - Validation Not Performed"
       end
-
-      if results.errors.length > 0
-        results.errors.each do |err|
-          puts err.to_s
-        end
-        raise "W3C Validation of " + current_url + " failed."
-      end
     end
-
 
     def set_scheme  
       ENV['SCHEME']=='https' ? scheme = 'https' : scheme = 'http'
