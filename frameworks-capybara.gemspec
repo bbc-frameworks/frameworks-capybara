@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency("json")
   s.add_runtime_dependency("capybara-celerity")
   s.add_runtime_dependency("w3c_validators")
-  s.add_development_dependency("cucumber", [">= 0.10.5"])
+  s.add_runtime_dependency("cucumber", [">= 0.10.5"])
   s.add_development_dependency("rake")
   s.add_development_dependency("rspec", [">=1.0.0"])
 
