@@ -21,15 +21,18 @@ module Frameworks
       set_scheme
       if(environment =='sandbox')
         @base_url = @sandbox + @bbc_domain 
+        @ssl_base_url = @sslsandbox + @bbc_domain
         @static_base_url = @static_sandbox + @bbc_domain
       elsif (environment =='live' && ENV['WWW_LIVE']=='false')
         @base_url = @www_prefix.chop + @bbc_domain
+        @ssl_base_url = @ssl_prefix.chop + @bbc_domain
         @static_base_url = @static_prefix.chop + @bbci_domain
         @open_base_url = @open_prefix.chop + @bbc_domain
       elsif (environment.split('.')[0].include? 'pal') #address specific box
         @base_url = "#{scheme}://#{ENV['ENVIRONMENT']}" 
       else
         @base_url = @www_prefix + environment + @bbc_domain
+        @ssl_base_url = @ssl_prefix + environment + @bbc_domain
         @static_base_url = @static_prefix + environment + @bbci_domain
         @static_base_url = @static_prefix.chop + @bbci_domain if environment == 'live'
         @open_base_url = @open_prefix + environment + @bbc_domain
@@ -62,11 +65,13 @@ module Frameworks
     def set_scheme  
       ENV['SCHEME']=='https' ? scheme = 'https' : scheme = 'http'
       @www_prefix = "#{scheme}://www."
+      @ssl_prefix = "https://ssl."
       @static_prefix = "#{scheme}://static."
       @open_prefix = "#{scheme}://open."
       @bbc_domain = '.bbc.co.uk'
       @bbci_domain = '.bbci.co.uk'
       @sandbox = "#{scheme}://pal.sandbox.dev"
+      @sslsandbox = "https://ssl.sandbox.dev"
       @static_sandbox = "#{scheme}://static.sandbox.dev"
     end
 

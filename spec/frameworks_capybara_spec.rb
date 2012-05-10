@@ -18,7 +18,6 @@ shared_examples_for "Selenium Driver Options Array" do
   it "should contain no nil values for unset options" do
     #TODO: Test for nil elements in options - there shouldn't be any that we insert
     #i.e. anything in our ENV options should not end up being nil in Selenium
-
     Capybara.current_session.driver.options[:environment].should == nil
     Capybara.current_session.driver.options[:proxy].should == nil
     Capybara.current_session.driver.options[:proxy_on].should == nil
@@ -27,6 +26,7 @@ shared_examples_for "Selenium Driver Options Array" do
     Capybara.current_session.driver.options[:version].should == nil
     Capybara.current_session.driver.options[:job_name].should == nil
     Capybara.current_session.driver.options[:chrome_switches].should == nil
+    Capybara.current_session.driver.options[:firefox_prefs].should == nil
     Capybara.current_session.driver.options[:max_duration].should == nil
     Capybara.current_session.driver.options[:profile].should_not be_a_kind_of String
     Capybara.current_session.driver.options[:browser].should_not be_a_kind_of String
@@ -274,6 +274,25 @@ describe CapybaraSetup do
         end
         it_behaves_like "Selenium Driver Options Array"
       end
+
+      context "with Selenium driver and additional firefox preferences" do
+        before do
+          ENV['BROWSER'] = 'firefox'
+          ENV['FIREFOX_PROFILE'] = 'default'
+          ENV['FIREFOX_PREFS'] = '{"javascript.enabled": false}'
+        end
+
+        it "should be initialized correctly" do 
+          Capybara.delete_session
+          CapybaraSetup.new.driver.should == :selenium
+          Capybara.current_session.driver.should be_a_kind_of Capybara::Selenium::Driver
+          Capybara.current_session.driver.options[:browser].should == :firefox
+          Capybara.current_session.driver.options[:profile].should be_a_kind_of Selenium::WebDriver::Firefox::Profile
+          Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['javascript.enabled'].should == false
+        end
+        it_behaves_like "Selenium Driver Options Array"
+      end
+      
 
       context "with Remote Selenium driver and specified Chrome Switches" do
         before do

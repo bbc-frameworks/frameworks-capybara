@@ -14,7 +14,7 @@ class CapybaraSetup
   attr_reader :driver
 
   def initialize
-    capybara_opts = {:environment => ENV['ENVIRONMENT'], :proxy => ENV['PROXY_URL'], :profile => ENV['FIREFOX_PROFILE'], :browser => ENV['BROWSER'], :javascript_enabled => ENV['CELERITY_JS_ENABLED'], :proxy_on => ENV['PROXY_ON'],:url => ENV['REMOTE_URL'], :chrome_switches => ENV['CHROME_SWITCHES']}
+    capybara_opts = {:environment => ENV['ENVIRONMENT'], :proxy => ENV['PROXY_URL'], :profile => ENV['FIREFOX_PROFILE'], :browser => ENV['BROWSER'], :javascript_enabled => ENV['CELERITY_JS_ENABLED'], :proxy_on => ENV['PROXY_ON'],:url => ENV['REMOTE_URL'], :chrome_switches => ENV['CHROME_SWITCHES'], :firefox_prefs => ENV['FIREFOX_PREFS']}
     selenium_remote_opts = {:platform => ENV['PLATFORM'], :browser_name => ENV['REMOTE_BROWSER'], :version => ENV['REMOTE_BROWSER_VERSION'], :url => ENV['REMOTE_URL']}
     custom_opts = {:job_name => ENV['SAUCE_JOB_NAME'], :max_duration => ENV['SAUCE_MAX_DURATION']}
 
@@ -27,6 +27,7 @@ class CapybaraSetup
     Capybara.run_server = false #Disable rack server
 
     [capybara_opts, selenium_remote_opts, custom_opts].each do |opts| #delete nil options and environment (which is only used for validation)
+    
       opts.delete_if {|k,v| (v.nil? or k == :environment)}
     end
 
@@ -64,7 +65,7 @@ class CapybaraSetup
   def register_selenium_driver(opts,remote_opts,custom_opts)
     Capybara.register_driver :selenium do |app|
 
-      opts[:profile] = create_profile(opts[:profile]) if(opts[:profile])
+      opts[:profile] = create_profile(opts[:profile],  opts[:firefox_prefs]) if(opts[:profile])
       opts[:switches] = [opts.delete(:chrome_switches)] if(opts[:chrome_switches])
 
       if opts[:browser] == :remote
@@ -80,7 +81,8 @@ class CapybaraSetup
         opts[:desired_capabilities] = caps
         opts[:http_client] = client
       end
-      clean_opts(opts, :proxy, :proxy_on)
+
+      clean_opts(opts, :proxy, :proxy_on, :firefox_prefs)
       Capybara::Selenium::Driver.new(app,opts)
     end   
     :selenium
@@ -95,7 +97,8 @@ class CapybaraSetup
     Selenium::WebDriver::Proxy.new(:http => opts[:proxy]) if opts[:proxy] && opts[:proxy_on] != 'false' #set proxy on client connection if required, note you may use ENV['PROXY_URL'] for setting in browser (ff profile) but not for client conection, hence allow for PROXY_ON=false
   end
 
-  def create_profile(profile_name)
+  def create_profile(profile_name, additional_prefs)
+    additional_prefs = JSON.parse(additional_prefs) if additional_prefs
     if(profile_name == 'BBC_INTERNAL')
       profile = Selenium::WebDriver::Firefox::Profile.new
       profile["network.proxy.type"] = 1
@@ -113,6 +116,13 @@ class CapybaraSetup
       profile = Selenium::WebDriver::Firefox::Profile.from_name profile_name
       profile.native_events = true
     end
+
+    if additional_prefs
+      additional_prefs.each do |k, v|
+        profile[k] = v
+      end
+    end
+
     profile
   end
 
