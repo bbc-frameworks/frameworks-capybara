@@ -49,13 +49,13 @@ describe CapybaraSetup do
     end
 
     it "should require as a minimum ENVIRONMENT and BROWSER" do
-      lambda {CapybaraSetup.new}.should raise_error(RuntimeError,'Please ensure following environment variables are set ENVIRONMENT [int|test|stage|live], BROWSER[headless|ie|chrome|firefox] and PROXY_URL (if required)')
+      lambda {CapybaraSetup.new}.should raise_error(RuntimeError,'Please ensure following environment variables are set ENVIRONMENT [int|test|stage|live], BROWSER[headless|ie|chrome|firefox] and HTTP_PROXY (if required)')
     end
 
     it "should require as a minimum ENVIRONMENT, BROWSER and REMOTE_BROWSER if running a Remote Selenium Instance" do
       ENV['BROWSER'] = 'remote'
       ENV['ENVIRONMENT'] = 'test'
-      lambda {CapybaraSetup.new}.should raise_error(RuntimeError,'Please ensure the following environment variables are set PLATFORM, REMOTE_URL, REMOTE_BROWSER (browser to use on remote machine), PROXY_URL (if required), REMOTE_BROWSER_PROXY (if required) and BROWSER_VERSION (if required)')
+      lambda {CapybaraSetup.new}.should raise_error(RuntimeError,'Please ensure the following environment variables are set PLATFORM, REMOTE_URL, REMOTE_BROWSER (browser to use on remote machine), HTTP_PROXY (if required), REMOTE_BROWSER_PROXY (if required) and BROWSER_VERSION (if required)')
     end
 
     it "should not error if ENVIRONMENT and BROWSER are provided" do
@@ -116,7 +116,7 @@ describe CapybaraSetup do
         before do
           ENV['BROWSER'] = 'firefox'
           ENV['FIREFOX_PROFILE'] = 'BBC_INTERNAL'
-          ENV['PROXY_URL'] = 'http://example.cache.co.uk:80'
+          ENV['HTTP_PROXY'] = 'http://example.cache.co.uk:80'
           ENV['PROXY_ON'] = 'false'
         end
 
@@ -183,7 +183,7 @@ describe CapybaraSetup do
           ENV['REMOTE_BROWSER'] = 'firefox'
           ENV['FIREFOX_PROFILE'] = 'default'
           ENV['REMOTE_URL'] = 'http://example.com'
-          ENV['PROXY_URL'] = 'http://example.cache.co.uk:80'
+          ENV['HTTP_PROXY'] = 'http://example.cache.co.uk:80'
         end
 
         it "should be initialized correctly" do 
@@ -205,7 +205,7 @@ describe CapybaraSetup do
           ENV['REMOTE_BROWSER'] = 'firefox'
           ENV['FIREFOX_PROFILE'] = 'BBC_INTERNAL'
           ENV['REMOTE_URL'] = 'http://example.cache.co.uk:80'
-          ENV['PROXY_URL'] = 'http://example.cache.co.uk:80'
+          ENV['HTTP_PROXY'] = 'http://example.cache.co.uk:80'
           ENV['PROXY_ON'] = 'false'
         end
 
@@ -257,6 +257,26 @@ describe CapybaraSetup do
         it_behaves_like "Selenium Driver Options Array"
       end
 
+      context "with Selenium driver and hardcoded bbc internal profile and additional firefox preferences" do
+        before do
+          ENV['BROWSER'] = 'firefox'
+          ENV['HTTP_PROXY'] = 'http://example.cache.co.uk:80'
+          ENV['FIREFOX_PROFILE'] = 'BBC_INTERNAL'
+          ENV['FIREFOX_PREFS'] = '{"javascript.enabled":false}'
+        end
+
+        it "should be initialized correctly" do 
+          Capybara.delete_session
+          CapybaraSetup.new.driver.should == :selenium
+          Capybara.current_session.driver.should be_a_kind_of Capybara::Selenium::Driver
+          Capybara.current_session.driver.options[:browser].should == :firefox
+          Capybara.current_session.driver.options[:profile].should be_a_kind_of Selenium::WebDriver::Firefox::Profile
+          Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['javascript.enabled'].should == false
+        end
+        it_behaves_like "Selenium Driver Options Array"
+      end
+      
+
       context "with Selenium driver and additional firefox preferences" do
         before do
           ENV['BROWSER'] = 'firefox'
@@ -279,7 +299,6 @@ describe CapybaraSetup do
       context "with Selenium driver and new profile and custom prefs" do
         before do
           ENV['BROWSER'] = 'firefox'
-          ENV['CREATE_NEW_FF_PROFILE'] = 'true'
           ENV['FIREFOX_PREFS'] = '{"javascript.enabled":false}'
         end
 
@@ -366,7 +385,7 @@ describe CapybaraSetup do
           before do
             ENV['BROWSER'] = 'mechanize'
             ENV['ENVIRONMENT'] = 'test'
-            ENV['PROXY_URL'] = 'http://example.cache.co.uk:80'
+            ENV['HTTP_PROXY'] = 'http://example.cache.co.uk:80'
           end
 
           it "should be initialized correctly" do
@@ -402,7 +421,7 @@ describe CapybaraSetup do
           before do
             ENV['BROWSER'] = 'headless'
             ENV['CELERITY_JS_ENABLED'] = 'true'
-            ENV['PROXY_URL'] = 'http://example.cache.co.uk:80'
+            ENV['HTTP_PROXY'] = 'http://example.cache.co.uk:80'
           end
 
           it "should be initialized correctly" do
@@ -415,6 +434,20 @@ describe CapybaraSetup do
             Capybara.current_session.driver.options[:browser].should == nil
           end
         end
+
+        context "with maximal Celerity driver" do
+          before do
+            ENV['BROWSER'] = 'headless'
+            ENV['CELERITY_JS_ENABLED'] = 'true'
+            ENV['http_proxy'] = 'http://example.cache.co.uk:80'
+          end
+
+          it "should cope with http_proxy and HTTP_PROXY " do
+            Capybara.delete_session
+            Capybara.current_session.driver.options[:proxy].should == 'example.cache.co.uk:80'
+          end
+        end
+
       end
     end
   end

@@ -29,10 +29,10 @@ The following environment variables can be set to configure your tests:
 
   ENVIRONMENT - this must be one of either 'sandbox', 'int', 'test', 'stage', 'live'
   BROWSER - this must be one of either 'ie', 'firefox', 'chrome', 'headless', 'remote'
-  PROXY_URL - url of proxy if required e.g. 'http://proxyhost:80', when running a headless browser this sets the proxy for the browser itself, when running a remote browser this sets the proxy for the client which will connect to the remote selenium server
+  HTTP_PROXY - url of proxy if required e.g. 'http://proxyhost:80', when running a headless browser this sets the proxy for the browser itself, when running a remote browser this sets the proxy for the client which will connect to the remote selenium server
   PLATFORM - used when specifying remote test on a grid that provides a choice of platforms, this must be one of either 'WINDOWS' or 'LINUX'
-  REMOTE_BROWSER - used when specifying remote test, must be one of either 'ie', 'firefox', 'chrome', 'headless', 'remote'
-  REMOTE_BROWSER_PROXY_URL - used when specifying remote test, sets proxy on remote browser (Firefox only at present, other browsers must have proxies set appropriately on remote machine)
+  REMOTE_BROWSER - used when specifying remote test, must be one of either 'ie', 'firefox', 'chrome', 'headless', 'remote':w
+  
   REMOTE_BROWSER_VERSION - used when specifying remote test on a grid the provides a choice of browser versions for a given browser
   REMOTE_URL - URL of remote Selenium-Webdriver server e.g. http://yourremotehost:4444/wd/hub
   FIREFOX_PROFILE - specify a firefox profile to use when running in-browser tests (local or remote)
@@ -55,7 +55,7 @@ Here is a sample cucumber.yml:
   <%browser_firefox='BROWSER=firefox'%>
   <%browser_chrome='BROWSER=chrome'%>
   <%browser_remote='BROWSER=remote'%>
-  <%proxy_on='PROXY_URL=http://proxyhost:proxyport'%>
+  <%proxy_on='=http://proxyhost:proxyport'%>
   <%sauce_remote_url='REMOTE_URL=http://mykey@ondemand.saucelabs.com:80/wd/hub'%>
   <%demo_feature='features/demo.feature'%>
 
