@@ -136,24 +136,6 @@ describe CapybaraSetup do
         it_behaves_like "Selenium Driver Options Array"
       end
 
-
-      context "with Selenium driver and programtically created profile with referer disabled" do
-        before do
-          ENV['BROWSER'] = 'firefox'
-          ENV['FIREFOX_PROFILE'] = 'DISABLED_REFERER'
-        end
-
-        it "should be initialized correctly" do 
-          Capybara.delete_session
-          CapybaraSetup.new.driver.should == :selenium
-          Capybara.current_session.driver.should be_a_kind_of Capybara::Selenium::Driver
-          Capybara.current_session.driver.options[:browser].should == :firefox
-          Capybara.current_session.driver.options[:profile].should be_a_kind_of Selenium::WebDriver::Firefox::Profile
-          Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['network.http.sendRefererHeader'].should == 0
-        end
-        it_behaves_like "Selenium Driver Options Array"
-      end
-
       context "with Selenium driver and custom chrome options" do
         before do
           ENV['BROWSER'] = 'chrome'
@@ -279,7 +261,7 @@ describe CapybaraSetup do
         before do
           ENV['BROWSER'] = 'firefox'
           ENV['FIREFOX_PROFILE'] = 'default'
-          ENV['FIREFOX_PREFS'] = '{"javascript.enabled": false}'
+          ENV['FIREFOX_PREFS'] = '{"javascript.enabled":false}'
         end
 
         it "should be initialized correctly" do 
@@ -294,6 +276,24 @@ describe CapybaraSetup do
       end
       
 
+      context "with Selenium driver and new profile and custom prefs" do
+        before do
+          ENV['BROWSER'] = 'firefox'
+          ENV['CREATE_NEW_FF_PROFILE'] = 'true'
+          ENV['FIREFOX_PREFS'] = '{"javascript.enabled":false}'
+        end
+
+        it "should be initialized correctly" do 
+          Capybara.delete_session
+          CapybaraSetup.new.driver.should == :selenium
+          Capybara.current_session.driver.should be_a_kind_of Capybara::Selenium::Driver
+          Capybara.current_session.driver.options[:browser].should == :firefox
+          Capybara.current_session.driver.options[:profile].should be_a_kind_of Selenium::WebDriver::Firefox::Profile
+          Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['javascript.enabled'].should == false
+        end
+        it_behaves_like "Selenium Driver Options Array"
+      end
+      
       context "with Remote Selenium driver and specified Chrome Switches" do
         before do
           ENV['BROWSER'] = 'remote'
