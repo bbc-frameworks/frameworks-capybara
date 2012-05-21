@@ -61,6 +61,12 @@ class Capybara::Mechanize::Driver
     browser.agent.cookie_jar.clear!
   end
 
+  def delete_cookies_in_domain(domain)
+    cookies.each do |cookie|
+      delete_cookie(cookie[:name]) if cookie[:domain].include?(domain)
+    end
+  end
+
   FakeURI = Struct.new(:host)
   def add_cookie(attribs)
     c = Mechanize::Cookie.new(attribs[:name],attribs[:value])
