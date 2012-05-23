@@ -43,6 +43,10 @@ class Capybara::Selenium::Driver
   def add_cookie(attribs)
     browser.manage.add_cookie(attribs)
   end
+
+   def delete_cookies_in_domain(domain)
+    browser.manage.delete_cookies_in_domain(domain)
+  end
 end
 
 module Capybara
@@ -78,6 +82,8 @@ module Capybara
       driver.add_cookie(attribs)
     end
 
+    def delete_cookies_in_domain(domain)
+      driver.delete_cookies_in_domain(domain)
+    end
   end
-
 end

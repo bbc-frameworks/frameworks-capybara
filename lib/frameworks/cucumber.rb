@@ -18,7 +18,9 @@ module Frameworks
     #Generate base urls to use in Cucumber step defs
     def generate_base_urls 
       environment = ENV['ENVIRONMENT'].downcase #be defensive
+
       set_scheme
+
       if(environment =='sandbox')
         @base_url = @sandbox + @bbc_domain 
         @ssl_base_url = @sslsandbox + @bbc_domain
@@ -37,6 +39,7 @@ module Frameworks
         @static_base_url = @static_prefix.chop + @bbci_domain if environment == 'live'
         @open_base_url = @open_prefix + environment + @bbc_domain
       end
+
       proxy = ENV['http_proxy'] || ENV['HTTP_PROXY'] 
       @proxy_host = proxy.scan(/http:\/\/(.*):80/)[0][0] if proxy
     end
@@ -88,10 +91,18 @@ Before do
   #it was either this or a monkey patch - need to think about pushing a softer reset change to capybara-mechanize to override this
   http_proxy = ENV['HTTP_PROXY'] || ENV['http_proxy']
   if page.driver.class == Capybara::Mechanize::Driver
-    page.driver.browser.agent.cert, page.driver.browser.agent.key = ENV['FW_CERT_LOCATION'], ENV['FW_CERT_LOCATION'] if ENV['FW_CERT_LOCATION']
+
+    if ENV['FW_CERT_LOCATION']
+      page.driver.browser.agent.cert, page.driver.browser.agent.key = 
+        ENV['FW_CERT_LOCATION'],
+        ENV['FW_CERT_LOCATION'] 
+    end
+
     page.driver.browser.agent.ca_file = ENV['CA_CERT_LOCATION'] if ENV['CA_CERT_LOCATION']
+
     #TODO: Fix proxy logic globally...use system proxy instead of PROXY_URL
     page.driver.browser.agent.set_proxy(http_proxy.scan(/http:\/\/(.*):80/).to_s,80) if http_proxy
+
     #This is necessary because Mech2 does not ship with root certs like Mech1 did and boxes may not have the OpenSSL set installed
     page.driver.browser.agent.verify_mode = OpenSSL::SSL::VERIFY_NONE
   end
