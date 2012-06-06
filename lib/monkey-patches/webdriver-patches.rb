@@ -33,3 +33,29 @@ module Selenium
     end
   end
 end
+
+#Workaround for http://code.google.com/p/selenium/issues/detail?id=4007
+module Selenium
+  module WebDriver
+    module Remote
+      module Http
+        class Default
+          def new_http_client
+            if @proxy
+              unless @proxy.respond_to?(:http) && url = @proxy.http
+                raise Error::WebDriverError, "expected HTTP proxy, got #{@proxy.inspect}"
+              end
+
+              proxy = URI.parse(url)
+
+              clazz = Net::HTTP::Proxy(proxy.host, proxy.port, proxy.user, proxy.password)
+              clazz.new(server_url.host, server_url.port)
+            else
+              Net::HTTP.new server_url.host, server_url.port
+            end
+          end
+        end
+      end
+    end
+  end
+end
