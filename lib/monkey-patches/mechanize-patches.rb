@@ -57,3 +57,111 @@ end
 end
 =end
 
+# This patch prevents Mechanize from raising a Mechanize::ResponseCodeError
+# when the HTTP Response Code is 503. This lets capybara continue the journey.
+class Mechanize::HTTP::Agent
+  def fetch uri, method = :get, headers = {}, params = [],
+            referer = current_page, redirects = 0
+    referer_uri = referer ? referer.uri : nil
+
+    uri = resolve uri, referer
+
+    uri, params = resolve_parameters uri, method, params
+
+    request = http_request uri, method, params
+
+    connection = connection_for uri
+
+    request_auth             request, uri
+
+    disable_keep_alive       request
+    enable_gzip              request
+
+    request_language_charset request
+    request_cookies          request, uri
+    request_host             request, uri
+    request_referer          request, uri, referer_uri
+    request_user_agent       request
+    request_add_headers      request, headers
+
+    pre_connect              request
+
+    # Consult robots.txt
+    if robots && uri.is_a?(URI::HTTP)
+      robots_allowed?(uri) or raise Mechanize::RobotsDisallowedError.new(uri)
+    end
+
+    # Add If-Modified-Since if page is in history
+    page = visited_page(uri)
+
+    if (page = visited_page(uri)) and page.response['Last-Modified']
+      request['If-Modified-Since'] = page.response['Last-Modified']
+    end if(@conditional_requests)
+
+    # Specify timeouts if given
+    connection.open_timeout = @open_timeout if @open_timeout
+    connection.read_timeout = @read_timeout if @read_timeout
+
+    request_log request
+
+    response_body_io = nil
+
+    # Send the request
+    begin
+      response = connection.request(uri, request) { |res|
+        response_log res
+
+        response_body_io = response_read res, request, uri
+
+        res
+      }
+    rescue Mechanize::ChunkedTerminationError => e
+      raise unless @ignore_bad_chunking
+
+      response = e.response
+      response_body_io = e.body_io
+    end
+
+    hook_content_encoding response, uri, response_body_io
+
+    response_body_io = response_content_encoding response, response_body_io if
+      request.response_body_permitted?
+
+    post_connect uri, response, response_body_io
+
+    page = response_parse response, response_body_io, uri
+
+    response_cookies response, uri, page
+
+    meta = response_follow_meta_refresh response, uri, page, redirects
+
+    return meta if meta
+
+    case response
+    when Net::HTTPSuccess
+      if robots && page.is_a?(Mechanize::Page)
+        page.parser.noindex? and raise Mechanize::RobotsDisallowedError.new(uri)
+      end
+
+      page
+    when Mechanize::FileResponse
+      page
+    when Net::HTTPNotModified
+      log.debug("Got cached page") if log
+      visited_page(uri) || page
+    when Net::HTTPRedirection
+      response_redirect response, method, page, redirects, headers, referer
+    when Net::HTTPUnauthorized
+      response_authenticate(response, page, uri, request, headers, params,
+                            referer)
+    else
+      # BEGIN PATCH
+      if page.code == "503"
+        page
+      else
+        raise Mechanize::ResponseCodeError.new(page, 'unhandled response')
+      end
+      # END PATCH
+    end
+  end
+end
