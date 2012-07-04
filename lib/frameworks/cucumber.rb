@@ -19,17 +19,21 @@ module Frameworks
     def generate_base_urls 
       environment = ENV['ENVIRONMENT'].downcase #be defensive
 
-      set_scheme
+      prepare_host
 
       if(environment =='sandbox')
         @base_url = @sandbox + @bbc_domain 
         @ssl_base_url = @sslsandbox + @bbc_domain
         @static_base_url = @static_sandbox + @bbc_domain
+        @mobile_base_url = @mobiledot_prefix + "sandbox.dev.bbc.co.uk"
+        @m_base_url = @mdot_prefix + "sandbox.dev.bbc.co.uk"
       elsif (environment =='live' && ENV['WWW_LIVE']=='false')
         @base_url = @www_prefix.chop + @bbc_domain
         @ssl_base_url = @ssl_prefix.chop + @bbc_domain
         @static_base_url = @static_prefix.chop + @bbci_domain
         @open_base_url = @open_prefix.chop + @bbc_domain
+        @mobile_base_url = @mobiledot_prefix.chop + @bbc_domain
+        @m_base_url = @mdot_prefix.chop + @bbc_domain
       elsif (environment.split('.')[0].include? 'pal') #address specific box
         @base_url = "#{scheme}://#{ENV['ENVIRONMENT']}" 
       else
@@ -38,6 +42,8 @@ module Frameworks
         @static_base_url = @static_prefix + environment + @bbci_domain
         @static_base_url = @static_prefix.chop + @bbci_domain if environment == 'live'
         @open_base_url = @open_prefix + environment + @bbc_domain
+        @mobile_base_url = @mobiledot_prefix + environment + @bbc_domain
+        @m_base_url = @mdot_prefix + environment + @bbc_domain
       end
 
       proxy = ENV['http_proxy'] || ENV['HTTP_PROXY'] 
@@ -65,7 +71,7 @@ module Frameworks
       end
     end
 
-    def set_scheme  
+    def prepare_host
       ENV['SCHEME']=='https' ? scheme = 'https' : scheme = 'http'
       @www_prefix = "#{scheme}://www."
       @ssl_prefix = "https://ssl."
@@ -74,6 +80,8 @@ module Frameworks
       @bbc_domain = '.bbc.co.uk'
       @bbci_domain = '.bbci.co.uk'
       @sandbox = "#{scheme}://pal.sandbox.dev"
+      @mobiledot_prefix = "#{scheme}://mobile."
+      @mdot_prefix = "#{scheme}://m."
       @sslsandbox = "https://ssl.sandbox.dev"
       @static_sandbox = "#{scheme}://static.sandbox.dev"
     end

@@ -16,6 +16,8 @@ describe Frameworks::EnvHelper do
       @base_url.should == 'http://pal.sandbox.dev.bbc.co.uk'
       @ssl_base_url.should == 'https://ssl.sandbox.dev.bbc.co.uk'
       @static_base_url.should == 'http://static.sandbox.dev.bbc.co.uk'
+      @m_base_url.should == 'http://m.sandbox.dev.bbc.co.uk'
+      @mobile_base_url.should == 'http://mobile.sandbox.dev.bbc.co.uk'
     end
 
     it "should be able to set a base url" do
@@ -25,6 +27,8 @@ describe Frameworks::EnvHelper do
       @ssl_base_url.should == 'https://ssl.foo.bbc.co.uk'
       @static_base_url.should == 'http://static.foo.bbci.co.uk'
       @open_base_url.should == 'http://open.foo.bbc.co.uk'
+      @m_base_url.should == 'http://m.foo.bbc.co.uk'
+      @mobile_base_url.should == 'http://mobile.foo.bbc.co.uk'
     end
 
     it "should set correct static base for www.live.bbc.co.uk" do
@@ -34,6 +38,8 @@ describe Frameworks::EnvHelper do
       @ssl_base_url.should == 'https://ssl.live.bbc.co.uk'
       @static_base_url.should == 'http://static.bbci.co.uk'
       @open_base_url.should == 'http://open.live.bbc.co.uk'
+      @m_base_url.should == 'http://m.live.bbc.co.uk'
+      @mobile_base_url.should == 'http://mobile.live.bbc.co.uk'
     end
 
     it "should be able to set a base url and not be case sensitive" do
@@ -43,6 +49,8 @@ describe Frameworks::EnvHelper do
       @ssl_base_url.should == 'https://ssl.foo.bbc.co.uk'
       @static_base_url.should == 'http://static.foo.bbci.co.uk'
       @open_base_url.should == 'http://open.foo.bbc.co.uk'
+      @m_base_url.should == 'http://m.foo.bbc.co.uk'
+      @mobile_base_url.should == 'http://mobile.foo.bbc.co.uk'
     end
 
     it "should set correct static base for www.live.bbc.co.uk and not be case sensitive" do
@@ -52,6 +60,8 @@ describe Frameworks::EnvHelper do
       @ssl_base_url.should == 'https://ssl.live.bbc.co.uk'
       @static_base_url.should == 'http://static.bbci.co.uk'
       @open_base_url.should == 'http://open.live.bbc.co.uk'
+      @m_base_url.should == 'http://m.live.bbc.co.uk'
+      @mobile_base_url.should == 'http://mobile.live.bbc.co.uk'
     end
 
 
@@ -63,6 +73,8 @@ describe Frameworks::EnvHelper do
       @ssl_base_url.should == 'https://ssl.bbc.co.uk'
       @static_base_url.should == 'http://static.bbci.co.uk'
       @open_base_url.should == 'http://open.bbc.co.uk'
+      @m_base_url.should == 'http://m.bbc.co.uk'
+      @mobile_base_url.should == 'http://mobile.bbc.co.uk'
     end
 
     it "should be able to set scheme to ssl" do
