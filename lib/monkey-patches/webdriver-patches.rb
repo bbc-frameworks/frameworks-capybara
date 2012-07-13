@@ -23,12 +23,12 @@ module Selenium
           hash
         end
       end
+    end
 
-      class Options
-        def delete_cookies_in_domain(domain)
-          delete_all_cookies #proxy to this method as WebDriver only deletes
-          #by domain
-        end
+    class Options
+      def delete_cookies_in_domain(domain)
+        delete_all_cookies #proxy to this method as WebDriver only deletes
+        #by domain
       end
     end
   end
