@@ -1,3 +1,3 @@
 module FrameworksCapybara
-  VERSION = '0.3.0rc2'
+  VERSION = '0.3.0.rc2'
 end
