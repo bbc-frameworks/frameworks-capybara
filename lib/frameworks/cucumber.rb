@@ -23,21 +23,22 @@ module Frameworks
 
       if(environment =='sandbox')
         @base_url = @sandbox + @bbc_domain 
+        @pal_base_url = @sandbox + @bbc_domain 
         @ssl_base_url = @sslsandbox + @bbc_domain
         @static_base_url = @static_sandbox + @bbc_domain
         @mobile_base_url = @mobiledot_prefix + "sandbox.dev.bbc.co.uk"
         @m_base_url = @mdot_prefix + "sandbox.dev.bbc.co.uk"
       elsif (environment =='live' && ENV['WWW_LIVE']=='false')
         @base_url = @www_prefix.chop + @bbc_domain
+        @pal_base_url = @pal_prefix + environment + @bbc_domain
         @ssl_base_url = @ssl_prefix.chop + @bbc_domain
         @static_base_url = @static_prefix.chop + @bbci_domain
         @open_base_url = @open_prefix.chop + @bbc_domain
         @mobile_base_url = @mobiledot_prefix.chop + @bbc_domain
         @m_base_url = @mdot_prefix.chop + @bbc_domain
-      elsif (environment.split('.')[0].include? 'pal') #address specific box
-        @base_url = "#{scheme}://#{ENV['ENVIRONMENT']}" 
       else
         @base_url = @www_prefix + environment + @bbc_domain
+        @pal_base_url = @pal_prefix + environment + @bbc_domain
         @ssl_base_url = @ssl_prefix + environment + @bbc_domain
         @static_base_url = @static_prefix + environment + @bbci_domain
         @static_base_url = @static_prefix.chop + @bbci_domain if environment == 'live'
@@ -74,6 +75,7 @@ module Frameworks
     def prepare_host
       ENV['SCHEME']=='https' ? scheme = 'https' : scheme = 'http'
       @www_prefix = "#{scheme}://www."
+      @pal_prefix = "#{scheme}://pal."
       @ssl_prefix = "https://ssl."
       @static_prefix = "#{scheme}://static."
       @open_prefix = "#{scheme}://open."

@@ -77,6 +77,33 @@ describe Frameworks::EnvHelper do
       @mobile_base_url.should == 'http://mobile.bbc.co.uk'
     end
 
+    it "should be able to set pal url and not be case sensitive" do
+      ENV['ENVIRONMENT'] = 'Live'
+      generate_base_urls
+      @base_url.should == 'http://www.live.bbc.co.uk'
+      @pal_base_url.should == 'http://pal.live.bbc.co.uk'
+      @ssl_base_url.should == 'https://ssl.live.bbc.co.uk'
+      @static_base_url.should == 'http://static.bbci.co.uk'
+      @open_base_url.should == 'http://open.live.bbc.co.uk'
+      @m_base_url.should == 'http://m.live.bbc.co.uk'
+      @mobile_base_url.should == 'http://mobile.live.bbc.co.uk'
+    end
+
+    it "pal url should still have environment even if asking for classic live url" do
+      ENV['ENVIRONMENT'] = 'Live'
+      ENV['WWW_LIVE'] = 'false' 
+      generate_base_urls
+      @base_url.should == 'http://www.bbc.co.uk'
+      @pal_base_url.should == 'http://pal.live.bbc.co.uk'
+      @ssl_base_url.should == 'https://ssl.bbc.co.uk'
+      @static_base_url.should == 'http://static.bbci.co.uk'
+      @open_base_url.should == 'http://open.bbc.co.uk'
+      @m_base_url.should == 'http://m.bbc.co.uk'
+      @mobile_base_url.should == 'http://mobile.bbc.co.uk'
+    end
+
+
+
     it "should be able to set scheme to ssl" do
       ENV['SCHEME'] = 'https'
       ENV['ENVIRONMENT'] = 'foo'
