@@ -1,11 +1,10 @@
 PATH
   remote: .
   specs:
-    frameworks-capybara (0.2.14)
+    frameworks-capybara (0.2.15)
       capybara (>= 1.0.0)
       capybara-celerity
       capybara-mechanize (>= 0.3.0)
-      capybara-webkit
       cucumber (>= 0.10.5)
       headless
       json
@@ -96,6 +95,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  capybara-webkit
   frameworks-capybara!
   jruby-openssl
   rake
