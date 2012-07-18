@@ -22,7 +22,9 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency("capybara", [">=1.0.0"])
   s.add_runtime_dependency("capybara-mechanize", [">=0.3.0"])
+  s.add_runtime_dependency("capybara-webkit")
   s.add_runtime_dependency("json")
+  s.add_runtime_dependency("headless")
   s.add_runtime_dependency("capybara-celerity")
   s.add_runtime_dependency("w3c_validators")
   s.add_runtime_dependency("cucumber", [">= 0.10.5"])

@@ -275,7 +275,7 @@ describe CapybaraSetup do
         end
         it_behaves_like "Selenium Driver Options Array"
       end
-      
+
 
       context "with Selenium driver and additional firefox preferences" do
         before do
@@ -294,7 +294,7 @@ describe CapybaraSetup do
         end
         it_behaves_like "Selenium Driver Options Array"
       end
-      
+
 
       context "with Selenium driver and new profile and custom prefs" do
         before do
@@ -312,7 +312,7 @@ describe CapybaraSetup do
         end
         it_behaves_like "Selenium Driver Options Array"
       end
-      
+
       context "with Remote Selenium driver and specified Chrome Switches" do
         before do
           ENV['BROWSER'] = 'remote'
@@ -449,6 +449,21 @@ describe CapybaraSetup do
         end
 
       end
+
+      describe "should allow Webkit driver to be created" do
+        context "with minimal Webkit driver" do
+          before do
+            ENV['BROWSER'] = 'webkit'
+          end
+
+          it "should be initialized correctly" do 
+            Capybara.delete_session
+            CapybaraSetup.new.driver.should == :webkit
+            Capybara.current_session.driver.should be_a_kind_of Capybara::Driver::Webkit
+          end
+        end
+      end
+
     end
   end
 end

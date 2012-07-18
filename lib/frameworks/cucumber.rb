@@ -2,7 +2,8 @@ require 'frameworks/capybara'
 require 'w3c_validators'
 require 'monkey-patches/cucumber-patches'
 
-if(ENV['XVFB']=='true')
+#This is hackish but means we only run once in cucumber and not every scenario
+if(ENV['XVFB']=='true' || ENV['BROWSER'] == 'webkit')
   puts "You have chosen to use XVFB - ensure you have yum installed Xvfb Xorg and firefox"
   require 'headless'
   headless = Headless.new
@@ -110,11 +111,15 @@ Before do
 
     page.driver.browser.agent.ca_file = ENV['CA_CERT_LOCATION'] if ENV['CA_CERT_LOCATION']
 
-    #TODO: Fix proxy logic globally...use system proxy instead of PROXY_URL
     page.driver.browser.agent.set_proxy(http_proxy.scan(/http:\/\/(.*):80/).to_s,80) if http_proxy
 
     #This is necessary because Mech2 does not ship with root certs like Mech1 did and boxes may not have the OpenSSL set installed
     page.driver.browser.agent.verify_mode = OpenSSL::SSL::VERIFY_NONE
+  end
+
+  #TODO: See if this can be set at the driver level rather than in before do - and only want to start headless once
+  if page.driver.class == Capybara::Driver::Webkit
+    page.driver.browser.set_proxy(:host => http_proxy.scan(/http:\/\/(.*):80/).to_s,:port => '80') if http_proxy
   end
 
   generate_base_urls
