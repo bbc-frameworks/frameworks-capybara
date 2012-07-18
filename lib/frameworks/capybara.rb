@@ -169,6 +169,7 @@ class CapybaraSetup
     Capybara.register_driver :webkit do |app|
       Capybara::Driver::Webkit.new(app)
     end
+    Capybara.javascript_driver = :webkit
     :webkit
   end
 
