@@ -8,7 +8,6 @@ require 'monkey-patches/net-http-persistent-patches'
 require 'selenium-webdriver'
 require 'capybara/mechanize/cucumber' 
 require 'capybara/celerity'
-require 'capybara-webkit'
 
 class CapybaraSetup
 
@@ -54,8 +53,6 @@ class CapybaraSetup
       @driver = register_celerity_driver(capybara_opts)
     when :mechanize then
       @driver = register_mechanize_driver(capybara_opts)
-    when :webkit then
-      @driver = register_webkit_driver(capybara_opts)
     else
       @driver = register_selenium_driver(capybara_opts, selenium_remote_opts, custom_opts)
     end
@@ -165,12 +162,6 @@ class CapybaraSetup
     :mechanize
   end
 
-  def register_webkit_driver(opts)
-    Capybara.register_driver :webkit do |app|
-      Capybara::Driver::Webkit.new(app)
-    end
-    :webkit
-  end
 
   def clean_opts(opts, *args)
     args.each do |arg|

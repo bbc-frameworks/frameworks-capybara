@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    frameworks-capybara (0.2.15)
+    frameworks-capybara (0.2.16)
       capybara (>= 1.0.0)
       capybara-celerity
       capybara-mechanize (>= 0.3.0)
@@ -28,9 +28,6 @@ GEM
     capybara-mechanize (0.3.0)
       capybara (~> 1.1)
       mechanize (~> 2.3)
-    capybara-webkit (0.12.1)
-      capybara (>= 1.0.0, < 1.2)
-      json
     celerity (0.9.2)
     childprocess (0.3.3)
       ffi (~> 1.0.6)
@@ -95,7 +92,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  capybara-webkit
   frameworks-capybara!
   jruby-openssl
   rake

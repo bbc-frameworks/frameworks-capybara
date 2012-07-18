@@ -450,20 +450,7 @@ describe CapybaraSetup do
 
       end
 
-      describe "should allow Webkit driver to be created" do
-        context "with minimal Webkit driver" do
-          before do
-            ENV['BROWSER'] = 'webkit'
-          end
-
-          it "should be initialized correctly" do 
-            Capybara.delete_session
-            CapybaraSetup.new.driver.should == :webkit
-            Capybara.current_session.driver.should be_a_kind_of Capybara::Driver::Webkit
-          end
-        end
-      end
-
+    
     end
   end
 end
