@@ -119,6 +119,7 @@ Before do
 
   #TODO: See if this can be set at the driver level rather than in before do - and only want to start headless once
   if page.driver.class == Capybara::Driver::Webkit
+    page.driver.browser.ignore_ssl_errors #shouldn't have to do this on test but for some reason do
     page.driver.browser.set_proxy(:host => http_proxy.scan(/http:\/\/(.*):80/).to_s,:port => '80') if http_proxy
   end
   
