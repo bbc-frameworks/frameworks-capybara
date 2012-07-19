@@ -1,10 +1,10 @@
 require 'capybara-webkit'
 class Capybara::Driver::Webkit
-  def get_cookies
-    scookies = []
+  def kookies
+    kookies = []
 
     cookies.send(:cookies).each do |cookie|
-     scookies.push({
+     kookies.push({
         :name => cookie.name,
         :value => cookie.value,
         :domain => cookie.domain,
@@ -13,14 +13,11 @@ class Capybara::Driver::Webkit
         :path => cookie.path
       })
     end
-    p '--cookies--'
-    p scookies
-    p '--cookies--'
-    scookies
+    kcookies
   end
 
   def cookie_named(name)
-    get_cookies.find { |c| c[:name] == name }
+    kookies.find { |c| c[:name] == name }
   end
 end
 
