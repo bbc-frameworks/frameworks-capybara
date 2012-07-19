@@ -1,6 +1,7 @@
 require 'capybara/cucumber'
 require 'monkey-patches/webdriver-patches'
 require 'monkey-patches/capybara-patches'
+require 'monkey-patches/capybara-webkit-patches'
 require 'monkey-patches/capybara-mechanize-patches'
 require 'monkey-patches/mechanize-patches'
 require 'monkey-patches/send-keys'
