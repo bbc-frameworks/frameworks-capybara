@@ -121,7 +121,7 @@ World(Frameworks::EnvHelper)
 Before do
   #This is ugly but unavoidable since Capybara::RackTest::Driver.reset_host! does @browser = nil and wipes all brower level settings
   #it was either this or a monkey patch - need to think about pushing a softer reset change to capybara-mechanize to override this
-  setup_mechanize(page.browser.agent) if page.driver.class == Capybara::Mechanize::Driver
+  setup_mechanize(page.driver.browser.agent) if page.driver.class == Capybara::Mechanize::Driver
 
   generate_base_urls
 end
