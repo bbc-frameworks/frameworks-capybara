@@ -89,6 +89,27 @@ module Frameworks
       @static_sandbox = "#{scheme}://static.sandbox.dev"
     end
 
+    def setup_mechanize(agent, http_proxy=nil)
+      http_proxy = http_proxy || ENV['HTTP_PROXY'] || ENV['http_proxy']
+
+      if ENV['FW_CERT_LOCATION']
+        agent.cert, agent.key = ENV['FW_CERT_LOCATION'], ENV['FW_CERT_LOCATION'] 
+      end
+
+      agent.ca_file = ENV['CA_CERT_LOCATION'] if ENV['CA_CERT_LOCATION']
+      agent.set_proxy(http_proxy.scan(/http:\/\/(.*):80/)[0][0].to_s,80) if http_proxy
+
+      #This is necessary because Mech2 does not ship with root certs like Mech1 did and boxes may not have the OpenSSL set installed
+      agent.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    end
+
+    def new_mechanize(http_proxy=nil)
+      require 'mechanize'
+      agent = Mechanize.new
+      setup_mechanize(agent, http_proxy)
+      agent
+    end
+
   end #EnvHelper
 end #Frameworks
 
@@ -100,22 +121,7 @@ World(Frameworks::EnvHelper)
 Before do
   #This is ugly but unavoidable since Capybara::RackTest::Driver.reset_host! does @browser = nil and wipes all brower level settings
   #it was either this or a monkey patch - need to think about pushing a softer reset change to capybara-mechanize to override this
-  http_proxy = ENV['HTTP_PROXY'] || ENV['http_proxy']
-  if page.driver.class == Capybara::Mechanize::Driver
-
-    if ENV['FW_CERT_LOCATION']
-      page.driver.browser.agent.cert, page.driver.browser.agent.key = 
-        ENV['FW_CERT_LOCATION'],
-        ENV['FW_CERT_LOCATION'] 
-    end
-
-    page.driver.browser.agent.ca_file = ENV['CA_CERT_LOCATION'] if ENV['CA_CERT_LOCATION']
-
-    page.driver.browser.agent.set_proxy(http_proxy.scan(/http:\/\/(.*):80/).to_s,80) if http_proxy
-
-    #This is necessary because Mech2 does not ship with root certs like Mech1 did and boxes may not have the OpenSSL set installed
-    page.driver.browser.agent.verify_mode = OpenSSL::SSL::VERIFY_NONE
-  end
+  setup_mechanize(page.browser.agent) if page.driver.class == Capybara::Mechanize::Driver
 
   generate_base_urls
 end
