@@ -147,5 +147,12 @@ describe Frameworks::EnvHelper do
       agent.should be_a_kind_of Mechanize
       agent.proxy_addr.should == 'mycache.co.uk'
     end
+
+    it "the proxy should be separately configurable" do
+      agent = new_mechanize(http_proxy='http://mycache.co.uk:80')
+      agent.should be_a_kind_of Mechanize
+      agent.proxy_addr.should == 'mycache.co.uk'
+    end
+
   end
 end
