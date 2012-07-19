@@ -137,4 +137,22 @@ describe Frameworks::EnvHelper do
     end
 =end
   end
+
+    describe "independent mechanize agent" do
+    include Frameworks::EnvHelper
+
+    it "should allow you to create an independent, configured mechanize object" do
+      ENV['HTTP_PROXY'] = 'http://mycache.co.uk:80'
+      agent = new_mechanize
+      agent.should be_a_kind_of Mechanize
+      agent.proxy_addr.should == 'mycache.co.uk'
+    end
+
+    it "the proxy should be separately configurable" do
+      agent = new_mechanize(http_proxy='http://mycache.co.uk:80')
+      agent.should be_a_kind_of Mechanize
+      agent.proxy_addr.should == 'mycache.co.uk'
+    end
+
+  end
 end
