@@ -49,7 +49,7 @@ module Frameworks
       end
 
       proxy = ENV['http_proxy'] || ENV['HTTP_PROXY'] 
-      @proxy_host = proxy.scan(/http:\/\/(.*):80/)[0][0] if proxy
+      @proxy_host = proxy.scan(/http:\/\/(.*):80/)[0][0] if proxy && !proxy.empty?
     end
 
     def validate_online(src)
@@ -97,7 +97,7 @@ module Frameworks
       end
 
       agent.ca_file = ENV['CA_CERT_LOCATION'] if ENV['CA_CERT_LOCATION']
-      agent.set_proxy(http_proxy.scan(/http:\/\/(.*):80/)[0][0].to_s,80) if http_proxy
+      agent.set_proxy(http_proxy.scan(/http:\/\/(.*):80/)[0][0].to_s,80) if http_proxy && !http_proxy.empty?
 
       #This is necessary because Mech2 does not ship with root certs like Mech1 did and boxes may not have the OpenSSL set installed
       agent.verify_mode = OpenSSL::SSL::VERIFY_NONE
