@@ -116,7 +116,7 @@ describe CapybaraSetup do
         before do
           ENV['BROWSER'] = 'firefox'
           ENV['FIREFOX_PROFILE'] = 'BBC_INTERNAL'
-          ENV['HTTP_PROXY'] = 'http://example.cache.co.uk:80'
+          ENV['HTTP_PROXY'] = 'http://example.cache.co.uk:80/'
           ENV['PROXY_ON'] = 'false'
         end
 
