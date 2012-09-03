@@ -37,7 +37,7 @@ class CapybaraSetup
 
     validate_env_vars(capybara_opts.merge(selenium_remote_opts)) #validate environment variables set using cucumber.yml or passed via command line
 
-    @proxy_host =  capybara_opts[:proxy].gsub(/http:\/\//,'').gsub(/:80/,'') unless capybara_opts[:proxy].nil?
+    @proxy_host =  capybara_opts[:proxy].gsub(/http:\/\//,'').gsub(/:80.*/,'') unless capybara_opts[:proxy].nil?
     capybara_opts[:browser] = capybara_opts[:browser].intern #update :browser value to be a symbol, required for Selenium
     selenium_remote_opts[:browser_name] = selenium_remote_opts[:browser_name].intern if selenium_remote_opts[:browser_name]#update :browser value to be a symbol, required for Selenium
 
