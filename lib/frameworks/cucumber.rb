@@ -101,6 +101,10 @@ module Frameworks
 
       #This is necessary because Mech2 does not ship with root certs like Mech1 did and boxes may not have the OpenSSL set installed
       agent.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+      # This prevents Mechanize from raising a Mechanize::ResponseCodeError
+      # when the HTTP Response Code is 404 or 503. This lets capybara continue the journey.
+      agent.agent.allowed_error_codes = ['404', '503']
     end
 
     def new_mechanize(http_proxy=nil)

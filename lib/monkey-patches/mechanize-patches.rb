@@ -58,8 +58,17 @@ end
 =end
 
 # This patch prevents Mechanize from raising a Mechanize::ResponseCodeError
-# when the HTTP Response Code is 503 or 404. This lets capybara continue the journey.
+# when the HTTP Response Code is in `allowed_error_codes`.
+# https://github.com/tenderlove/mechanize/pull/248
 class Mechanize::HTTP::Agent
+  attr_accessor :allowed_error_codes
+
+  alias_method :old_initialize, :initialize
+  def initialize
+    @allowed_error_codes      = []
+    old_initialize
+  end
+
   def fetch uri, method = :get, headers = {}, params = [],
             referer = current_page, redirects = 0
     referer_uri = referer ? referer.uri : nil
@@ -156,7 +165,11 @@ class Mechanize::HTTP::Agent
                             referer)
     else
       # BEGIN PATCH
-      if page.code == "503" or page.code == "404"
+      if @allowed_error_codes.any? {|code| code.to_s == page.code} then
+        if robots && page.is_a?(Mechanize::Page)
+          page.parser.noindex? and raise Mechanize::RobotsDisallowedError.new(uri)
+        end
+
         page
       else
         raise Mechanize::ResponseCodeError.new(page, 'unhandled response')
