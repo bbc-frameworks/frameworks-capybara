@@ -74,7 +74,7 @@ This gem also sets up a number of 'base urls' for you to use in your tests, thes
   @base_static_url
   @base_open_url
 
-Finally this gem contains some useful monkey-patches to core libraries e.g. Capybara, Selenium-Webdriver and Cucumber.
+Finally this gem contains some useful monkey-patches to core libraries e.g. Capybara-Mechanize, Selenium-Webdriver and Cucumber.
 
 == Release instructions
 
