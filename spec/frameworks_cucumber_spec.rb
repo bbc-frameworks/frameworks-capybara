@@ -130,6 +130,22 @@ describe Frameworks::EnvHelper do
       @proxy_port.should == "8080"
     end
 
+    it "should be able to use 80 as default proxy port when none specified" do
+      ENV['ENVIRONMENT'] = 'foo'
+      ENV['http_proxy'] = 'http://mycache.co.uk'
+      generate_base_urls
+      @proxy_host.should == "mycache.co.uk"
+      @proxy_port.should == "80"
+    end
+
+    it "should be able to handle an environment variable which doesn't have the protocol" do
+      ENV['ENVIRONMENT'] = 'foo'
+      ENV['http_proxy'] = 'mycache.co.uk'
+      generate_base_urls
+      @proxy_host.should == "mycache.co.uk"
+      @proxy_port.should == "80"
+    end
+
     it "should be able to have an empty http_proxy environment variable" do
       ENV['ENVIRONMENT'] = 'foo'
       ENV['http_proxy'] = ''
