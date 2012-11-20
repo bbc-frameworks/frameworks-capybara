@@ -114,18 +114,28 @@ describe Frameworks::EnvHelper do
       @open_base_url.should == 'https://open.foo.bbc.co.uk'
     end
 
-    it "should be able to set proxy host correctly to use in tests using HTTP_PROXY env variable" do
+    it "should be able to set proxy host and port correctly to use in tests using HTTP_PROXY env variable" do
       ENV['ENVIRONMENT'] = 'foo'
-      ENV['HTTP_PROXY'] = 'http://mycache.co.uk:80'
+      ENV['HTTP_PROXY'] = 'http://mycache.co.uk:8080'
       generate_base_urls
       @proxy_host.should == "mycache.co.uk"
+      @proxy_port.should == "8080"
     end
 
     it "should be able to set proxy host correctly to use in tests using http_proxy env variable" do
       ENV['ENVIRONMENT'] = 'foo'
-      ENV['http_proxy'] = 'http://mycache.co.uk:80'
+      ENV['http_proxy'] = 'http://mycache.co.uk:8080'
       generate_base_urls
       @proxy_host.should == "mycache.co.uk"
+      @proxy_port.should == "8080"
+    end
+
+    it "should be able to have an empty http_proxy environment variable" do
+      ENV['ENVIRONMENT'] = 'foo'
+      ENV['http_proxy'] = ''
+      generate_base_urls
+      @proxy_host.should be_nil
+      @proxy_port.should be_nil
     end
 
 =begin
