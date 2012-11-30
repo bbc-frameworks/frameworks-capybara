@@ -34,8 +34,8 @@ module Frameworks
         @pal_base_url = @sandbox6 + @bbc_domain 
         @ssl_base_url = @sslsandbox6 + @bbc_domain
         @static_base_url = @static_sandbox6 + @bbc_domain
-        @mobile_base_url = @mobiledot_prefix + "sandbox.dev.bbc.co.uk"
-        @m_base_url = @mdot_prefix + "sandbox.dev.bbc.co.uk"
+        @mobile_base_url = @mobiledot_prefix + "sandbox.bbc.co.uk"
+        @m_base_url = @mdot_prefix + "sandbox.bbc.co.uk"
       elsif (environment =='live' && ENV['WWW_LIVE']=='false')
         @base_url = @www_prefix.chop + @bbc_domain
         @pal_base_url = @pal_prefix + environment + @bbc_domain
@@ -90,13 +90,13 @@ module Frameworks
       @bbc_domain = '.bbc.co.uk'
       @bbci_domain = '.bbci.co.uk'
       @sandbox = "#{scheme}://pal.sandbox.dev"
-      @sandbox6 = "#{scheme}://sandbox6.sandbox.dev"
+      @sandbox6 = "#{scheme}://sb1.sandbox"
       @mobiledot_prefix = "#{scheme}://mobile."
       @mdot_prefix = "#{scheme}://m."
       @sslsandbox = "https://ssl.sandbox.dev"
-      @sslsandbox6 = "https://ssl6.sandbox.dev"
+      @sslsandbox6 = "https://ssl.sandbox"
       @static_sandbox = "#{scheme}://static.sandbox.dev"
-      @static_sandbox6 = "#{scheme}://static6.sandbox.dev"      
+      @static_sandbox6 = "#{scheme}://static.sandbox"      
     end
 
     def setup_mechanize(agent, http_proxy=nil)

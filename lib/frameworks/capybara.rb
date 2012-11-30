@@ -124,7 +124,7 @@ class CapybaraSetup
     elsif(profile_name == 'BBC_INTERNAL')
       profile = Selenium::WebDriver::Firefox::Profile.new
       profile["network.proxy.type"] = 1
-      profile["network.proxy.no_proxies_on"] = "*.sandbox.dev.bbc.co.uk"
+      profile["network.proxy.no_proxies_on"] = "*.sandbox.dev.bbc.co.uk,*.sandbox.bbc.co.uk"
       profile["network.proxy.http"] = @proxy_host 
       profile["network.proxy.ssl"] = @proxy_host 
       profile["network.proxy.http_port"] = 80
