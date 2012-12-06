@@ -90,7 +90,7 @@ module Frameworks
       @bbc_domain = '.bbc.co.uk'
       @bbci_domain = '.bbci.co.uk'
       @sandbox = "#{scheme}://pal.sandbox.dev"
-      @sandbox6 = "#{scheme}://sb1.sandbox"
+      @sandbox6 = "#{scheme}://access.sandbox"
       @mobiledot_prefix = "#{scheme}://mobile."
       @mdot_prefix = "#{scheme}://m."
       @sslsandbox = "https://ssl.sandbox.dev"
