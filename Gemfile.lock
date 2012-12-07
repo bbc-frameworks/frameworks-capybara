@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    frameworks-capybara (0.2.19)
+    frameworks-capybara (0.2.20)
       capybara (>= 1.0.0)
       capybara-celerity
       capybara-mechanize (>= 0.3.0)

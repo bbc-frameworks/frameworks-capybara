@@ -1,0 +1,6 @@
+0.2.20
+validate_online() now takes optional hash of parameters to pass to MarkupValidator
+Updated proxy handling to pick up port and to work without protocol or port. 
+
+0.2.19
+Present production release

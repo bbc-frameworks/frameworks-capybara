@@ -60,9 +60,13 @@ module Frameworks
       end
     end
 
-    def validate_online(src)
+    def validate_online(src, validator_args = nil)
 
-      @validator = MarkupValidator.new({:proxy_host => @proxy_host,:proxy_port => @proxy_port})
+      args = {:proxy_host => @proxy_host,:proxy_port => @proxy_port} 
+      if(validator_args != nil)
+         args = args.merge(validator_args)
+      end    
+      @validator = MarkupValidator.new(args)
 
       @validator.set_doctype!(:xhtml)
       begin
