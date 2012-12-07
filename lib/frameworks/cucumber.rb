@@ -49,12 +49,20 @@ module Frameworks
       end
 
       proxy = ENV['http_proxy'] || ENV['HTTP_PROXY'] 
-      @proxy_host = proxy.scan(/http:\/\/(.*):80/)[0][0] if proxy && !proxy.empty?
+      proxy_parts = proxy.scan(/(?:http:\/\/)?([^\:]+)(?::(\d+))?/) if proxy && !proxy.empty?
+      if proxy_parts && !proxy_parts.empty?
+          @proxy_host = proxy_parts[0][0]
+          if proxy_parts[0][1]
+              @proxy_port = proxy_parts[0][1]
+          else
+              @proxy_port = "80"
+          end
+      end
     end
 
     def validate_online(src)
 
-      @validator = MarkupValidator.new({:proxy_host => @proxy_host,:proxy_port => 80})
+      @validator = MarkupValidator.new({:proxy_host => @proxy_host,:proxy_port => @proxy_port})
 
       @validator.set_doctype!(:xhtml)
       begin
