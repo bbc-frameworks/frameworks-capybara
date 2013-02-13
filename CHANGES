@@ -1,3 +1,7 @@
+0.2.21
+Add support for Centos6 sandbox
+Update Gemfile.lock to latest gem versions
+
 0.2.20
 validate_online() now takes optional hash of parameters to pass to MarkupValidator
 Updated proxy handling to pick up port and to work without protocol or port. 
