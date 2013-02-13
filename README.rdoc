@@ -27,7 +27,7 @@ In your env.rb simply add:
 
 The following environment variables can be set to configure your tests:
 
-  ENVIRONMENT - this must be one of either 'sandbox', 'int', 'test', 'stage', 'live'
+  ENVIRONMENT - this must be one of either 'sandbox', 'sandbox6', 'int', 'test', 'stage', 'live'
   BROWSER - this must be one of either 'ie', 'firefox', 'chrome', 'headless', 'remote'
   HTTP_PROXY - url of proxy if required e.g. 'http://proxyhost:80', when running a headless browser this sets the proxy for the browser itself, when running a remote browser this sets the proxy for the client which will connect to the remote selenium server
   PLATFORM - used when specifying remote test on a grid that provides a choice of platforms, this must be one of either 'WINDOWS' or 'LINUX'

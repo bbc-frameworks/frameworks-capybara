@@ -127,7 +127,7 @@ describe CapybaraSetup do
           Capybara.current_session.driver.options[:browser].should == :firefox
           Capybara.current_session.driver.options[:profile].should be_a_kind_of Selenium::WebDriver::Firefox::Profile
           Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['network.proxy.type'].should == 1
-          Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['network.proxy.no_proxies_on'].should == '*.sandbox.dev.bbc.co.uk'
+          Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['network.proxy.no_proxies_on'].should == '*.sandbox.dev.bbc.co.uk,*.sandbox.bbc.co.uk'
           Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['network.proxy.http'].should == 'example.cache.co.uk'
           Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['network.proxy.http_port'].should == 80
           Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['network.proxy.ssl'].should == 'example.cache.co.uk'
@@ -216,7 +216,7 @@ describe CapybaraSetup do
           Capybara.current_session.driver.options[:browser].should == :remote
           Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].should be_a_kind_of Selenium::WebDriver::Firefox::Profile
           Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].instance_variable_get(:@additional_prefs)['network.proxy.type'].should == 1
-          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].instance_variable_get(:@additional_prefs)['network.proxy.no_proxies_on'].should == '*.sandbox.dev.bbc.co.uk'
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].instance_variable_get(:@additional_prefs)['network.proxy.no_proxies_on'].should == '*.sandbox.dev.bbc.co.uk,*.sandbox.bbc.co.uk'
           Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].instance_variable_get(:@additional_prefs)['network.proxy.http'].should == 'example.cache.co.uk'
           Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].instance_variable_get(:@additional_prefs)['network.proxy.http_port'].should == 80
           Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].instance_variable_get(:@additional_prefs)['network.proxy.ssl'].should == 'example.cache.co.uk'

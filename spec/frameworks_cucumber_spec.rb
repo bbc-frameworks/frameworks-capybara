@@ -20,6 +20,16 @@ describe Frameworks::EnvHelper do
       @mobile_base_url.should == 'http://mobile.sandbox.dev.bbc.co.uk'
     end
 
+    it "should be able to set a local system6 url" do
+      ENV['ENVIRONMENT'] = 'sandbox6'
+      generate_base_urls
+      @base_url.should == 'http://sandbox.eng.cloud.bbc.co.uk'
+      @ssl_base_url.should == 'https://ssl.sandbox.eng.cloud.bbc.co.uk'
+      @static_base_url.should == 'http://static.sandbox.eng.cloud.bbc.co.uk'
+      @m_base_url.should == 'http://m.sandbox.eng.cloud.bbc.co.uk'
+      @mobile_base_url.should == 'http://mobile.sandbox.eng.cloud.bbc.co.uk'
+    end
+
     it "should be able to set a base url" do
       ENV['ENVIRONMENT'] = 'foo'
       generate_base_urls
