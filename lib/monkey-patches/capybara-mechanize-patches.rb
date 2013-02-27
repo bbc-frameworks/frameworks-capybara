@@ -2,6 +2,7 @@ require 'capybara/mechanize/cucumber'
 require 'uri'
 class Capybara::Mechanize::Browser
   #patch to remove catching all Mechanize exceptions (which are nice and specific) and throwing a useless RuntimeError
+  #patch to add Referer (Mechanize@0.3.0 won't add Referer for urls starting with http(s)://.)
   def process_remote_request(method, url, attributes, headers)
     if remote?(url)
       uri = URI.parse(url)
@@ -9,11 +10,20 @@ class Capybara::Mechanize::Browser
       @last_remote_uri = uri
       url = uri.to_s
 
+      referer = nil
+      referer = Capybara::page.current_url unless Capybara::page.current_url.empty?
+
       reset_cache!
       args = []
       args << attributes unless attributes.empty?
       args << headers unless headers.empty?
-      @agent.send(method, url, *args)
+
+      if method == :get
+        @agent.send(method, url, attributes, referer, headers)
+      else
+        @agent.send(method, url, *args)              
+      end
+
       @last_request_remote = true
     end
   end
