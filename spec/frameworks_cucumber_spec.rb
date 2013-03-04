@@ -23,11 +23,11 @@ describe Frameworks::EnvHelper do
     it "should be able to set a local system6 url" do
       ENV['ENVIRONMENT'] = 'sandbox6'
       generate_base_urls
-      @base_url.should == 'http://sandbox.eng.cloud.bbc.co.uk'
-      @ssl_base_url.should == 'https://ssl.sandbox.eng.cloud.bbc.co.uk'
-      @static_base_url.should == 'http://static.sandbox.eng.cloud.bbc.co.uk'
-      @m_base_url.should == 'http://m.sandbox.eng.cloud.bbc.co.uk'
-      @mobile_base_url.should == 'http://mobile.sandbox.eng.cloud.bbc.co.uk'
+      @base_url.should == 'http://sandbox.bbc.co.uk'
+      @ssl_base_url.should == 'https://ssl.sandbox.bbc.co.uk'
+      @static_base_url.should == 'http://static.sandbox.bbc.co.uk'
+      @m_base_url.should == 'http://m.sandbox.bbc.co.uk'
+      @mobile_base_url.should == 'http://mobile.sandbox.bbc.co.uk'
     end
 
     it "should be able to set a base url" do
