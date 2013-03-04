@@ -1,3 +1,6 @@
+0.2.22
+Update Centos6 sandbox DNS to sandbox.bbc.co.uk
+
 0.2.21
 Add support for Centos6 sandbox
 Update Gemfile.lock to latest gem versions
