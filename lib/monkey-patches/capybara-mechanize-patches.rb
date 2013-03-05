@@ -10,8 +10,7 @@ class Capybara::Mechanize::Browser
       @last_remote_uri = uri
       url = uri.to_s
 
-      referer = nil
-      referer = Capybara::page.current_url unless Capybara::page.current_url.empty?
+      referer = (!current_url.empty?) ? current_url : nil
 
       reset_cache!
       args = []
