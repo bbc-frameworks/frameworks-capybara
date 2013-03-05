@@ -19,9 +19,9 @@ class Capybara::Mechanize::Browser
       args << headers unless headers.empty?
 
       if method == :get
-        @agent.send(method, url, attributes, referer, headers)
+        agent.send(method, url, attributes, referer, headers)
       else
-        @agent.send(method, url, *args)              
+        agent.send(method, url, *args)
       end
 
       @last_request_remote = true
