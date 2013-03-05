@@ -96,3 +96,4 @@ DEPENDENCIES
   jruby-openssl
   rake
   rspec (>= 1.0.0)
+  rspec-mocks
