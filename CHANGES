@@ -1,3 +1,4 @@
+0.2.23
 Updated capybara-mechanize patch to send referer header.
 
 0.2.22
