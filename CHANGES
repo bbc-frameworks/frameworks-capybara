@@ -1,13 +1,15 @@
+Updated capybara-mechanize patch to send referer header.
+
 0.2.22
-Update Centos6 sandbox DNS to sandbox.bbc.co.uk
+Update Centos6 sandbox DNS to sandbox.bbc.co.uk.
 
 0.2.21
-Add support for Centos6 sandbox
-Update Gemfile.lock to latest gem versions
+Add support for Centos6 sandbox.
+Update Gemfile.lock to latest gem versions.
 
 0.2.20
-validate_online() now takes optional hash of parameters to pass to MarkupValidator
+validate_online() now takes optional hash of parameters to pass to MarkupValidator.
 Updated proxy handling to pick up port and to work without protocol or port. 
 
 0.2.19
-Present production release
+Present production release.
