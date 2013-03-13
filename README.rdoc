@@ -79,11 +79,18 @@ Finally this gem contains some useful monkey-patches to core libraries e.g. Capy
 == Release instructions
 
 * Run tests - 'rake'
+* If you have not published with 'gem' before, run 'gem push' to enter your credentials (ignore failed publish error at the end)
 * Bump version - manually update file in lib/version.rb
 * Run 'bundle install --binstubs --path vendor/to' bundle pick up new version in Gemfile
 * Commit 'Gemfile.lock' changes
 * Release - 'rake release'
-* Push new tag to Github 'git push --tags'
+
+You should see something like:
+
+  frameworks-capybara 0.2.23 built to pkg/frameworks-capybara-0.2.23.gem
+  Tagged v0.2.23
+  Pushed git commits and tags
+  Pushed frameworks-capybara 0.2.23 to rubygems.org
 
 == Contributing to frameworks-capybara
  
