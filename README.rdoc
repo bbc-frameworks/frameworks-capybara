@@ -80,8 +80,10 @@ Finally this gem contains some useful monkey-patches to core libraries e.g. Capy
 
 * Run tests - 'rake'
 * Bump version - manually update file in lib/version.rb
-* Run 'bundle install' to pick up new version in Gemfile
+* Run 'bundle install --binstubs --path vendor/to' bundle pick up new version in Gemfile
+* Commit 'Gemfile.lock' changes
 * Release - 'rake release'
+* Push new tag to Github 'git push --tags'
 
 == Contributing to frameworks-capybara
  
