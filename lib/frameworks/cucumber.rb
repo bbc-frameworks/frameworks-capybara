@@ -27,15 +27,15 @@ module Frameworks
         @pal_base_url = @sandbox + @bbc_domain 
         @ssl_base_url = @sslsandbox + @bbc_domain
         @static_base_url = @static_sandbox + @bbc_domain
-        @mobile_base_url = @mobiledot_prefix + "sandbox.dev.bbc.co.uk"
-        @m_base_url = @mdot_prefix + "sandbox.dev.bbc.co.uk"
+        @mobile_base_url = @mobiledot_prefix + "sandbox.dev" + @bbc_domain
+        @m_base_url = @mdot_prefix + "sandbox.dev" + @bbc_domain
       elsif(environment =='sandbox6')
         @base_url = @sandbox6 + @bbc_domain 
         @pal_base_url = @sandbox6 + @bbc_domain 
         @ssl_base_url = @sslsandbox6 + @bbc_domain
         @static_base_url = @static_sandbox6 + @bbc_domain
-        @mobile_base_url = @mobiledot_prefix + "sandbox.bbc.co.uk"
-        @m_base_url = @mdot_prefix + "sandbox.bbc.co.uk"
+        @mobile_base_url = @mobiledot_prefix + "sandbox" + @bbc_domain
+        @m_base_url = @mdot_prefix + "sandbox" + @bbc_domain
       elsif (environment =='live' && ENV['WWW_LIVE']=='false')
         @base_url = @www_prefix.chop + @bbc_domain
         @pal_base_url = @pal_prefix + environment + @bbc_domain
@@ -99,7 +99,7 @@ module Frameworks
       @ssl_prefix = "https://ssl."
       @static_prefix = "#{scheme}://static."
       @open_prefix = "#{scheme}://open."
-      @bbc_domain = '.bbc.co.uk'
+      @bbc_domain = '.' + (ENV['FW_BBC_DOMAIN'] || 'bbc.co.uk')
       @bbci_domain = '.bbci.co.uk'
       @sandbox = "#{scheme}://pal.sandbox.dev"
       @sandbox6 = "#{scheme}://sandbox"
