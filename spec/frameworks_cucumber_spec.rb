@@ -164,6 +164,53 @@ describe Frameworks::EnvHelper do
       @proxy_port.should be_nil
     end
 
+    it "should be able to set a local url with expected domain" do
+      ENV['ENVIRONMENT'] = 'sandbox'
+      ENV['FW_BBC_DOMAIN'] = 'bbc.com'
+      generate_base_urls
+      @base_url.should == 'http://pal.sandbox.dev.bbc.com'
+      @ssl_base_url.should == 'https://ssl.sandbox.dev.bbc.com'
+      @static_base_url.should == 'http://static.sandbox.dev.bbc.com'
+      @m_base_url.should == 'http://m.sandbox.dev.bbc.com'
+      @mobile_base_url.should == 'http://mobile.sandbox.dev.bbc.com'
+    end
+
+    it "should be able to set a local system6 url with expected domain" do
+      ENV['ENVIRONMENT'] = 'sandbox6'
+      ENV['FW_BBC_DOMAIN'] = 'bbc.com'
+      generate_base_urls
+      @base_url.should == 'http://sandbox.bbc.com'
+      @ssl_base_url.should == 'https://ssl.sandbox.bbc.com'
+      @static_base_url.should == 'http://static.sandbox.bbc.com'
+      @m_base_url.should == 'http://m.sandbox.bbc.com'
+      @mobile_base_url.should == 'http://mobile.sandbox.bbc.com'
+    end
+
+    it "should be able to set a base url with expected domain" do
+      ENV['ENVIRONMENT'] = 'foo'
+      ENV['FW_BBC_DOMAIN'] = 'bbc.com'
+      generate_base_urls
+      @base_url.should == 'http://www.foo.bbc.com'
+      @ssl_base_url.should == 'https://ssl.foo.bbc.com'
+      @static_base_url.should == 'http://static.foo.bbci.co.uk'
+      @open_base_url.should == 'http://open.foo.bbc.com'
+      @m_base_url.should == 'http://m.foo.bbc.com'
+      @mobile_base_url.should == 'http://mobile.foo.bbc.com'
+    end
+
+    it "should set public facing live domain" do
+      ENV['ENVIRONMENT'] = 'live'
+      ENV['WWW_LIVE'] = 'false'
+      ENV['FW_BBC_DOMAIN'] = 'bbc.com'
+      generate_base_urls
+      @base_url.should == 'http://www.bbc.com'
+      @ssl_base_url.should == 'https://ssl.bbc.com'
+      @static_base_url.should == 'http://static.bbci.co.uk'
+      @open_base_url.should == 'http://open.bbc.com'
+      @m_base_url.should == 'http://m.bbc.com'
+      @mobile_base_url.should == 'http://mobile.bbc.com'
+    end
+
 =begin
 #don't want to push proxy addr online
     it "should be able to validate xhtml online" do
