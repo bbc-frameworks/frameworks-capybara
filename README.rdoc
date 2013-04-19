@@ -81,6 +81,7 @@ Finally this gem contains some useful monkey-patches to core libraries e.g. Capy
 * Run tests - 'rake'
 * If you have not published with 'gem' before, run 'gem push' to enter your credentials (ignore failed publish error at the end)
 * Bump version - manually update file in lib/version.rb
+* Update the CHANGES[https://github.com/bbc-frameworks/frameworks-capybara/blob/master/CHANGES] log (see file for convention).
 * Run 'bundle install --binstubs --path vendor/to' bundle pick up new version in Gemfile
 * Commit 'Gemfile.lock' changes
 * Release - 'rake release'
