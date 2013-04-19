@@ -1,3 +1,6 @@
+0.2.24
+Added FW_BBC_DOMAIN param in order to set the top level domain used for requests.
+
 0.2.23
 Updated capybara-mechanize patch to send referer header.
 
