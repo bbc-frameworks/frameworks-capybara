@@ -1,3 +1,6 @@
+0.2.25
+Modified cucumber html report monkey patch to work with cucumber >= 1.3.0
+
 0.2.24
 Added FW_BBC_DOMAIN param in order to set the top level domain used for requests.
 

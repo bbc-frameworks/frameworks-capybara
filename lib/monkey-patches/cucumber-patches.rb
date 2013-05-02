@@ -7,7 +7,11 @@ module Cucumber
         @project_name = ENV['PROJECT_NAME'] || ''
         unless @project_name.empty? then @project_name += ' - ' end
 
-        @step_count = get_step_count(features)
+        if Cucumber::Ast::Feature.method_defined?(:step_count)
+          @step_count = features.step_count # cucumber >=1.3.0
+        else
+          @step_count = get_step_count(features) # cucumber <1.3.0
+        end
 
         # <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
         @builder.declare!(
