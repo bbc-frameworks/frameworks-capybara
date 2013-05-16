@@ -1,4 +1,4 @@
-0.2.26
+0.2.27
 Can now specify arguments passed to the browser via the BROWSER_CLI_ARGS environment variable. 
 
 0.2.25
