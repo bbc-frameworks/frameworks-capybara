@@ -25,7 +25,9 @@ class CapybaraSetup
       :proxy_on => ENV['PROXY_ON'],
       :url => ENV['REMOTE_URL'],
       :chrome_switches => ENV['CHROME_SWITCHES'],
-      :firefox_prefs => ENV['FIREFOX_PREFS']}
+      :firefox_prefs => ENV['FIREFOX_PREFS'],
+      :args => ENV['BROWSER_CLI_ARGS']
+    }
 
     selenium_remote_opts = {:platform => ENV['PLATFORM'],
       :browser_name => ENV['REMOTE_BROWSER'],
