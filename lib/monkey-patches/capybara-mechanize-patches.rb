@@ -40,12 +40,14 @@ class Capybara::Mechanize::Driver
     browser.agent.cookie_jar.jar.each do |domain|
       domain[1].each do |path|
         path[1].each do |cookie|
+          
           cookies.push({
             :name => cookie[1].name,
             :value => cookie[1].value,
             :domain => cookie[1].domain,
             :secure => cookie[1].secure,
             :expires => cookie[1].expires,
+            :httponly => cookie[1].httponly,
             :path => cookie[1].path
           })
         end
