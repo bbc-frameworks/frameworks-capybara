@@ -4,9 +4,9 @@ require 'mechanize'
 #we check after response and it may be the last response we need it to clear here.
 class Mechanize::CookieJar
   alias_method :old_add, :add
-  def add(uri, cookie)
+  def add(*args)
     cleanup
-    old_add(uri, cookie)
+    old_add(*args)
   end
 end
 #This patch may still be required, think it is only not needed now because we don't run
