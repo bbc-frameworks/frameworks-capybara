@@ -82,14 +82,20 @@ class Capybara::Mechanize::Driver
     end
   end
 
-  FakeURI = Struct.new(:host)
   def add_cookie(attribs)
-    c = Mechanize::Cookie.new(attribs[:name],attribs[:value])
-    # remember: mechanize always removes leading '.' from domains
-    c.domain = attribs[:domain]
-    c.path = '/'
-    c.expires = attribs[:expires]
-    c.secure = attribs[:secure]
-    browser.agent.cookie_jar.add(FakeURI.new(c.domain),c)
+    
+    cookie = HTTP::Cookie.new(
+      attribs[:name],
+      attribs[:value],
+      :domain => attribs[:domain],
+      :for_domain => true,
+      :path => '/',
+      :expires => attribs[:expires],
+      :secure => attribs[:secure],
+      :httponly => attribs[:httponly]
+    )
+
+    browser.agent.cookie_jar.add(cookie)
+
   end
 end
