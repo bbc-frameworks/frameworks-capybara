@@ -1,3 +1,6 @@
+0.2.29
+Updated add_cookie patch to use new http_cookie API, following Mechanize changes (see http://bit.ly/12Do1l7)
+
 0.2.28
 Updated Mechanize::CookieJar add patch to work with latest capybara-mechanize.
 Added support for httpOnly cookie flag to capybara mechanize patch
