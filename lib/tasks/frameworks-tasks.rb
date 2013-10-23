@@ -24,7 +24,7 @@ class RakeHelpers
       f =  File.open('config/cucumber.yml', 'r')
       linenum = 0
       @profiles = {}
-      f.read.each do |line|
+      f.readlines.each do |line|
         line.scan(/.*?: /) do |match|
           linenum += 1
           puts color(linenum.to_s + '. ', :color => :yellow) + color(match.gsub(':',''), :color => :green)

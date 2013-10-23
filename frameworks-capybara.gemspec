@@ -20,6 +20,8 @@ Gem::Specification.new do |s|
 
   s.files         = `git ls-files`.split("\n")
 
+  s.add_runtime_dependency("nokogiri", ["~>1.5.10"])
+  s.add_runtime_dependency("rubyzip", ["~>0.9.9"])
   s.add_runtime_dependency("capybara", ["~>1.1.2"])
   s.add_runtime_dependency("capybara-mechanize", [">=0.3.0"])
   s.add_runtime_dependency("json")

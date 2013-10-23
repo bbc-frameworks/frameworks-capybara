@@ -1,3 +1,6 @@
+0.2.30
+Fixed rake profiles listings to work with Ruby 1.9+
+
 0.2.29
 Updated add_cookie patch to use new http_cookie API, following Mechanize changes (see http://bit.ly/12Do1l7)
 
