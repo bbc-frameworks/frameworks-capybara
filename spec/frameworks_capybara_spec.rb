@@ -544,11 +544,9 @@ describe CapybaraSetup do
             secmod_data = write_random_data(@secmod_db)
 
             setup = CapybaraSetup.new
-            result = nil
-            setup.instance_exec(profile, @cert_dir, result) { |profile, certificate_path, result|
-              result = update_firefox_profile_with_certificates(profile, certificate_path) 
+            result = setup.instance_exec(profile, @cert_dir) { |profile, certificate_path|
+              update_firefox_profile_with_certificates(profile, certificate_path) 
             }
-
             profile_path = result.layout_on_disk
             compare_file_data(profile_path, 'cert8.db', cert8_data)
             compare_file_data(profile_path, 'key3.db', key3_data)
@@ -568,11 +566,9 @@ describe CapybaraSetup do
             secmod_data = write_random_data(@secmod_db)
 
             setup = CapybaraSetup.new
-            result = nil
-            setup.instance_exec(profile, @cert_dir, cert_prefix, result) { |profile, certificate_path, certificate_prefix, result|
-              result = update_firefox_profile_with_certificates(profile, certificate_path, certificate_prefix) 
+            result = setup.instance_exec(profile, @cert_dir, cert_prefix) { |profile, certificate_path, certificate_prefix, result|
+              update_firefox_profile_with_certificates(profile, certificate_path, certificate_prefix) 
             }
-
             profile_path = result.layout_on_disk
             compare_file_data(profile_path, 'cert8.db', cert8_data)
             compare_file_data(profile_path, 'key3.db', key3_data)

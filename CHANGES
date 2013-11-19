@@ -1,3 +1,6 @@
+0.2.32
+Fix Ruby 1.9 RSpec test failures introduced in release 0.2.31
+
 0.2.31
 Added Firefox profile certificate handling via the FIREFOX_CERT_PATH and FIREFOX_CERT_PREFIX variables.
 
