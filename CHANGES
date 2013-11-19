@@ -1,3 +1,6 @@
+0.2.31
+Added Firefox profile certificate handling via the FIREFOX_CERT_PATH and FIREFOX_CERT_PREFIX variables.
+
 0.2.30
 Fixed rake profiles listings to work with Ruby 1.9+
 

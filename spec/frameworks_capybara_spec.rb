@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'securerandom'
 ##
 #Monkey Patch
 #This is required because Capybara has module methods (singletons) which create
@@ -446,6 +447,138 @@ describe CapybaraSetup do
             Capybara.delete_session
             Capybara.current_session.driver.options[:proxy].should == 'example.cache.co.uk:80'
           end
+        end
+
+        context "integration tests for update_firefox_profile_with_certificates() method" do
+          before do
+            def write_random_data(file_path) 
+              file_data = SecureRandom.hex
+              File.open(file_path, "w") { |a_file|
+                a_file.write(file_data)
+              }
+              file_data
+            end
+
+            def compare_file_data(profile_path, file_name, expected_data)
+              profile_file = profile_path + File::SEPARATOR + file_name
+              actual_data = nil
+              File.open(profile_file, "r") { |a_file|
+                actual_data = a_file.read
+              }
+              expected_data.should == actual_data 
+            end
+
+            ENV['BROWSER'] = 'firefox'
+            ENV['ENVIRONMENT'] = 'test'
+            ENV['HTTP_PROXY'] = 'http://example.cache.co.uk:80'
+            @cert_dir = Dir.mktmpdir
+            @cert8_db = @cert_dir + File::SEPARATOR + 'cert8.db'
+            @key3_db = @cert_dir + File::SEPARATOR + 'key3.db'
+            @secmod_db = @cert_dir + File::SEPARATOR + 'secmod.db'
+          end
+
+          after do
+            FileUtils.remove_entry @cert_dir
+          end
+
+          it "should raise an exception if the cert8.db file is missing in the source directory" do
+            profile = Selenium::WebDriver::Firefox::Profile.new
+
+            key3_data = write_random_data(@key3_db)
+            secmod_data = write_random_data(@secmod_db)
+           
+            an_exception = nil
+            begin 
+              CapybaraSetup.new.instance_exec(profile, @cert_dir) { |profile, certificate_path|
+                update_firefox_profile_with_certificates(profile, certificate_path) 
+              }
+            rescue RuntimeError => e
+              an_exception = e
+            end
+
+            an_exception.should_not be_nil
+          end
+
+          it "should raise an exception if the key3.db file is missing in the source directory" do
+            profile = Selenium::WebDriver::Firefox::Profile.new
+
+            cert8_data = write_random_data(@cert8_db)
+            secmod_data = write_random_data(@secmod_db)
+           
+            an_exception = nil
+            begin 
+              CapybaraSetup.new.instance_exec(profile, @cert_dir) { |profile, certificate_path|
+                update_firefox_profile_with_certificates(profile, certificate_path) 
+              }
+            rescue RuntimeError => e
+              an_exception = e
+            end
+
+            an_exception.should_not be_nil
+          end
+          
+          it "should raise an exception if the secmod.db file is missing in the source directory" do
+            profile = Selenium::WebDriver::Firefox::Profile.new
+
+            cert8_data = write_random_data(@cert8_db)
+            key3_data = write_random_data(@key3_db)
+  
+            an_exception = nil
+            begin 
+              CapybaraSetup.new.instance_exec(profile, @cert_dir) { |profile, certificate_path|
+                update_firefox_profile_with_certificates(profile, certificate_path) 
+              }
+            rescue RuntimeError => e
+              an_exception = e
+            end
+
+            an_exception.should_not be_nil
+          end
+
+          it "should update a firefox profile with valid references to certificate db files" do
+       
+            profile = Selenium::WebDriver::Firefox::Profile.new
+
+            cert8_data = write_random_data(@cert8_db)
+            key3_data = write_random_data(@key3_db)
+            secmod_data = write_random_data(@secmod_db)
+
+            setup = CapybaraSetup.new
+            result = nil
+            setup.instance_exec(profile, @cert_dir, result) { |profile, certificate_path, result|
+              result = update_firefox_profile_with_certificates(profile, certificate_path) 
+            }
+
+            profile_path = result.layout_on_disk
+            compare_file_data(profile_path, 'cert8.db', cert8_data)
+            compare_file_data(profile_path, 'key3.db', key3_data)
+            compare_file_data(profile_path, 'secmod.db', secmod_data)
+          end
+
+          it "should update a firefox profile with references to certificate db files with prefixes" do
+       
+            profile = Selenium::WebDriver::Firefox::Profile.new
+            cert_prefix = 'a'
+            @cert8_db = @cert_dir + File::SEPARATOR + cert_prefix + 'cert8.db'
+            @key3_db = @cert_dir + File::SEPARATOR + cert_prefix + 'key3.db'
+            @secmod_db = @cert_dir + File::SEPARATOR + cert_prefix + 'secmod.db'
+ 
+            cert8_data = write_random_data(@cert8_db)
+            key3_data = write_random_data(@key3_db)
+            secmod_data = write_random_data(@secmod_db)
+
+            setup = CapybaraSetup.new
+            result = nil
+            setup.instance_exec(profile, @cert_dir, cert_prefix, result) { |profile, certificate_path, certificate_prefix, result|
+              result = update_firefox_profile_with_certificates(profile, certificate_path, certificate_prefix) 
+            }
+
+            profile_path = result.layout_on_disk
+            compare_file_data(profile_path, 'cert8.db', cert8_data)
+            compare_file_data(profile_path, 'key3.db', key3_data)
+            compare_file_data(profile_path, 'secmod.db', secmod_data)
+          end
+
         end
 
       end

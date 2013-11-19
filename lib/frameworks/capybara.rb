@@ -32,10 +32,14 @@ class CapybaraSetup
     selenium_remote_opts = {:platform => ENV['PLATFORM'],
       :browser_name => ENV['REMOTE_BROWSER'],
       :version => ENV['REMOTE_BROWSER_VERSION'],
-      :url => ENV['REMOTE_URL']}
+      :url => ENV['REMOTE_URL']
+    }
 
     custom_opts = {:job_name => ENV['SAUCE_JOB_NAME'],
-      :max_duration => ENV['SAUCE_MAX_DURATION']}
+      :max_duration => ENV['SAUCE_MAX_DURATION'],
+      :firefox_cert_path => ENV['FIREFOX_CERT_PATH'],
+      :firefox_cert_prefix => ENV['FIREFOX_CERT_PREFIX']
+    }
 
     validate_env_vars(capybara_opts.merge(selenium_remote_opts)) #validate environment variables set using cucumber.yml or passed via command line
 
@@ -80,11 +84,39 @@ class CapybaraSetup
     end
   end
 
+  # WARNING: This modifies the Firefox profile passed in the parameters
+  def update_firefox_profile_with_certificates(profile, certificate_path, certificate_prefix = '')
+    profile_path = profile.layout_on_disk
+    
+    # Create links to the certificate files in the profile directory
+    ['cert8.db', 'key3.db', 'secmod.db'].each do |cert_file|
+      source_file = "#{certificate_prefix}#{cert_file}"
+      source_path = "#{certificate_path}" + File::SEPARATOR + source_file
+      dest_path = profile_path + File::SEPARATOR + cert_file
+      if(! File.exist?(source_path))
+        raise "Firefox cert db file #{source_path} does not exist."
+      end
+      FileUtils.cp(source_path, dest_path)
+    end 
+
+    # Force the certificates to get pulled into the profile
+    profile = Selenium::WebDriver::Firefox::Profile.new(profile_path)
+
+    # Avoid Firefox certificate alerts
+    profile["security.default_personal_cert"] = 'Select Automatically'
+    
+    return profile
+  end
+
   def register_selenium_driver(opts,remote_opts,custom_opts)
     Capybara.register_driver :selenium do |app|
 
       if opts[:firefox_prefs] || opts[:profile]
         opts[:profile] = create_profile(opts[:profile], opts[:firefox_prefs])
+
+        if custom_opts[:firefox_cert_path]
+          opts[:profile] = update_firefox_profile_with_certificates(opts[:profile], custom_opts[:firefox_cert_path], custom_opts[:firefox_cert_prefix])
+        end
       end
 
       opts[:switches] = [opts.delete(:chrome_switches)] if(opts[:chrome_switches])
