@@ -20,11 +20,20 @@ Gem::Specification.new do |s|
 
   s.files         = `git ls-files`.split("\n")
 
-  s.add_runtime_dependency("mime-types", ["~>1.25"])
-  s.add_runtime_dependency("nokogiri", ["~>1.5.10"])
-  s.add_runtime_dependency("rubyzip", ["~>0.9.9"])
-  s.add_runtime_dependency("capybara", ["~>1.1.2"])
-  s.add_runtime_dependency("capybara-mechanize", [">=0.3.0"])
+  if RUBY_VERSION < "1.9"
+    s.add_runtime_dependency("mime-types", ["~>1.25"])
+    s.add_runtime_dependency("nokogiri", ["~>1.5.10"])
+    s.add_runtime_dependency("rubyzip", ["~>0.9.9"])
+  else
+    s.add_runtime_dependency("mime-types")
+    s.add_runtime_dependency("nokogiri")
+    s.add_runtime_dependency("rubyzip")
+    s.add_runtime_dependency("zip")
+  end
+  s.add_runtime_dependency("selenium-webdriver")
+  s.add_runtime_dependency("capybara", ["~>1.1.2"])  
+  s.add_runtime_dependency("mechanize", ["2.7.2"])
+  s.add_runtime_dependency("capybara-mechanize", [">=0.3.0"], ["<1.0.0"])
   s.add_runtime_dependency("json")
   s.add_runtime_dependency("headless")
   s.add_runtime_dependency("capybara-celerity")

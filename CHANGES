@@ -1,3 +1,6 @@
+0.2.33
+Specify different runtime dependencies depending on the ruby version.
+
 0.2.32
 Fix Ruby 1.9 RSpec test failures introduced in release 0.2.31
 
