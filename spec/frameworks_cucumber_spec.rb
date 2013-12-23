@@ -215,8 +215,18 @@ describe Frameworks::EnvHelper do
 #don't want to push proxy addr online
     it "should be able to validate xhtml online" do
       @proxy_host = ''
+      @proxy_port = ''
       xhtml = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"><head><title>a</title></head><body><p>a</p></body></html>'
       validate_online(xhtml)
+    end
+
+    it "should be able to report errors for invalid markup" do
+      @proxy_host = ''
+      @proxy_port = ''
+      xhtml = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"><head><nosuchelement><title>a</title></head><body><p>a</p></body></html>'
+      expect {
+        validate_online(xhtml)
+      }.to raise_error(RuntimeError)
     end
 =end
   end

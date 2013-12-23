@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    frameworks-capybara (0.2.33)
+    frameworks-capybara (0.2.34)
       capybara (~> 1.1.2)
       capybara-celerity
       capybara-mechanize (>= 0.3.0, < 1.0.0)
@@ -65,7 +65,7 @@ GEM
     multi_test (0.0.2)
     net-http-digest_auth (1.4)
     net-http-persistent (2.9)
-    nokogiri (1.5.10)
+    nokogiri (1.5.11)
     ntlm-http (0.1.1)
     rack (1.5.2)
     rack-test (0.6.2)

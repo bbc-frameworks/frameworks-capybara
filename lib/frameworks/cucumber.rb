@@ -84,11 +84,11 @@ module Frameworks
           results.errors.each do |err|
             puts err.to_s
           end
-          raise "W3C Validation of " + current_url + " failed."
+          raise "W3C Validation failed."
         end
 
-      rescue Net::HTTPFatalError => e
-        puts "WARNING - OUTGOING NETWORK ERROR FROM FORGE TO W3C - Validation Not Performed"
+      rescue SystemCallError => e
+        puts "System error whilst performing request to W3C: #{e}"  
       end
     end
 
