@@ -1,3 +1,8 @@
+1.0.0
+Base required Ruby version now 1.9.3 or later
+Bumped gem dependency versions
+Updated Travis build lists to include Ruby 2.0, 2.1
+
 0.2.34
 Improved validate_online method to disregard system/OS errors.
 
