@@ -43,7 +43,11 @@ class CapybaraSetup
 
     validate_env_vars(capybara_opts.merge(selenium_remote_opts)) #validate environment variables set using cucumber.yml or passed via command line
 
-    @proxy_host =  capybara_opts[:proxy].gsub(/http:\/\//,'').gsub(/:80.*/,'') unless capybara_opts[:proxy].nil?
+    if(capybara_opts[:proxy])
+      proxy_uri = URI(capybara_opts[:proxy])
+      @proxy_host = proxy_uri.host
+      @proxy_port = proxy_uri.port
+    end
     capybara_opts[:browser] = capybara_opts[:browser].intern #update :browser value to be a symbol, required for Selenium
     selenium_remote_opts[:browser_name] = selenium_remote_opts[:browser_name].intern if selenium_remote_opts[:browser_name]#update :browser value to be a symbol, required for Selenium
 
@@ -157,12 +161,14 @@ class CapybaraSetup
       profile.native_events = true
     elsif(profile_name == 'BBC_INTERNAL')
       profile = Selenium::WebDriver::Firefox::Profile.new
-      profile["network.proxy.type"] = 1
-      profile["network.proxy.no_proxies_on"] = "*.sandbox.dev.bbc.co.uk,*.sandbox.bbc.co.uk"
-      profile["network.proxy.http"] = @proxy_host 
-      profile["network.proxy.ssl"] = @proxy_host 
-      profile["network.proxy.http_port"] = 80
-      profile["network.proxy.ssl_port"] = 80
+      if(@proxy_host && @proxy_port) 
+        profile["network.proxy.type"] = 1
+        profile["network.proxy.no_proxies_on"] = "*.sandbox.dev.bbc.co.uk,*.sandbox.bbc.co.uk"
+        profile["network.proxy.http"] = @proxy_host 
+        profile["network.proxy.ssl"] = @proxy_host 
+        profile["network.proxy.http_port"] = @proxy_port
+        profile["network.proxy.ssl_port"] = @proxy_port
+      end
       profile.native_events = true
     else
       profile = Selenium::WebDriver::Firefox::Profile.from_name profile_name

@@ -579,7 +579,49 @@ describe CapybaraSetup do
 
       end
 
-    
+      describe "The BBC-INTERNAL firefox profile should be set up with the correct proxy settings whether working behind a firewall or not" do
+
+        context "working without a proxy" do
+          before do
+            ENV['BROWSER'] = 'firefox'
+            ENV['ENVIRONMENT'] = 'test'
+          end
+
+          it "should create the firefox profile settings correctly" do
+            setup = CapybaraSetup.new
+            profile = setup.instance_exec('BBC_INTERNAL', nil) { |profile_name, additional_prefs|
+              create_profile(profile_name, additional_prefs)
+            }
+
+            profile.instance_variable_get('@additional_prefs')['network.proxy.type'].should be_nil
+            profile.instance_variable_get('@additional_prefs')['network.proxy.http'].should be_nil
+            profile.instance_variable_get('@additional_prefs')['network.proxy.http_port'].should be_nil
+          end
+        end
+
+        context "working behind a proxy" do
+          before do
+            @proxy_host = 'example.cache.co.uk'
+            @proxy_port = 6789
+            ENV['BROWSER'] = 'firefox'
+            ENV['ENVIRONMENT'] = 'test'
+            ENV['HTTP_PROXY'] = "http://#{@proxy_host}:#{@proxy_port}"
+          end
+
+          it "should create the firefox profile correctly" do
+            setup = CapybaraSetup.new
+            profile = setup.instance_exec('BBC_INTERNAL', nil) { |profile_name, additional_prefs|
+              create_profile(profile_name, additional_prefs)
+            }
+
+            profile.instance_variable_get('@additional_prefs')['network.proxy.type'].should == 1    
+            profile.instance_variable_get('@additional_prefs')['network.proxy.http'].should == @proxy_host
+            profile.instance_variable_get('@additional_prefs')['network.proxy.http_port'].should == @proxy_port
+          end
+        end
+
+      end
+
     end
   end
 end
