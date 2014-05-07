@@ -579,9 +579,9 @@ describe CapybaraSetup do
 
       end
 
-      describe "The BBC-INTERNAL firefox profile should be set up with the correct proxy settings whether working behind a firewall or not" do
+      describe "The BBC-INTERNAL firefox profile should be set up with the correct proxy settings whether working behind a proxy or not" do
 
-        context "working without a proxy" do
+        context "no proxy settings provided" do
           before do
             ENV['BROWSER'] = 'firefox'
             ENV['ENVIRONMENT'] = 'test'
@@ -599,7 +599,7 @@ describe CapybaraSetup do
           end
         end
 
-        context "working behind a proxy" do
+        context "proxy settings provided" do
           before do
             @proxy_host = 'example.cache.co.uk'
             @proxy_port = 6789
@@ -619,9 +619,7 @@ describe CapybaraSetup do
             profile.instance_variable_get('@additional_prefs')['network.proxy.http_port'].should == @proxy_port
           end
         end
-
       end
-
     end
   end
 end
