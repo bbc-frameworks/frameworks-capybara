@@ -20,8 +20,8 @@ shared_examples_for "Selenium Driver Options Array" do
     #TODO: Test for nil elements in options - there shouldn't be any that we insert
     #i.e. anything in our ENV options should not end up being nil in Selenium
     Capybara.current_session.driver.options[:environment].should == nil
-    Capybara.current_session.driver.options[:proxy].should == nil
-    Capybara.current_session.driver.options[:proxy_on].should == nil
+    Capybara.current_session.driver.options[:http_proxy].should == nil
+    Capybara.current_session.driver.options[:webdriver_proxy_on].should == nil
     Capybara.current_session.driver.options[:platform].should == nil
     Capybara.current_session.driver.options[:browser_name].should == nil
     Capybara.current_session.driver.options[:version].should == nil
@@ -430,7 +430,7 @@ describe CapybaraSetup do
             CapybaraSetup.new.driver.should == :celerity
             Capybara.current_session.driver.should be_a_kind_of Capybara::Driver::Celerity
             Capybara.current_session.driver.options[:javascript_enabled].should == true
-            Capybara.current_session.driver.options[:proxy].should == 'example.cache.co.uk:80'
+            Capybara.current_session.driver.options[:http_proxy].should == 'example.cache.co.uk:80'
             Capybara.current_session.driver.options[:environment].should == nil
             Capybara.current_session.driver.options[:browser].should == nil
           end
@@ -445,7 +445,7 @@ describe CapybaraSetup do
 
           it "should cope with http_proxy and HTTP_PROXY " do
             Capybara.delete_session
-            Capybara.current_session.driver.options[:proxy].should == 'example.cache.co.uk:80'
+            Capybara.current_session.driver.options[:http_proxy].should == 'example.cache.co.uk:80'
           end
         end
 

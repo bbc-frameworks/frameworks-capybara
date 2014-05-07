@@ -18,11 +18,11 @@ class CapybaraSetup
     http_proxy = ENV['HTTP_PROXY'] || ENV['http_proxy']
 
     capybara_opts = {:environment => ENV['ENVIRONMENT'],
-      :proxy => http_proxy,
+      :http_proxy => http_proxy,
       :profile => ENV['FIREFOX_PROFILE'],
       :browser => ENV['BROWSER'],
       :javascript_enabled => ENV['CELERITY_JS_ENABLED'],
-      :proxy_on => ENV['PROXY_ON'],
+      :webdriver_proxy_on => ENV['PROXY_ON'],
       :url => ENV['REMOTE_URL'],
       :chrome_switches => ENV['CHROME_SWITCHES'],
       :firefox_prefs => ENV['FIREFOX_PREFS'],
@@ -43,8 +43,8 @@ class CapybaraSetup
 
     validate_env_vars(capybara_opts.merge(selenium_remote_opts)) #validate environment variables set using cucumber.yml or passed via command line
 
-    if(capybara_opts[:proxy])
-      proxy_uri = URI(capybara_opts[:proxy])
+    if(capybara_opts[:http_proxy])
+      proxy_uri = URI(capybara_opts[:http_proxy])
       @proxy_host = proxy_uri.host
       @proxy_port = proxy_uri.port
     end
@@ -139,7 +139,7 @@ class CapybaraSetup
         opts[:http_client] = client
       end
 
-      clean_opts(opts, :proxy, :proxy_on, :firefox_prefs)
+      clean_opts(opts, :http_proxy, :webdriver_proxy_on, :firefox_prefs)
       Capybara::Selenium::Driver.new(app,opts)
     end   
     :selenium
@@ -151,7 +151,7 @@ class CapybaraSetup
   end
 
   def set_client_proxy(opts)
-    Selenium::WebDriver::Proxy.new(:http => opts[:proxy]) if opts[:proxy] && opts[:proxy_on] != 'false' #set proxy on client connection if required, note you may use ENV['HTTP_PROXY'] for setting in browser (ff profile) but not for client conection, hence allow for PROXY_ON=false
+    Selenium::WebDriver::Proxy.new(:http => opts[:http_proxy]) if opts[:http_proxy] && opts[:webdriver_proxy_on] != 'false' #set proxy on client connection if required, note you may use ENV['HTTP_PROXY'] for setting in browser (ff profile) but not for client conection, hence allow for PROXY_ON=false
   end
 
   def create_profile(profile_name = nil, additional_prefs = nil)
@@ -188,7 +188,7 @@ class CapybaraSetup
     Capybara.register_driver :celerity do |app|
       opts.delete :browser #delete browser from options as value with  be 'headless'
       opts[:javascript_enabled] == 'true' ? opts[:javascript_enabled] = true : opts[:javascript_enabled] = false
-      opts[:proxy] = "#{@proxy_host}:80" unless opts[:proxy].nil?
+      opts[:http_proxy] = "#{@proxy_host}:80" unless opts[:http_proxy].nil?
       Capybara::Driver::Celerity.new(app,opts)
     end
     :celerity
