@@ -15,8 +15,6 @@ Below are the current drivers that can be registered:
 
 * Selenium-Webdriver (Selenium2) - REMOTE: This can be used to drive 'in-browser' tests on a remote macine, this could be another macine on your local network which is running a Selenium-Webdriver server or indeed a cloud service such as 'Sauce Labs'
 
-* Celerity: This can be used to drive 'headless' tests.  Celerity is a ruby wrapper for HTMLUnit and as such provides support for Javascript, though this is commonly quite fragile.
-
 * Mechanize-Caybara: This can be used, by setting BROWSER=mechanize
 
 How to use this gem in your project:
@@ -40,7 +38,6 @@ The following environment variables can be set to configure your tests:
   FIREFOX_CERT_PATH - specify optional directory containing Firefox profile certificate (.db) files
   FIREFOX_CERT_PREFIX - specify optional prefix for locating Firefox profile certificate files (e.g. <prefix>-<file>.db)
   CREATE_NEW_FF_PROFILE - create a new Firefox profile with name provided by FIREFOX_PROFILE 
-  CELERITY_JS_ENABLED (string - 'true', 'false') - determines whether Celerity (HTMLUnit) attempts to execute javascript 
   XVFB - (string - 'true', 'false') - determines whether XVFB is used to run browser (i.e. headless Firefox on *nix platform)
   FW_CERT_LOCATION - path to client certificate (combined pem)
   CHROME_SWITCHES - pass in any allowed switches for the Selenium chrome driver (http://peter.sh/experiments/chromium-command-line-switches/) e.g. CHROME_SWITCHES="--user-agent=Mozilla/5.0 (PLAYSTATION 3; 3.55)"

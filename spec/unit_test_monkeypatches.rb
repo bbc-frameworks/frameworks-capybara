@@ -1,3 +1,6 @@
+# This patch overrides the normal mechanism for searching for Firefox profiles
+# causing named profiles to be created in the local directory (rather than be referenced)
+# for unit/integration testing purposes
 module Selenium
   module WebDriver
     module Firefox

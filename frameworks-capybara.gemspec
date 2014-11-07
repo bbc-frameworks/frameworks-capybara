@@ -15,23 +15,18 @@ Gem::Specification.new do |s|
   s.files = Dir.glob("{features,lib,bin,config,vendor,.bundle}/**/*") +  %w(Gemfile Gemfile.lock)
 
   s.require_paths = ["lib"]
-  s.rubygems_version = "1.3.6"
+  s.rubygems_version = "2.4.2"
   s.summary = "Gem to ease the pain of managing capybara driver config and provide a home for common utils and patches"
 
   s.files         = `git ls-files`.split("\n")
 
-  s.add_runtime_dependency("mime-types")
-  s.add_runtime_dependency("nokogiri")
-  s.add_runtime_dependency("rubyzip")
   s.add_runtime_dependency("selenium-webdriver")
-  s.add_runtime_dependency("capybara", ["~>1.1.2"])  
-  s.add_runtime_dependency("mechanize", ["2.7.2"])
-  s.add_runtime_dependency("capybara-mechanize", [">=0.3.0"], ["<1.0.0"])
+  s.add_runtime_dependency("capybara")  
+  s.add_runtime_dependency("mechanize")
+  s.add_runtime_dependency("capybara-mechanize")
   s.add_runtime_dependency("json")
-  s.add_runtime_dependency("headless")
-  s.add_runtime_dependency("capybara-celerity")
-  s.add_runtime_dependency("w3c_validators")
-  s.add_runtime_dependency("cucumber", [">= 0.10.5"])
+  s.add_runtime_dependency("cucumber")
+  s.add_runtime_dependency("w3c_validators")  
   s.add_development_dependency("rake")
-  s.add_development_dependency("rspec", [">=1.0.0"])
+  s.add_development_dependency("rspec")
 end
