@@ -1,3 +1,9 @@
+2.0.0
+Upgraded to Capybara 2.0+ and the latest versions of remaining gems.
+Removed monkey patches, reclassifying some as "extensions".
+Disabled the setting of SauceLabs custom capabilities.
+Dropped celerity driver support.
+
 1.1.1
 Handover release, no code changes
 

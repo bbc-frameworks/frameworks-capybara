@@ -247,8 +247,8 @@ describe CapybaraSetup do
           Capybara.current_session.driver.options[:http_client].should be_a_kind_of Selenium::WebDriver::Remote::Http::Default 
           Capybara.current_session.driver.options[:http_client].instance_variable_get(:@proxy).should == nil
           Capybara.current_session.driver.options[:desired_capabilities].should be_a_kind_of Selenium::WebDriver::Remote::Capabilities 
-          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@custom_capabilities)[:'job-name'].should == 'frameworks-unamed-job' 
-          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@custom_capabilities)[:'max-duration'].should == 1800 
+          #Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@custom_capabilities)[:'job-name'].should == 'frameworks-unamed-job' 
+          #Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@custom_capabilities)[:'max-duration'].should == 1800 
           Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:browser_name].should == :firefox
           Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:version].should == '4' 
           Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:platform].should == 'windows'
@@ -358,8 +358,8 @@ describe CapybaraSetup do
           Capybara.current_session.driver.options[:http_client].should be_a_kind_of Selenium::WebDriver::Remote::Http::Default 
           Capybara.current_session.driver.options[:http_client].instance_variable_get(:@proxy).should == nil
           Capybara.current_session.driver.options[:desired_capabilities].should be_a_kind_of Selenium::WebDriver::Remote::Capabilities 
-          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@custom_capabilities)[:'job-name'].should == 'myjobname' 
-          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@custom_capabilities)[:'max-duration'].should == 2000 
+          #Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@custom_capabilities)[:'job-name'].should == 'myjobname' 
+          #Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@custom_capabilities)[:'max-duration'].should == 2000 
           Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:browser_name].should == :firefox
           Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].should be_a_kind_of Selenium::WebDriver::Firefox::Profile
           Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].instance_variable_get(:@model).should include 'default'
@@ -401,53 +401,7 @@ describe CapybaraSetup do
         end
       end
 
-      describe "should allow Celerity driver to be created" do
-
-        context "with minimal Celerity driver" do
-          before do
-            ENV['BROWSER'] = 'headless'
-          end
-
-          it "should be initialized correctly" do
-            Capybara.delete_session
-            CapybaraSetup.new.driver.should == :celerity
-            Capybara.current_session.driver.should be_a_kind_of Capybara::Driver::Celerity
-            Capybara.current_session.driver.options[:javascript_enabled].should == false
-            Capybara.current_session.driver.options[:environment].should == nil
-            Capybara.current_session.driver.options[:browser].should == nil
-          end
-        end
-
-        context "with maximal Celerity driver" do
-          before do
-            ENV['BROWSER'] = 'headless'
-            ENV['CELERITY_JS_ENABLED'] = 'true'
-            ENV['HTTP_PROXY'] = 'http://example.cache.co.uk:80'
-          end
-
-          it "should be initialized correctly" do
-            Capybara.delete_session
-            CapybaraSetup.new.driver.should == :celerity
-            Capybara.current_session.driver.should be_a_kind_of Capybara::Driver::Celerity
-            Capybara.current_session.driver.options[:javascript_enabled].should == true
-            Capybara.current_session.driver.options[:http_proxy].should == 'example.cache.co.uk:80'
-            Capybara.current_session.driver.options[:environment].should == nil
-            Capybara.current_session.driver.options[:browser].should == nil
-          end
-        end
-
-        context "with maximal Celerity driver" do
-          before do
-            ENV['BROWSER'] = 'headless'
-            ENV['CELERITY_JS_ENABLED'] = 'true'
-            ENV['http_proxy'] = 'http://example.cache.co.uk:80'
-          end
-
-          it "should cope with http_proxy and HTTP_PROXY " do
-            Capybara.delete_session
-            Capybara.current_session.driver.options[:http_proxy].should == 'example.cache.co.uk:80'
-          end
-        end
+      describe "should permit certificate files to be incorporated into firefox profiles" do
 
         context "integration tests for update_firefox_profile_with_certificates() method" do
           before do

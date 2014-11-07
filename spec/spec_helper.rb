@@ -13,5 +13,3 @@ Cucumber::RbSupport::RbLanguage.new(Cucumber::Runtime.new) #Need to load Cucumbe
 
 require 'frameworks/capybara'
 require 'frameworks/cucumber'
-require 'monkey-patches/capybara-mechanize-patches'
-require 'unit_test_monkeypatches.rb'

@@ -1,13 +1,9 @@
+require 'capybara'
 require 'capybara/cucumber'
-require 'monkey-patches/webdriver-patches'
-require 'monkey-patches/capybara-patches'
-require 'monkey-patches/capybara-mechanize-patches'
-require 'monkey-patches/mechanize-patches'
-require 'monkey-patches/send-keys'
-require 'monkey-patches/net-http-persistent-patches'
+require 'capybara/mechanize'
+#require 'capybara/mechanize/cucumber' 
 require 'selenium-webdriver'
-require 'capybara/mechanize/cucumber' 
-require 'capybara/celerity'
+require 'extensions/capybara-mechanize-extensions'
 
 class CapybaraSetup
 
@@ -21,7 +17,6 @@ class CapybaraSetup
       :http_proxy => http_proxy,
       :profile => ENV['FIREFOX_PROFILE'],
       :browser => ENV['BROWSER'],
-      :javascript_enabled => ENV['CELERITY_JS_ENABLED'],
       :webdriver_proxy_on => ENV['PROXY_ON'],
       :url => ENV['REMOTE_URL'],
       :chrome_switches => ENV['CHROME_SWITCHES'],
@@ -52,6 +47,7 @@ class CapybaraSetup
     selenium_remote_opts[:browser_name] = selenium_remote_opts[:browser_name].intern if selenium_remote_opts[:browser_name]#update :browser value to be a symbol, required for Selenium
 
     Capybara.run_server = false #Disable rack server
+    Capybara.ignore_hidden_elements = false
 
     [capybara_opts, selenium_remote_opts, custom_opts].each do |opts| #delete nil options and environment (which is only used for validation)
 
@@ -59,8 +55,6 @@ class CapybaraSetup
     end
 
     case capybara_opts[:browser] 
-    when :headless then
-      @driver = register_celerity_driver(capybara_opts)
     when :mechanize then
       @driver = register_mechanize_driver(capybara_opts)
     else
@@ -147,7 +141,8 @@ class CapybaraSetup
 
   def add_custom_caps(caps, custom_opts)
     sauce_time_limit = custom_opts.delete(:max_duration).to_i #note nil.to_i == 0 
-    caps.custom_capabilities({:'job-name' => (custom_opts[:job_name] or 'frameworks-unamed-job'), :'max-duration' => ((sauce_time_limit if sauce_time_limit != 0) or 1800)}) 
+    # This no longer works with the latest selenium-webdriver release
+    #caps.custom_capabilities({:'job-name' => (custom_opts[:job_name] or 'frameworks-unamed-job'), :'max-duration' => ((sauce_time_limit if sauce_time_limit != 0) or 1800)}) 
   end
 
   def set_client_proxy(opts)
@@ -184,17 +179,13 @@ class CapybaraSetup
     profile
   end
 
-  def register_celerity_driver(opts)
-    Capybara.register_driver :celerity do |app|
-      opts.delete :browser #delete browser from options as value with  be 'headless'
-      opts[:javascript_enabled] == 'true' ? opts[:javascript_enabled] = true : opts[:javascript_enabled] = false
-      opts[:http_proxy] = "#{@proxy_host}:80" unless opts[:http_proxy].nil?
-      Capybara::Driver::Celerity.new(app,opts)
-    end
-    :celerity
-  end
-
   def register_mechanize_driver(opts)
+    # Mechanize needs a Rack application: create a dummy one
+    app = Proc.new do |env|
+      ['200', {'Content-Type' => 'text/html'}, ['A barebones rack app.']]
+    end
+    Capybara.app = app 
+    Capybara.run_server = false
     Capybara.register_driver :mechanize do |app|
       Capybara.app_host = "http://www.bbc.co.uk"
       Capybara::Mechanize::Driver.new(app)

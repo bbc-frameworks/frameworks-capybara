@@ -1,17 +1,5 @@
 require 'frameworks/capybara'
 require 'w3c_validators'
-require 'monkey-patches/cucumber-patches'
-
-#This is hackish but means we only run once in cucumber and not every scenario
-if(ENV['XVFB']=='true')
-  puts "You have chosen to use XVFB - ensure you have yum installed Xvfb Xorg and firefox"
-  require 'headless'
-  headless = Headless.new
-  headless.start
-  at_exit do
-    headless.destroy
-  end
-end
 
 module Frameworks
   module EnvHelper
@@ -143,12 +131,8 @@ end #Frameworks
 #Add module into world to ensure visibility of instance variables within Cucumber
 World(Frameworks::EnvHelper)
 
-#Call generate method in Before hook
 Before do
-  #This is ugly but unavoidable since Capybara::RackTest::Driver.reset_host! does @browser = nil and wipes all brower level settings
-  #it was either this or a monkey patch - need to think about pushing a softer reset change to capybara-mechanize to override this
   setup_mechanize(page.driver.browser.agent) if page.driver.class == Capybara::Mechanize::Driver
-
   generate_base_urls
 end
 
