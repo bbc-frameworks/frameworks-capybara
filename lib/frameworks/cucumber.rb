@@ -109,6 +109,17 @@ module Frameworks
       agent.ca_file = ENV['CA_CERT_LOCATION'] if ENV['CA_CERT_LOCATION']
       agent.set_proxy(http_proxy.scan(/http:\/\/(.*):80/)[0][0].to_s,80) if http_proxy && !http_proxy.empty?
 
+      # The above proxy setting ignores any no_proxy variable setting:
+      # added the following to circumvent this
+      if(http_proxy)
+        no_proxy = ENV['NO_PROXY'] || ENV['no_proxy']
+        if(no_proxy)
+          # The no_proxy query string argument must not contain spaces
+          no_proxy_qs = no_proxy.gsub(/[, ]+/,',')
+          agent.agent.http.proxy = URI(http_proxy + '?no_proxy=' + no_proxy_qs)
+        end
+      end
+
       #This is necessary because Mech2 does not ship with root certs like Mech1 did and boxes may not have the OpenSSL set installed
       agent.verify_mode = OpenSSL::SSL::VERIFY_NONE
 

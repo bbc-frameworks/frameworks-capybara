@@ -247,5 +247,33 @@ describe Frameworks::EnvHelper do
       agent.proxy_addr.should == 'mycache.co.uk'
     end
 
+   it "the proxy should be ignored if the no_proxy exclusion is set" do
+      proxy_host = 'mycache.co.uk'
+      proxy_port = '80'
+      proxy_uri = 'http://'  + proxy_host + ':' + proxy_port
+      no_proxy = 'ignore_this_host'
+      ENV['NO_PROXY'] = no_proxy
+      agent = new_mechanize(http_proxy=proxy_uri)
+      expect(agent).to be_a_kind_of Mechanize
+      expect(agent.agent.http.proxy_uri.host).to eq(proxy_host)
+      expect(agent.agent.http.proxy_uri.port).to eq(proxy_port.to_i)
+      no_proxy_array = [ no_proxy ]
+      expect(agent.agent.http.no_proxy).to eq(no_proxy_array)
+    end
+
+    it "the proxy should be ignored if the no_proxy exclusion is set with multiple values" do
+      proxy_host = 'mycache.co.uk'
+      proxy_port = '80'
+      proxy_uri = 'http://'  + proxy_host + ':' + proxy_port
+      no_proxy1 = 'ignore_this_host'
+      no_proxy2 = '.and.this.domain'
+      ENV['NO_PROXY'] = no_proxy1 + ', ' + no_proxy2
+      agent = new_mechanize(http_proxy=proxy_uri)
+      expect(agent).to be_a_kind_of Mechanize
+      expect(agent.agent.http.proxy_uri.host).to eq(proxy_host)
+      expect(agent.agent.http.proxy_uri.port).to eq(proxy_port.to_i)
+      no_proxy_array = [ no_proxy1, no_proxy2 ]
+      expect(agent.agent.http.no_proxy).to eq(no_proxy_array)
+    end
   end
 end
