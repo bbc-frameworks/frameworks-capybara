@@ -1,3 +1,6 @@
+2.1.0
+Added Wait utility class.
+
 2.0.1
 Fixed issue with no_proxy variable not being honoured (Mechanize driver).
 
