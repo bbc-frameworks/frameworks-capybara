@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    frameworks-capybara (2.1.0)
+    frameworks-capybara (2.2.0)
       capybara
       capybara-mechanize
       cucumber
