@@ -1,8 +1,8 @@
 require 'capybara'
 require 'capybara/cucumber'
 require 'capybara/mechanize'
-#require 'capybara/mechanize/cucumber' 
 require 'selenium-webdriver'
+require 'extensions/capybara-extensions'
 require 'extensions/capybara-mechanize-extensions'
 
 class CapybaraSetup
