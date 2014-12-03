@@ -24,16 +24,23 @@ class CapybaraSetup
       :args => ENV['BROWSER_CLI_ARGS']
     }
 
-    selenium_remote_opts = {:platform => ENV['PLATFORM'],
+    selenium_remote_opts = {:os => ENV['PLATFORM'],
+      :os_version => ENV['PLATFORM_VERSION'],
       :browser_name => ENV['REMOTE_BROWSER'],
-      :version => ENV['REMOTE_BROWSER_VERSION'],
+      :browser_version => ENV['REMOTE_BROWSER_VERSION'],
       :url => ENV['REMOTE_URL']
     }
 
     custom_opts = {:job_name => ENV['SAUCE_JOB_NAME'],
       :max_duration => ENV['SAUCE_MAX_DURATION'],
       :firefox_cert_path => ENV['FIREFOX_CERT_PATH'],
-      :firefox_cert_prefix => ENV['FIREFOX_CERT_PREFIX']
+      :firefox_cert_prefix => ENV['FIREFOX_CERT_PREFIX'],
+      :browserstack_build => ENV['BS_BUILD'],
+      :browserstack_debug => ENV['BS_DEBUG'] || 'true', # BrowserStack debug mode on by default
+      :browserstack_device => ENV['BS_DEVICE'],
+      :browserstack_device_orientation => ENV['BS_DEVICE_ORIENTATION'],
+      :browserstack_project => ENV['BS_PROJECT'],
+      :browserstack_resolution => ENV['BS_RESOLUTION']
     }
 
     validate_env_vars(capybara_opts.merge(selenium_remote_opts)) #validate environment variables set using cucumber.yml or passed via command line
@@ -129,6 +136,8 @@ class CapybaraSetup
 
         add_custom_caps(caps, custom_opts) if remote_opts[:url].include? 'saucelabs' #set sauce specific parameters - will this scupper other on sauce remote jobs? 
 
+        add_browserstack_caps(caps, custom_opts) if remote_opts[:url].include? 'browserstack' #set browserstack specific parameters
+
         opts[:desired_capabilities] = caps
         opts[:http_client] = client
       end
@@ -143,6 +152,15 @@ class CapybaraSetup
     sauce_time_limit = custom_opts.delete(:max_duration).to_i #note nil.to_i == 0 
     # This no longer works with the latest selenium-webdriver release
     #caps.custom_capabilities({:'job-name' => (custom_opts[:job_name] or 'frameworks-unamed-job'), :'max-duration' => ((sauce_time_limit if sauce_time_limit != 0) or 1800)}) 
+  end
+
+  def add_browserstack_caps(caps, custom_opts)
+    caps[:'build'] = custom_opts[:browserstack_build] if custom_opts[:browserstack_build]
+    caps[:'browserstack.debug'] = custom_opts[:browserstack_debug] if custom_opts[:browserstack_debug]
+    caps[:'device'] = custom_opts[:browserstack_device] if custom_opts[:browserstack_device]
+    caps[:'deviceOrientation'] = custom_opts[:browserstack_device_orientation] if custom_opts[:browserstack_device_orientation]
+    caps[:'project'] = custom_opts[:browserstack_project] if custom_opts[:browserstack_project]
+    caps[:'resolution'] = custom_opts[:browserstack_resolution] if custom_opts[:browserstack_resolution]
   end
 
   def set_client_proxy(opts)

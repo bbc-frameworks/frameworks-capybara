@@ -29,8 +29,8 @@ The following environment variables can be set to configure your tests:
   BROWSER - this must be one of either 'ie', 'firefox', 'chrome', 'headless', 'remote'
   HTTP_PROXY - url of proxy if required e.g. 'http://proxyhost:80', when running a headless browser this sets the proxy for the browser itself, when running a remote browser this sets the proxy for the client which will connect to the remote selenium server
   PLATFORM - used when specifying remote test on a grid that provides a choice of platforms, this must be one of either 'WINDOWS' or 'LINUX'
+  PLATFORM_VERSION - used to specify the OS version of the specified platform e.g. '7', '8.1'
   REMOTE_BROWSER - used when specifying remote test, must be one of either 'ie', 'firefox', 'chrome', 'headless', 'remote':w
-  
   REMOTE_BROWSER_VERSION - used when specifying remote test on a grid the provides a choice of browser versions for a given browser
   REMOTE_URL - URL of remote Selenium-Webdriver server e.g. http://yourremotehost:4444/wd/hub
   FIREFOX_PROFILE - specify a firefox profile to use when running in-browser tests (local or remote)
@@ -44,6 +44,15 @@ The following environment variables can be set to configure your tests:
   PROJECT_NAME - optional project name description which gets displayed in Cucumber html reports 
   TEAM_NAME - optional team name description which gets displayed in Cucumber html reports 
   BROWSER_CLI_ARGS - optional additional arguments to pass to local browser processes
+
+The following environment variables are specific to running tests against a BrowserStack remote grid:
+
+  BS_BUILD - allows the user to specify a name for a logical group of tests e.g. 'Component A Tests'
+  BS_DEBUG - set to 'false' to disable screenshot generation ('true' by default)
+  BS_DEVICE - specify a mobile/tablet device e.g. 'iPhone 5C'
+  BS_DEVICE_ORIENTATION - specify to force the device orientation ('portrait' or 'landscape')
+  BS_PROJECT - allows the user to specify a name for a logical group of builds e.g. 'Project X'
+  BS_RESOLUTION - set the browser resolution e.g. '1024x768'
 
 Here is a sample cucumber.yml:
 

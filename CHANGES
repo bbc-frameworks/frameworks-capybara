@@ -1,3 +1,6 @@
+2.3.0
+Improved support for specifying browser configurations with BrowserStack.
+
 2.2.0
 Added Capybara cookie-handling extensions.
 
