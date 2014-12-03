@@ -250,8 +250,8 @@ describe CapybaraSetup do
           #Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@custom_capabilities)[:'job-name'].should == 'frameworks-unamed-job' 
           #Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@custom_capabilities)[:'max-duration'].should == 1800 
           Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:browser_name].should == :firefox
-          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:version].should == '4' 
-          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:platform].should == 'windows'
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:browser_version].should == '4'
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:os].should == 'windows'
           Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].should be_a_kind_of Selenium::WebDriver::Firefox::Profile
           Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].instance_variable_get(:@model).should include 'default'
         end
@@ -367,7 +367,63 @@ describe CapybaraSetup do
         it_behaves_like "Selenium Driver Options Array"
       end
 
+      context "with Remote Selenium driver and most minimal Capabilites for BrowserStack" do
+        before do
+          ENV['BROWSER'] = 'remote'
+          ENV['REMOTE_BROWSER'] = 'ie'
+          ENV['REMOTE_URL'] = 'http://hub.browserstack.com'
+        end
 
+        it "should be initialized correctly" do
+          Capybara.delete_session
+          CapybaraSetup.new.driver.should == :selenium
+          Capybara.current_session.driver.should be_a_kind_of Capybara::Selenium::Driver
+          Capybara.current_session.driver.options[:browser].should == :remote
+          Capybara.current_session.driver.options[:url].should == ENV['REMOTE_URL']
+          Capybara.current_session.driver.options[:desired_capabilities].should be_a_kind_of Selenium::WebDriver::Remote::Capabilities
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:'browserstack.debug'].should == 'true'
+        end
+        it_behaves_like "Selenium Driver Options Array"
+      end
+
+      context "with Remote Selenium driver and specified Custom Capabilites for BrowserStack" do
+        before do
+          ENV['BROWSER'] = 'remote'
+          ENV['BS_BUILD'] = 'browserstack build 1'
+          ENV['BS_DEBUG'] = 'false'
+          ENV['BS_DEVICE'] = 'iPhone 5C'
+          ENV['BS_DEVICE_ORIENTATION'] = 'landscape'
+          ENV['BS_PROJECT'] = 'Test BrowserStack Project'
+          ENV['BS_RESOLUTION'] = '1024x768'
+          ENV['PLATFORM'] = 'MAC'
+          ENV['PLATFORM_VERSION'] = '7'
+          ENV['REMOTE_BROWSER'] = 'iPhone'
+          ENV['REMOTE_BROWSER_VERSION'] = '7.1.2'
+          ENV['REMOTE_URL'] = 'http://hub.browserstack.com'
+        end
+
+        it "should be initialized correctly" do
+          Capybara.delete_session
+          CapybaraSetup.new.driver.should == :selenium
+          Capybara.current_session.driver.should be_a_kind_of Capybara::Selenium::Driver
+          Capybara.current_session.driver.options[:browser].should == :remote
+          Capybara.current_session.driver.options[:url].should == ENV['REMOTE_URL']
+          Capybara.current_session.driver.options[:http_client].should be_a_kind_of Selenium::WebDriver::Remote::Http::Default
+          Capybara.current_session.driver.options[:http_client].instance_variable_get(:@proxy).should == nil
+          Capybara.current_session.driver.options[:desired_capabilities].should be_a_kind_of Selenium::WebDriver::Remote::Capabilities
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:build].should == ENV['BS_BUILD']
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:'browserstack.debug'].should == ENV['BS_DEBUG']
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:device].should == ENV['BS_DEVICE']
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:deviceOrientation].should == ENV['BS_DEVICE_ORIENTATION']
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:project].should == ENV['BS_PROJECT']
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:resolution].should == ENV['BS_RESOLUTION']
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:os].should == ENV['PLATFORM']
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:os_version].should == ENV['PLATFORM_VERSION']
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:browser_name].should == :iPhone
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:browser_version].should == ENV['REMOTE_BROWSER_VERSION']
+        end
+        it_behaves_like "Selenium Driver Options Array"
+      end
     end
 
     describe "should allow Mechanize driver to be created" do
