@@ -12,6 +12,7 @@ class CapybaraSetup
   def initialize
 
     http_proxy = ENV['HTTP_PROXY'] || ENV['http_proxy']
+    browser_cli_args = ENV['BROWSER_CLI_ARGS'].split(/\s+/).compact if ENV['BROWSER_CLI_ARGS']
 
     capybara_opts = {:environment => ENV['ENVIRONMENT'],
       :http_proxy => http_proxy,
@@ -21,7 +22,7 @@ class CapybaraSetup
       :url => ENV['REMOTE_URL'],
       :chrome_switches => ENV['CHROME_SWITCHES'],
       :firefox_prefs => ENV['FIREFOX_PREFS'],
-      :args => ENV['BROWSER_CLI_ARGS']
+      :args => browser_cli_args
     }
 
     selenium_remote_opts = {:os => ENV['PLATFORM'],

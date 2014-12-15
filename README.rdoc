@@ -43,7 +43,7 @@ The following environment variables can be set to configure your tests:
   CHROME_SWITCHES - pass in any allowed switches for the Selenium chrome driver (http://peter.sh/experiments/chromium-command-line-switches/) e.g. CHROME_SWITCHES="--user-agent=Mozilla/5.0 (PLAYSTATION 3; 3.55)"
   PROJECT_NAME - optional project name description which gets displayed in Cucumber html reports 
   TEAM_NAME - optional team name description which gets displayed in Cucumber html reports 
-  BROWSER_CLI_ARGS - optional additional arguments to pass to local browser processes
+  BROWSER_CLI_ARGS - optional additional arguments to pass to local browser processes (individual arguments should be separated with spaces)
 
 The following environment variables are specific to running tests against a BrowserStack remote grid:
 
