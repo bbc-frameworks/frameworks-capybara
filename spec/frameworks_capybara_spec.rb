@@ -95,6 +95,51 @@ describe CapybaraSetup do
         it_behaves_like "Selenium Driver Options Array"
       end
 
+      context "with no command-line arguments supplied" do
+        before do
+          ENV['BROWSER'] = 'phantomjs'
+        end
+
+        it "should be initialized correctly" do
+          Capybara.delete_session
+          expect(CapybaraSetup.new.driver).to eq :selenium
+          expect(Capybara.current_session.driver.options[:args]).to be nil
+        end
+      end
+
+      context "with single command-line argument supplied" do
+        before do
+          ENV['BROWSER'] = 'phantomjs'
+          ENV['BROWSER_CLI_ARGS'] = '--ignore-ssl-errors=true'
+        end
+
+        it "should be initialized correctly" do
+          Capybara.delete_session
+          expect(CapybaraSetup.new.driver).to eq :selenium
+          args = Capybara.current_session.driver.options[:args]
+          expect(args).to be_instance_of Array
+          expect(args.size).to eq 1
+          expect(args[0]).to eq '--ignore-ssl-errors=true'
+        end
+      end
+
+      context "with multiple command-line arguments supplied" do
+        before do
+          ENV['BROWSER'] = 'phantomjs'
+          ENV['BROWSER_CLI_ARGS'] = '--ignore-ssl-errors=true --remote-debugger-port=9000'
+        end
+
+        it "should be initialized correctly" do
+          Capybara.delete_session
+          expect(CapybaraSetup.new.driver).to eq :selenium
+          args = Capybara.current_session.driver.options[:args]
+          expect(args).to be_instance_of Array
+          expect(args.size).to eq 2
+          expect(args[0]).to eq '--ignore-ssl-errors=true'
+          expect(args[1]).to eq '--remote-debugger-port=9000'
+        end
+      end
+
       context "with Selenium driver and default firefox profile (from profiles.ini)" do
         before do
           ENV['BROWSER'] = 'firefox'
