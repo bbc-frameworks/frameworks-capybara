@@ -1,3 +1,6 @@
+2.3.1
+Allow multiple arguments in the BROWSER_CLI_ARGS environment variable to be parsed correctly.
+
 2.3.0
 Improved support for specifying browser configurations with BrowserStack.
 
