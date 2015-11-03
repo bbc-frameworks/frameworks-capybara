@@ -1,6 +1,5 @@
 require 'rubygems'
 require 'bundler/setup'
-require 'gherkin'
 require 'cucumber/language_support/language_methods'
 require 'cucumber/rb_support/rb_language'
 require 'cucumber/runtime'

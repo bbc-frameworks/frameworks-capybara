@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
   s.files         = `git ls-files`.split("\n")
 
   s.add_runtime_dependency("selenium-webdriver")
-  s.add_runtime_dependency("capybara")  
+  s.add_runtime_dependency("capybara", '~> 2.5')  
   s.add_runtime_dependency("mechanize")
   s.add_runtime_dependency("capybara-mechanize")
   s.add_runtime_dependency("json")
