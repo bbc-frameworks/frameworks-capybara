@@ -54,6 +54,13 @@ The following environment variables are specific to running tests against a Brow
   BS_PROJECT - allows the user to specify a name for a logical group of builds e.g. 'Project X'
   BS_RESOLUTION - set the browser resolution e.g. '1024x768'
 
+The following environment variables are specific to running tests against an Appium server:
+
+  APPIUM_PLATFORM - one of iOS, Android, or FirefoxOS
+  APPIUM_DEVICE - e.g. iPhone Simulator, iPad Simulator, iPhone Retina 4-inch, Android Emulator
+  APPIUM_BROWSER - e.g. chrome, safari
+  APPIUM_UDID - the device id, note you can find this by doing +adb devices+ if you are working on a local machine
+
 Here is a sample cucumber.yml:
 
   <%intenv='ENVIRONMENT=int'%>

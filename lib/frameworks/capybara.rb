@@ -41,10 +41,14 @@ class CapybaraSetup
       :browserstack_device => ENV['BS_DEVICE'],
       :browserstack_device_orientation => ENV['BS_DEVICE_ORIENTATION'],
       :browserstack_project => ENV['BS_PROJECT'],
-      :browserstack_resolution => ENV['BS_RESOLUTION']
+      :browserstack_resolution => ENV['BS_RESOLUTION'],
+      :appium_platform => ENV['APPIUM_PLATFORM'],
+      :appium_device => ENV['APPIUM_DEVICE'],
+      :appium_browser => ENV['APPIUM_BROWSER'],
+      :appium_udid => ENV['APPIUM_UDID']
     }
 
-    validate_env_vars(capybara_opts.merge(selenium_remote_opts)) #validate environment variables set using cucumber.yml or passed via command line
+    validate_env_vars(capybara_opts.merge(selenium_remote_opts), custom_opts) #validate environment variables set using cucumber.yml or passed via command line
 
     if(capybara_opts[:http_proxy])
       proxy_uri = URI(capybara_opts[:http_proxy])
@@ -74,26 +78,23 @@ class CapybaraSetup
 
   private
 
-  def validate_env_vars(opts)
-
+  def validate_env_vars(opts, custom_opts)
     msg1 = 'Please ensure following environment variables are set ENVIRONMENT [int|test|stage|live], BROWSER[headless|ie|chrome|firefox] and HTTP_PROXY (if required)'
     msg2 = 'Please ensure the following environment variables are set PLATFORM, REMOTE_URL, REMOTE_BROWSER (browser to use on remote machine), HTTP_PROXY (if required), REMOTE_BROWSER_PROXY (if required) and BROWSER_VERSION (if required)'
 
-    [:environment, :browser].each do |item|
-      !opts.has_key?(item) or opts[item]==nil ? raise(msg1) : '' 
-    end
+    [:environment, :browser].each { |item| !opts.has_key?(item) or opts[item]==nil ? raise(msg1) : '' }
 
-    if opts[:browser]=='remote'
-      [:url, :browser_name].each do |item|
-        !opts.has_key?(item) or opts[item]==nil ? raise(msg2) : '' 
-      end
+    if custom_opts[:appium_platform]
+      [:url].each { |item| !opts.has_key?(item) or opts[item]==nil ? raise(msg2) : '' }
+    elsif opts[:browser]=='remote'
+      [:url, :browser_name].each { |item| !opts.has_key?(item) or opts[item]==nil ? raise(msg2) : '' }
     end
   end
 
   # WARNING: This modifies the Firefox profile passed in the parameters
   def update_firefox_profile_with_certificates(profile, certificate_path, certificate_prefix = '')
     profile_path = profile.layout_on_disk
-    
+
     # Create links to the certificate files in the profile directory
     ['cert8.db', 'key3.db', 'secmod.db'].each do |cert_file|
       source_file = "#{certificate_prefix}#{cert_file}"
@@ -139,6 +140,8 @@ class CapybaraSetup
 
         add_browserstack_caps(caps, custom_opts) if remote_opts[:url].include? 'browserstack' #set browserstack specific parameters
 
+        add_appium_caps(caps, custom_opts) if custom_opts.keys.join.include?('appium')  #set appium specific parameters
+
         opts[:desired_capabilities] = caps
         opts[:http_client] = client
       end
@@ -162,6 +165,13 @@ class CapybaraSetup
     caps[:'deviceOrientation'] = custom_opts[:browserstack_device_orientation] if custom_opts[:browserstack_device_orientation]
     caps[:'project'] = custom_opts[:browserstack_project] if custom_opts[:browserstack_project]
     caps[:'resolution'] = custom_opts[:browserstack_resolution] if custom_opts[:browserstack_resolution]
+  end
+
+  def add_appium_caps(caps, custom_opts)
+    caps[:platformName] = custom_opts[:appium_platform] if custom_opts[:appium_platform]
+    caps[:deviceName] = custom_opts[:appium_device] if custom_opts[:appium_device]
+    caps[:browserName] = custom_opts[:appium_browser] if custom_opts[:appium_browser]
+    caps[:udid] = custom_opts[:appium_udid] if custom_opts[:appium_udid]
   end
 
   def set_client_proxy(opts)

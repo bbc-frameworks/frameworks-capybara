@@ -469,6 +469,29 @@ describe CapybaraSetup do
         end
         it_behaves_like "Selenium Driver Options Array"
       end
+
+      context "with Remote Selenium driver and specified Custom Capabilites for Appium" do
+        before do
+          ENV['BROWSER'] = 'remote'
+          ENV['REMOTE_URL'] = 'http://127.0.0.1:4273'
+          ENV['APPIUM_PLATFORM'] = 'Android'
+          ENV['APPIUM_DEVICE'] = 'android'
+          ENV['APPIUM_BROWSER'] = 'chrome'
+          ENV['APPIUM_UDID'] = 'abd234'
+        end
+
+        it "should be initialized correctly" do
+          Capybara.delete_session
+          CapybaraSetup.new.driver.should == :selenium
+          Capybara.current_session.driver.should be_a_kind_of Capybara::Selenium::Driver
+          Capybara.current_session.driver.options[:browser].should == :remote
+          Capybara.current_session.driver.options[:url].should == ENV['REMOTE_URL']
+          Capybara.current_session.driver.options[:http_client].should be_a_kind_of Selenium::WebDriver::Remote::Http::Default
+          Capybara.current_session.driver.options[:http_client].instance_variable_get(:@proxy).should == nil
+          Capybara.current_session.driver.options[:desired_capabilities].should be_a_kind_of Selenium::WebDriver::Remote::Capabilities
+        end
+        it_behaves_like "Selenium Driver Options Array"
+      end
     end
 
     describe "should allow Mechanize driver to be created" do
@@ -541,7 +564,7 @@ describe CapybaraSetup do
 
             key3_data = write_random_data(@key3_db)
             secmod_data = write_random_data(@secmod_db)
-           
+
             an_exception = nil
             begin 
               CapybaraSetup.new.instance_exec(profile, @cert_dir) { |profile, certificate_path|
