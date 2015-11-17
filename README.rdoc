@@ -17,6 +17,8 @@ Below are the current drivers that can be registered:
 
 * Mechanize-Caybara: This can be used, by setting BROWSER=mechanize
 
+* Poltergeist: This can be used, by setting BROWSER=poltergeist
+
 How to use this gem in your project:
 
 In your env.rb simply add:

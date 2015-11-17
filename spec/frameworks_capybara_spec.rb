@@ -525,6 +525,34 @@ describe CapybaraSetup do
         end
       end
 
+    describe "should allow Poltergeist driver to be created" do
+      context "with minimal Poltergeist driver" do
+        before do
+          ENV['BROWSER'] = 'poltergeist'
+        end
+
+        it "should be initialized correctly" do
+          Capybara.delete_session
+          CapybaraSetup.new.driver.should == :poltergeist
+          Capybara.current_session.driver.should be_a_kind_of Capybara::Poltergeist::Driver
+        end
+
+        context "with maximal Poltergeist driver" do
+          before do
+            ENV['BROWSER'] = 'poltergeist'
+            ENV['ENVIRONMENT'] = 'test'
+            ENV['HTTP_PROXY'] = 'http://example.cache.co.uk:80'
+          end
+
+          it "should be initialized correctly" do
+            Capybara.delete_session
+            CapybaraSetup.new.driver.should == :poltergeist
+            Capybara.current_session.driver.should be_a_kind_of Capybara::Poltergeist::Driver
+          end
+        end
+      end
+    end
+
       describe "should permit certificate files to be incorporated into firefox profiles" do
 
         context "integration tests for update_firefox_profile_with_certificates() method" do

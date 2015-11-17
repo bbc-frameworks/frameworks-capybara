@@ -1,6 +1,7 @@
 require 'capybara'
 require 'capybara/cucumber'
 require 'capybara/mechanize'
+require 'capybara/poltergeist'
 require 'selenium-webdriver'
 require 'extensions/capybara-extensions'
 require 'extensions/capybara-mechanize-extensions'
@@ -66,9 +67,11 @@ class CapybaraSetup
       opts.delete_if {|k,v| (v.nil? or k == :environment)}
     end
 
-    case capybara_opts[:browser] 
+    case capybara_opts[:browser]
     when :mechanize then
       @driver = register_mechanize_driver(capybara_opts)
+    when :poltergeist then
+      @driver = register_poltergeist_driver(capybara_opts)
     else
       @driver = register_selenium_driver(capybara_opts, selenium_remote_opts, custom_opts)
     end
@@ -104,14 +107,14 @@ class CapybaraSetup
         raise "Firefox cert db file #{source_path} does not exist."
       end
       FileUtils.cp(source_path, dest_path)
-    end 
+    end
 
     # Force the certificates to get pulled into the profile
     profile = Selenium::WebDriver::Firefox::Profile.new(profile_path)
 
     # Avoid Firefox certificate alerts
     profile["security.default_personal_cert"] = 'Select Automatically'
-    
+
     return profile
   end
 
@@ -136,7 +139,7 @@ class CapybaraSetup
         remote_opts['chrome.switches'] = opts.delete :switches if opts[:switches]
         caps = Selenium::WebDriver::Remote::Capabilities.new(remote_opts)
 
-        add_custom_caps(caps, custom_opts) if remote_opts[:url].include? 'saucelabs' #set sauce specific parameters - will this scupper other on sauce remote jobs? 
+        add_custom_caps(caps, custom_opts) if remote_opts[:url].include? 'saucelabs' #set sauce specific parameters - will this scupper other on sauce remote jobs?
 
         add_browserstack_caps(caps, custom_opts) if remote_opts[:url].include? 'browserstack' #set browserstack specific parameters
 
@@ -148,14 +151,14 @@ class CapybaraSetup
 
       clean_opts(opts, :http_proxy, :webdriver_proxy_on, :firefox_prefs)
       Capybara::Selenium::Driver.new(app,opts)
-    end   
+    end
     :selenium
   end
 
   def add_custom_caps(caps, custom_opts)
-    sauce_time_limit = custom_opts.delete(:max_duration).to_i #note nil.to_i == 0 
+    sauce_time_limit = custom_opts.delete(:max_duration).to_i #note nil.to_i == 0
     # This no longer works with the latest selenium-webdriver release
-    #caps.custom_capabilities({:'job-name' => (custom_opts[:job_name] or 'frameworks-unamed-job'), :'max-duration' => ((sauce_time_limit if sauce_time_limit != 0) or 1800)}) 
+    #caps.custom_capabilities({:'job-name' => (custom_opts[:job_name] or 'frameworks-unamed-job'), :'max-duration' => ((sauce_time_limit if sauce_time_limit != 0) or 1800)})
   end
 
   def add_browserstack_caps(caps, custom_opts)
@@ -185,11 +188,11 @@ class CapybaraSetup
       profile.native_events = true
     elsif(profile_name == 'BBC_INTERNAL')
       profile = Selenium::WebDriver::Firefox::Profile.new
-      if(@proxy_host && @proxy_port) 
+      if(@proxy_host && @proxy_port)
         profile["network.proxy.type"] = 1
         profile["network.proxy.no_proxies_on"] = "*.sandbox.dev.bbc.co.uk,*.sandbox.bbc.co.uk"
-        profile["network.proxy.http"] = @proxy_host 
-        profile["network.proxy.ssl"] = @proxy_host 
+        profile["network.proxy.http"] = @proxy_host
+        profile["network.proxy.ssl"] = @proxy_host
         profile["network.proxy.http_port"] = @proxy_port
         profile["network.proxy.ssl_port"] = @proxy_port
       end
@@ -213,7 +216,7 @@ class CapybaraSetup
     app = Proc.new do |env|
       ['200', {'Content-Type' => 'text/html'}, ['A barebones rack app.']]
     end
-    Capybara.app = app 
+    Capybara.app = app
     Capybara.run_server = false
     Capybara.register_driver :mechanize do |app|
       Capybara.app_host = "http://www.bbc.co.uk"
@@ -222,6 +225,29 @@ class CapybaraSetup
     :mechanize
   end
 
+
+  def register_poltergeist_driver(opts)
+    ## Poltergiest needs a Rack application: create a dummy one
+    app = Proc.new do |env|
+      ['200', {'Content-Type' => 'text/html'}, ['A barebones rack app.']]
+    end
+    phantom_opts = %w(--ssl-protocol=tlsv1 --ignore-ssl-errors=yes)
+    phantom_opts.push "--proxy=#{@proxy_host}:#{@proxy_port}" if @proxy_host && @proxy_port
+    Capybara.app = app
+    Capybara.run_server = false
+    options = {
+      js_errors: false,
+      :timeout           => 120,
+      :window_size       => [1200, 1000],
+      :phantomjs_options => phantom_opts,
+      :default_wait_time => 30
+    }
+    Capybara.register_driver :poltergeist do |app|
+      Capybara.app_host = "http://www.bbc.co.uk"
+      Capybara::Poltergeist::Driver.new(app, options)
+    end
+    :poltergeist
+  end
 
   def clean_opts(opts, *args)
     args.each do |arg|

@@ -24,6 +24,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency("capybara", '~> 2.5')  
   s.add_runtime_dependency("mechanize")
   s.add_runtime_dependency("capybara-mechanize")
+  s.add_runtime_dependency("poltergeist")
   s.add_runtime_dependency("json")
   s.add_runtime_dependency("cucumber")
   s.add_runtime_dependency("w3c_validators")  
