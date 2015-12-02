@@ -4,19 +4,15 @@ module FrameworksCapybara
   module Wait
     ##
     # Execute a block until it returns true.
-    # Optionally pass a timeout (by default 5 seconds).
+    # Optionally pass a message and timeout (default 10 seconds).
     #
-    # wait_for { (Random.rand(2) % 2) }
+    # wait_for('checking divide by 2', timeout: 5) { (Random.rand(2) % 2) }
     #
-    # wait_for(:timeout => 4) { (Random.rand(2) % 2) }
-    #
-    def wait_for(options={:timeout => 5})
-      timeout = Time.new + options[:timeout].to_f
-
-      while (Time.new < timeout)
-        return if (yield)
+    def wait_for(message = '', options = { timeout: 5 })
+      Timeout.timeout(options[:timeout]) do
+        puts "In wait helper message is: #{message}"
+        sleep 1 until yield
       end
-      raise 'Timeout exceeded for wait until.'
     end
 
     ##

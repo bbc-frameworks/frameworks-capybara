@@ -10,13 +10,13 @@ describe FrameworksCapybara::Wait do
 
     it "should raise an exception if the default timeout expires" do
       start_time = Time.now
-      expect { test.wait_for { Time.now > (start_time + (6 * 60)) } }.to raise_error
+      expect { test.wait_for('foo') { true == false } }.to raise_error
     end
 
     it "should raise an exception if the specified timeout expires" do
       start_time = Time.now
       expect {
-        test.wait_for(timeout: 1) do
+        test.wait_for('',timeout: 1) do
           Time.now > (start_time + (2 * 60))
         end
       }.to raise_error
