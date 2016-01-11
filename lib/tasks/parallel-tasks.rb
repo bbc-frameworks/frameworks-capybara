@@ -48,6 +48,11 @@ class ParallelTasks
       t.options = %w(--markup=markdown)
     end
 
+    desc 'Create some docs'
+    YARD::Rake::YardocTask.new(:yarddoc) do |t|
+      t.files = ['features/*.feature', 'features/**/*.rb']
+    end
+
     desc 'Make sure we are good rubyists'
     RuboCop::RakeTask.new(:rubocop) do |t|
       t.formatters = ['progress']
