@@ -48,7 +48,7 @@ class ParallelTasks
       t.options = %w(--markup=markdown)
     end
 
-    desc 'Create some docs'
+    desc 'Feature documentation'
     YARD::Rake::YardocTask.new(:yarddoc) do |t|
       t.files = ['features/*.feature', 'features/**/*.rb']
     end
