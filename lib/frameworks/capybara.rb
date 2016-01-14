@@ -5,6 +5,7 @@ require 'capybara/poltergeist'
 require 'selenium-webdriver'
 require 'extensions/capybara-extensions'
 require 'extensions/capybara-mechanize-extensions'
+require 'extensions/patches'
 
 class CapybaraSetup
 

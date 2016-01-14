@@ -1,6 +1,6 @@
 require 'show_me_the_cookies'
 require 'capybara'
-require 'logger'
+require 'frameworks/logger'
 # monkey patches live here - beware!
 module Capybara
   # override behaviour of visit to surpress bbc survey
