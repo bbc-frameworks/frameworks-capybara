@@ -8,6 +8,7 @@ class ParallelTasks
     require 'rubocop/rake_task'
     require 'cucumber/rake/task'
     require 'yard'
+    require_relative 'merge_cucumber_json_reports'
 
     def run_rake_task(name)
       puts "name is #{name}"
@@ -108,6 +109,14 @@ class ParallelTasks
       end
       junit_rerun = Dir.glob "#{report_dir}/junit_rerun/*xml"
       sh "junit_merge #{report_dir}/junit_rerun #{junit_dir}" unless junit_rerun.empty?
+    end
+
+    desc 'Merge Cucumber JSON reports'
+    task :json_merge do
+      c = CucumberJSONMerger.new
+      c.run
+      c.rerun
+      File.open('combined.json', 'w+').write c.master.to_json
     end
   end
 end
