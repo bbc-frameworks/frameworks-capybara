@@ -30,8 +30,13 @@ class CucumberJSONMerger
   end
 
   def rerun
-    @reports = [JSON.parse(File.read('reports/rerun.json'))]
-    run
+    json_rerun = Dir.glob "#{report_dir}/rerun.json"
+    if json_rerun.empty?
+      puts 'no rerun file found'
+    else
+      @reports = [JSON.parse(File.read('reports/rerun.json'))]
+      run
+    end
   end
 
   private
