@@ -22,7 +22,7 @@ class ParallelTasks
     end
 
     def reports(name)
-      "--format pretty --format junit --out=reports/#{name} --strict --format html " \
+      "--format pretty --format junit --out=reports/junit_#{name} --strict --format html " \
       "--out=reports/#{name}.html --format json --out=reports/#{name}.json"
     end
 
@@ -69,7 +69,7 @@ class ParallelTasks
 
     desc 'Rerun failed cukes on production with browserstack chrome'
     Cucumber::Rake::Task.new(:rerun_browserstack) do |t|
-      t.cucumber_opts = %W(-p browserstack #{env} @reports/rerun.txt #{reports('junit_rerun')})
+      t.cucumber_opts = %W(-p browserstack #{env} @reports/rerun.txt #{reports('rerun')})
     end
 
     desc 'Run selenium and rerun failed tests'
