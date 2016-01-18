@@ -68,11 +68,14 @@ class CapybaraSetup
       opts.delete_if {|k,v| (v.nil? or k == :environment)}
     end
 
+    # always register in case we are using a configuration that swaps between drivers
+    mech_driver = register_mechanize_driver(capybara_opts)
+    poltergeist_driver = register_poltergeist_driver(capybara_opts)
     case capybara_opts[:browser]
     when :mechanize then
-      @driver = register_mechanize_driver(capybara_opts)
+      @driver = mech_driver
     when :poltergeist then
-      @driver = register_poltergeist_driver(capybara_opts)
+      @driver = poltergeist_driver
     else
       @driver = register_selenium_driver(capybara_opts, selenium_remote_opts, custom_opts)
     end
@@ -238,10 +241,10 @@ class CapybaraSetup
     Capybara.run_server = false
     options = {
       js_errors: false,
-      :timeout           => 120,
-      :window_size       => [1200, 1000],
-      :phantomjs_options => phantom_opts,
-      :default_wait_time => 30
+      timeout:   120,
+      window_size: [1200, 1000],
+      phantomjs_options: phantom_opts,
+      default_wait_time: 30
     }
     Capybara.register_driver :poltergeist do |app|
       Capybara.app_host = "http://www.bbc.co.uk"
