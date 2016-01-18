@@ -11,8 +11,9 @@ module Capybara
     alias_method :old_visit, :visit
     def visit(url)
       old_visit url
-      surpress_cookies_prompt unless Capybara.current_driver == :mechanize
-      reload_if_survey_appears unless Capybara.current_driver == :mechanize
+      return if [:mechanize, :poltergeist].include?(Capybara.current_driver)
+      surpress_cookies_prompt
+      reload_if_survey_appears
     end
 
     def surpress_cookies_prompt
