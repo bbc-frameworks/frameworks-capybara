@@ -30,6 +30,7 @@ class CucumberJSONMerger
   end
 
   def rerun
+    puts "Processing rerun json"
     json_rerun = Dir.glob "reports/rerun.json"
     if json_rerun.empty?
       puts 'no rerun file found'
@@ -50,7 +51,7 @@ class CucumberJSONMerger
   end
 
   def scenarios(report, fname)
-    report.find { |f| f['uri'] == fname }['elements'].select { |e| e['keyword'] == 'Scenario' }.flatten
+    report.find { |f| f['uri'] == fname }['elements'].select { |e| e['keyword'].include? 'Scenario' }.flatten
   end
 
   def feature_exists?(name)
@@ -64,7 +65,7 @@ class CucumberJSONMerger
   def replace_scenario(sname, scenario, feature)
     puts "Replacing #{sname} in #{feature} in master"
     @master.find { |f| f['uri'] == feature }['elements'].delete_if do |e|
-      e['keyword'] == 'Scenario' && e['name'] == sname
+      e['keyword'].include?('Scenario') && e['name'] == sname
     end
     append_scenario(scenario, feature)
   end
