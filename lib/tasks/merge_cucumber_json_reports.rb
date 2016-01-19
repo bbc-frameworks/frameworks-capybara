@@ -22,7 +22,8 @@ class CucumberJSONMerger
     if feature_exists? fname
       scenarios(report, fname).each do |scenario|
         sname = scenario.fetch 'name'
-        scenario_exists?(sname, fname) ? replace_scenario(sname, scenario, fname) : append_scenario(scenario, fname)
+        sline = scenario.fetch 'line'
+        scenario_exists?(sname, fname) ? replace_scenario(sname, sline, scenario, fname) : append_scenario(scenario, fname)
       end
     else
       append_feature feature
@@ -62,10 +63,11 @@ class CucumberJSONMerger
     scenario_names(@master, fname).include? scenario
   end
 
-  def replace_scenario(sname, scenario, feature)
-    puts "Replacing #{sname} in #{feature} in master"
+  def replace_scenario(sname, sline, scenario, feature)
     @master.find { |f| f['uri'] == feature }['elements'].delete_if do |e|
-      e['keyword'].include?('Scenario') && e['name'] == sname
+      exists = e['keyword'].include?('Scenario') && e['name'] == sname && e['line'] == sline
+      puts "Replacing #{sname} on line #{sline} in #{feature} in master" if exists
+      exists
     end
     append_scenario(scenario, feature)
   end
