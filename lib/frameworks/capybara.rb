@@ -61,7 +61,6 @@ class CapybaraSetup
     selenium_remote_opts[:browser_name] = selenium_remote_opts[:browser_name].intern if selenium_remote_opts[:browser_name]#update :browser value to be a symbol, required for Selenium
 
     Capybara.run_server = false #Disable rack server
-    Capybara.ignore_hidden_elements = false
 
     [capybara_opts, selenium_remote_opts, custom_opts].each do |opts| #delete nil options and environment (which is only used for validation)
 
