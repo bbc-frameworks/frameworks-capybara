@@ -84,7 +84,7 @@ class ParallelTasks
       selenium_successful = run_rake_task('parallel_cuke')
       rerun_successful = true
       rerun_successful = run_rake_task('rerun_browserstack') unless selenium_successful
-      result = (selenium_successful || rerun_sucessful) == true ? 'pass' : 'fail'
+      result = (selenium_successful || rerun_successful) == true ? 'pass' : 'fail'
       puts "Overall result is #{result}"
       write_confluence_report(result)
       fail 'Cucumber Failure' if result == 'fail'
