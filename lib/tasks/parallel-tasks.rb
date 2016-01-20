@@ -38,6 +38,13 @@ class ParallelTasks
       ENV['THREAD_COUNT'] ? ENV['THREAD_COUNT'].to_i : 2
     end
 
+    def write_confluence_report(passfail)
+      require "erb"
+      template = File.read(File.dirname(__FILE__) + '/confluence.erb')
+      @result = passfail == 'pass' ? 'green' : 'red'
+      File.open('reports/confluence.html', 'w+').puts ERB.new(template).result(binding)
+    end
+
     desc 'Run all examples'
     RSpec::Core::RakeTask.new(:spec) do |t|
       t.rspec_opts = %w(--color -fprogress -fhtml -oreports/rspec.html)
@@ -77,8 +84,10 @@ class ParallelTasks
       selenium_successful = run_rake_task('parallel_cuke')
       rerun_successful = true
       rerun_successful = run_rake_task('rerun_browserstack') unless selenium_successful
-      puts "result is #{selenium_successful} and  #{rerun_successful}"
-      fail 'Cucumber Failure' unless selenium_successful || rerun_successful
+      result = (selenium_successful || rerun_sucessful) == true ? 'pass' : 'fail'
+      puts "Overall result is #{result}"
+      write_confluence_report(result)
+      fail 'Cucumber Failure' if result == 'fail'
     end
 
     desc 'Remove all files from the ./reports and ./doc directory'
