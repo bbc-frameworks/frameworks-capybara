@@ -3,9 +3,8 @@ require 'capybara/cucumber'
 require 'capybara/mechanize'
 require 'capybara/poltergeist'
 require 'selenium-webdriver'
-require 'extensions/capybara-extensions'
-require 'extensions/capybara-mechanize-extensions'
-require 'extensions/patches'
+require 'frameworks/extensions/capybara-extensions'
+require 'frameworks/extensions/capybara-mechanize-extensions'
 
 class CapybaraSetup
 
