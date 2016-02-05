@@ -71,7 +71,7 @@ class ParallelTasks
 
     desc 'Run cukes on production in parallel with browserstack chrome'
     task :parallel_cuke do |t|
-      sh "bundle exec parallel_cucumber -n #{get_thread_count} -o '#{tags} #{env}' features"
+      sh "bundle19 exec parallel_cucumber -n #{get_thread_count} -o '#{tags} #{env}' features"
     end
 
     desc 'Rerun failed cukes on production with browserstack chrome'
@@ -109,7 +109,7 @@ class ParallelTasks
         thread_reports = Dir.entries "#{junit_dir}#{thread}"
         thread_reports.reject { |f| File.directory?(f) }.each do |report|
           if  original_reports.include?(report)
-            sh "junit_merge #{junit_dir}#{thread}/#{report} #{junit_dir}/#{report}"
+            sh "bundle19 exec junit_merge #{junit_dir}#{thread}/#{report} #{junit_dir}/#{report}"
           else
             puts  "copy #{junit_dir}#{thread}/#{report} to #{junit_dir}"
             FileUtils.cp  "#{junit_dir}#{thread}/#{report}", junit_dir
@@ -117,7 +117,7 @@ class ParallelTasks
         end
       end
       junit_rerun = Dir.glob "#{report_dir}/junit_rerun/*xml"
-      sh "junit_merge #{report_dir}/junit_rerun #{junit_dir}" unless junit_rerun.empty?
+      sh "bundle19 exec junit_merge #{report_dir}/junit_rerun #{junit_dir}" unless junit_rerun.empty?
     end
 
     desc 'Merge Cucumber JSON reports'
