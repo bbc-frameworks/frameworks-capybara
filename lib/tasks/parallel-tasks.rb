@@ -26,6 +26,10 @@ class ParallelTasks
       "--out=reports/#{name}.html --format json --out=reports/#{name}.json"
     end
 
+    def bundle_exec
+      ENV['BUNDLE_EXEC'] || 'bundle'
+    end
+
     def env
       ENV['ENVIRONMENT'] ? "ENVIRONMENT=#{ENV['ENVIRONMENT']}" : 'ENVIRONMENT=live'
     end
@@ -71,19 +75,19 @@ class ParallelTasks
 
     desc 'Run cukes on production in parallel with browserstack chrome'
     task :parallel_cuke do |t|
-      sh "bundle exec parallel_cucumber -n #{get_thread_count} -o '#{tags} #{env}' features"
+      sh "#{bundle_exec} exec parallel_cucumber -n #{get_thread_count} -o '#{tags} #{env}' features"
     end
 
     desc 'Rerun failed cukes on production with browserstack chrome'
-    Cucumber::Rake::Task.new(:rerun_browserstack) do |t|
-      t.cucumber_opts = %W(-p browserstack #{env} @reports/rerun.txt #{reports('rerun')})
+    Cucumber::Rake::Task.new(:rerun) do |t|
+      t.cucumber_opts = %W(-p rerun #{env} @reports/rerun.txt #{reports('rerun')})
     end
 
     desc 'Run selenium and rerun failed tests'
     task :tests_with_retry do
       selenium_successful = run_rake_task('parallel_cuke')
       rerun_successful = true
-      rerun_successful = run_rake_task('rerun_browserstack') unless selenium_successful
+      rerun_successful = run_rake_task('rerun') unless selenium_successful
       result = (selenium_successful || rerun_successful) == true ? 'pass' : 'fail'
       puts "Overall result is #{result}"
       write_confluence_report(result)
@@ -109,7 +113,7 @@ class ParallelTasks
         thread_reports = Dir.entries "#{junit_dir}#{thread}"
         thread_reports.reject { |f| File.directory?(f) }.each do |report|
           if  original_reports.include?(report)
-            sh "junit_merge #{junit_dir}#{thread}/#{report} #{junit_dir}/#{report}"
+            sh "#{bundle_exec} exec junit_merge #{junit_dir}#{thread}/#{report} #{junit_dir}/#{report}"
           else
             puts  "copy #{junit_dir}#{thread}/#{report} to #{junit_dir}"
             FileUtils.cp  "#{junit_dir}#{thread}/#{report}", junit_dir
@@ -117,7 +121,7 @@ class ParallelTasks
         end
       end
       junit_rerun = Dir.glob "#{report_dir}/junit_rerun/*xml"
-      sh "junit_merge #{report_dir}/junit_rerun #{junit_dir}" unless junit_rerun.empty?
+      sh "#{bundle_exec} exec junit_merge #{report_dir}/junit_rerun #{junit_dir}" unless junit_rerun.empty?
     end
 
     desc 'Merge Cucumber JSON reports'

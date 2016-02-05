@@ -233,7 +233,8 @@ class CapybaraSetup
     app = Proc.new do |env|
       ['200', {'Content-Type' => 'text/html'}, ['A barebones rack app.']]
     end
-    phantom_opts = %w(--ssl-protocol=tlsv1 --ignore-ssl-errors=yes)
+    phantom_opts = %w(--ignore-ssl-errors=true)
+    phantom_opts.push "--ssl-client-certificate-file=#{ENV['FW_CERT_LOCATION']}" if ENV['FW_CERT_LOCATION']
     phantom_opts.push "--proxy=#{@proxy_host}:#{@proxy_port}" if @proxy_host && @proxy_port
     Capybara.app = app
     Capybara.run_server = false
@@ -244,6 +245,7 @@ class CapybaraSetup
       phantomjs_options: phantom_opts,
       default_wait_time: 30
     }
+    options[:phantomjs] = ENV['PHANTOMJS_PATH'] if ENV['PHANTOMJS_PATH'] && !ENV['PHANTOMJS_PATH'].empty?
     Capybara.register_driver :poltergeist do |app|
       Capybara.app_host = "http://www.bbc.co.uk"
       Capybara::Poltergeist::Driver.new(app, options)
