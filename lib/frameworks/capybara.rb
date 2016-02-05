@@ -244,6 +244,7 @@ class CapybaraSetup
       phantomjs_options: phantom_opts,
       default_wait_time: 30
     }
+    options[:phantomjs] = ENV['PHANTOMJS_PATH'] if ENV['PHANTOMJS_PATH'] && !ENV['PHANTOMJS_PATH'].empty?
     Capybara.register_driver :poltergeist do |app|
       Capybara.app_host = "http://www.bbc.co.uk"
       Capybara::Poltergeist::Driver.new(app, options)
