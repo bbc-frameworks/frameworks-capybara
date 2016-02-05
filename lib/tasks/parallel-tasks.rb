@@ -87,7 +87,7 @@ class ParallelTasks
     task :tests_with_retry do
       selenium_successful = run_rake_task('parallel_cuke')
       rerun_successful = true
-      rerun_successful = run_rake_task('rerun_browserstack') unless selenium_successful
+      rerun_successful = run_rake_task('rerun') unless selenium_successful
       result = (selenium_successful || rerun_successful) == true ? 'pass' : 'fail'
       puts "Overall result is #{result}"
       write_confluence_report(result)
