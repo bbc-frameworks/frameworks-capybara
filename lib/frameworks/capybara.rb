@@ -233,7 +233,7 @@ class CapybaraSetup
     app = Proc.new do |env|
       ['200', {'Content-Type' => 'text/html'}, ['A barebones rack app.']]
     end
-    phantom_opts = %w(--ssl-protocol=tlsv1 --ignore-ssl-errors=yes)
+    phantom_opts = %w(--ignore-ssl-errors=true)
     phantom_opts.push "--ssl-client-certificate-file=#{ENV['FW_CERT_LOCATION']}" if ENV['FW_CERT_LOCATION']
     phantom_opts.push "--proxy=#{@proxy_host}:#{@proxy_port}" if @proxy_host && @proxy_port
     Capybara.app = app
