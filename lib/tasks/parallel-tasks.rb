@@ -38,6 +38,10 @@ class ParallelTasks
       ENV['TAGS'] || ''
     end
 
+    def features_dir
+      ENV['FEATURES_DIR'] || 'features'
+    end
+
     def get_thread_count
       ENV['THREAD_COUNT'] ? ENV['THREAD_COUNT'].to_i : 2
     end
@@ -75,7 +79,7 @@ class ParallelTasks
 
     desc 'Run cukes on production in parallel with browserstack chrome'
     task :parallel_cuke do |t|
-      sh "#{bundle_exec} exec parallel_cucumber -n #{get_thread_count} -o '#{tags} #{env}' features"
+      sh "#{bundle_exec} exec parallel_cucumber -n #{get_thread_count} -o '#{tags} #{env}' #{features_dir}"
     end
 
     desc 'Rerun failed cukes on production with browserstack chrome'
