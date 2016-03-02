@@ -17,11 +17,13 @@ Below are the current drivers that can be registered:
 
 * Mechanize-Caybara: This can be used, by setting BROWSER=mechanize
 
+* Poltergeist: This can be used, by setting BROWSER=poltergeist
+
 How to use this gem in your project:
 
 In your env.rb simply add:
-  
- require 'frameworks-capybara' 
+
+ require 'frameworks-capybara'
 
 The following environment variables can be set to configure your tests:
 
@@ -37,12 +39,12 @@ The following environment variables can be set to configure your tests:
   FIREFOX_PREFS - specify a json string of additional preferences e.g. FIREFOX_PREFS='{"javascript.enabled": false}'
   FIREFOX_CERT_PATH - specify optional directory containing Firefox profile certificate (.db) files
   FIREFOX_CERT_PREFIX - specify optional prefix for locating Firefox profile certificate files (e.g. <prefix>-<file>.db)
-  CREATE_NEW_FF_PROFILE - create a new Firefox profile with name provided by FIREFOX_PROFILE 
+  CREATE_NEW_FF_PROFILE - create a new Firefox profile with name provided by FIREFOX_PROFILE
   XVFB - (string - 'true', 'false') - determines whether XVFB is used to run browser (i.e. headless Firefox on *nix platform)
   FW_CERT_LOCATION - path to client certificate (combined pem)
   CHROME_SWITCHES - pass in any allowed switches for the Selenium chrome driver (http://peter.sh/experiments/chromium-command-line-switches/) e.g. CHROME_SWITCHES="--user-agent=Mozilla/5.0 (PLAYSTATION 3; 3.55)"
-  PROJECT_NAME - optional project name description which gets displayed in Cucumber html reports 
-  TEAM_NAME - optional team name description which gets displayed in Cucumber html reports 
+  PROJECT_NAME - optional project name description which gets displayed in Cucumber html reports
+  TEAM_NAME - optional team name description which gets displayed in Cucumber html reports
   BROWSER_CLI_ARGS - optional additional arguments to pass to local browser processes (individual arguments should be separated with spaces)
 
 The following environment variables are specific to running tests against a BrowserStack remote grid:
@@ -53,6 +55,13 @@ The following environment variables are specific to running tests against a Brow
   BS_DEVICE_ORIENTATION - specify to force the device orientation ('portrait' or 'landscape')
   BS_PROJECT - allows the user to specify a name for a logical group of builds e.g. 'Project X'
   BS_RESOLUTION - set the browser resolution e.g. '1024x768'
+
+The following environment variables are specific to running tests against an Appium server:
+
+  APPIUM_PLATFORM - one of iOS, Android, or FirefoxOS
+  APPIUM_DEVICE - e.g. iPhone Simulator, iPad Simulator, iPhone Retina 4-inch, Android Emulator
+  APPIUM_BROWSER - e.g. chrome, safari
+  APPIUM_UDID - the device id, note you can find this by doing +adb devices+ if you are working on a local machine
 
 Here is a sample cucumber.yml:
 
@@ -80,12 +89,36 @@ Here is a sample cucumber.yml:
 
 
 This gem also sets up a number of 'base urls' for you to use in your tests, these are set based on the ENVIRONMENT variable you set when running cucumber tests (either from the comand line or in cucumber.yml), the following URLs are set:
-  
+
   @base_url
   @base_static_url
   @base_open_url
 
 Finally this gem contains some useful monkey-patches to core libraries e.g. Capybara-Mechanize, Selenium-Webdriver and Cucumber.
+
+== Wait Helpers
+
+This gem provides some default wait helpers useful for when the 'out of the box' mechanisms provided by Capybara and/or SitePrism aren't quite enough.
+
+To use these include the +FrameworksCapybara+::+Wait+ module in your class.
+
++wait_for+ - simple wait for boolean condition
+   wait_for { (Random.rand(2) % 2) }
+
+
++wait_for_assertion+ - wait for rspec assertion to pass without raising exceptions
+
+   wait_for_assertion('Cannot find foo on page') do
+      expect(page).to have_content 'foo'
+   end
+
+
++wait_for_no_exception+ - wait for block to NOT raise provided exception
+
+    wait_for_no_exception('Author image not visible', SitePrism::TimeOutWaitingForElementVisibility) do
+       article.wait_until_author_image_visible
+    end
+
 
 == Release instructions
 
@@ -105,7 +138,7 @@ You should see something like:
   Pushed frameworks-capybara 0.2.23 to rubygems.org
 
 == Contributing to frameworks-capybara
- 
+
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet
 * Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it
 * Fork the project
@@ -117,4 +150,3 @@ You should see something like:
 == Copyright
 
 See LICENSE.txt for further details.
-
