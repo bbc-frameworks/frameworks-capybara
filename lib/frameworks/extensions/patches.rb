@@ -14,6 +14,7 @@ module Capybara
       return if [:mechanize, :poltergeist].include?(Capybara.current_driver)
       surpress_cookies_prompt
       reload_if_survey_appears
+      close_music_banner
     end
 
     def surpress_cookies_prompt
@@ -30,6 +31,11 @@ module Capybara
         end
       end
       visit current_url if reload
+    end
+
+    def close_music_banner
+      close_banner_button = '#mn-prompt--where-is-playlister button'
+      find(close_banner_button).click if has_selector?(close_banner_button, wait: 1)
     end
   end
 end
