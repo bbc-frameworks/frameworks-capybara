@@ -27,7 +27,7 @@ class ParallelTasks
     end
 
     def bundle_exec
-      ENV['BUNDLE_EXEC'] || 'bundle'
+      ENV['BUNDLE_EXEC'] || 'bundle exec '
     end
 
     def env
@@ -79,12 +79,12 @@ class ParallelTasks
 
     desc 'Run cukes on production in parallel with browserstack chrome'
     task :parallel_cuke do |t|
-      sh "#{bundle_exec} exec parallel_cucumber -n #{get_thread_count} -o '#{tags} #{env}' #{features_dir}"
+      sh "#{bundle_exec}parallel_cucumber -n #{get_thread_count} -o '#{tags} #{env}' #{features_dir}"
     end
 
     desc 'Rerun failed cukes on production with browserstack chrome'
-    Cucumber::Rake::Task.new(:rerun) do |t|
-      t.cucumber_opts = %W(-p rerun #{env} @reports/rerun.txt #{reports('rerun')})
+    task :rerun do
+      sh "#{bundle_exec}cucumber -p rerun #{env} @reports/rerun.txt #{reports('rerun')}"
     end
 
     desc 'Run selenium and rerun failed tests'
@@ -117,7 +117,7 @@ class ParallelTasks
         thread_reports = Dir.entries "#{junit_dir}#{thread}"
         thread_reports.reject { |f| File.directory?(f) }.each do |report|
           if  original_reports.include?(report)
-            sh "#{bundle_exec} exec junit_merge #{junit_dir}#{thread}/#{report} #{junit_dir}/#{report}"
+            sh "#{bundle_exec}junit_merge #{junit_dir}#{thread}/#{report} #{junit_dir}/#{report}"
           else
             puts  "copy #{junit_dir}#{thread}/#{report} to #{junit_dir}"
             FileUtils.cp  "#{junit_dir}#{thread}/#{report}", junit_dir
@@ -125,7 +125,7 @@ class ParallelTasks
         end
       end
       junit_rerun = Dir.glob "#{report_dir}/junit_rerun/*xml"
-      sh "#{bundle_exec} exec junit_merge #{report_dir}/junit_rerun #{junit_dir}" unless junit_rerun.empty?
+      sh "#{bundle_exec}junit_merge #{report_dir}/junit_rerun #{junit_dir}" unless junit_rerun.empty?
     end
 
     desc 'Merge Cucumber JSON reports'
