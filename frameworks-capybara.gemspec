@@ -21,12 +21,15 @@ Gem::Specification.new do |s|
   s.files         = `git ls-files`.split("\n")
 
   s.add_runtime_dependency("selenium-webdriver")
-  s.add_runtime_dependency("capybara")  
+  s.add_runtime_dependency("capybara", '~> 2.5')
   s.add_runtime_dependency("mechanize")
   s.add_runtime_dependency("capybara-mechanize")
+  s.add_runtime_dependency("poltergeist")
   s.add_runtime_dependency("json")
   s.add_runtime_dependency("cucumber")
-  s.add_runtime_dependency("w3c_validators")  
+  s.add_runtime_dependency("logging")
+  s.add_runtime_dependency("show_me_the_cookies")
+  s.add_runtime_dependency("w3c_validators")
   s.add_development_dependency("rake")
   s.add_development_dependency("rspec")
 end
