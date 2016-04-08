@@ -48,8 +48,10 @@ class ParallelTasks
 
     def write_confluence_report(passfail)
       require "erb"
+      green = '#4CD672'
+      red = '#EA4D61'
       template = File.read(File.dirname(__FILE__) + '/confluence.erb')
-      @result = passfail == 'pass' ? 'green' : 'red'
+      @result = passfail == 'pass' ? green : red
       File.open('reports/confluence.html', 'w+').puts ERB.new(template).result(binding)
     end
 
