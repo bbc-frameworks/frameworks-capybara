@@ -221,7 +221,6 @@ class CapybaraSetup
     Capybara.app = app
     Capybara.run_server = false
     Capybara.register_driver :mechanize do |app|
-      Capybara.app_host = "http://www.bbc.co.uk"
       Capybara::Mechanize::Driver.new(app)
     end
     :mechanize
