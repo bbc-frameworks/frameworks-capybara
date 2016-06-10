@@ -240,8 +240,9 @@ class CapybaraSetup
     options = {
       js_errors: false,
       timeout:   120,
-      window_size: [1200, 1000],
+      window_size: [1920, 5000],
       phantomjs_options: phantom_opts,
+      js: true,
       default_wait_time: 30
     }
     options[:phantomjs] = ENV['PHANTOMJS_PATH'] if ENV['PHANTOMJS_PATH'] && !ENV['PHANTOMJS_PATH'].empty?

@@ -55,7 +55,7 @@ module FrameworksCapybara
             end
           end
         end
-      rescue TimeoutError
+      rescue Timeout::Error
         puts '********************************************************************'
         puts "Timed out after waiting for #{timeout} seconds."
         puts exception_message
