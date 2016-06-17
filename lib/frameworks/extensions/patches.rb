@@ -13,7 +13,7 @@ module Capybara
       old_visit url
       return if [:mechanize, :poltergeist].include?(Capybara.current_driver)
       surpress_cookies_prompt
-      reload_if_survey_appears
+      #reload_if_survey_appears
       close_music_banner
     end
 
