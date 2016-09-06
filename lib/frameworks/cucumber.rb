@@ -24,7 +24,7 @@ module Frameworks
         @static_base_url = @static_sandbox6 + @bbc_domain
         @mobile_base_url = @mobiledot_prefix + "sandbox" + @bbc_domain
         @m_base_url = @mdot_prefix + "sandbox" + @bbc_domain
-      elsif (environment =='live' && ENV['WWW_LIVE']=='false')
+      elsif environment == 'live'
         @base_url = @www_prefix.chop + @bbc_domain
         @pal_base_url = @pal_prefix + environment + @bbc_domain
         @ssl_base_url = @ssl_prefix.chop + @bbc_domain
