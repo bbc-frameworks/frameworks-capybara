@@ -5,7 +5,6 @@ module Frameworks
   module EnvHelper
     include W3CValidators
     #Generate base urls to use in Cucumber step defs
-    #Generate base urls to use in Cucumber step defs
     def generate_base_urls 
       environment = ENV['ENVIRONMENT'].downcase #be defensive
 
