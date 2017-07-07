@@ -58,14 +58,14 @@ module Frameworks
 
     def validate_online(src, validator_args = nil)
       args = { proxy_host: @proxy_host, proxy_port: @proxy_port }
-      args = args.merge(validator_args) if !validator_args.nil?
+      args = args.merge(validator_args) unless validator_args.nil?
       @validator = MarkupValidator.new(args)
 
       @validator.set_doctype!(:xhtml)
       begin
         results = @validator.validate_text(src)
 
-        if !results.errors.empty?
+        unless results.errors.empty?
           results.errors.each do |err|
             puts err.to_s
           end

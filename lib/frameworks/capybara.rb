@@ -62,7 +62,6 @@ class CapybaraSetup
     selenium_remote_opts[:browser_name] = selenium_remote_opts[:browser_name].intern if selenium_remote_opts[:browser_name]
 
     Capybara.run_server = false # Disable rack server
-    
     # delete nil options and environment (which is only used for validation)
     [capybara_opts, selenium_remote_opts, custom_opts].each do |opts|
       opts.delete_if { |k, v| (v.nil? || k == :environment) }
@@ -92,12 +91,12 @@ class CapybaraSetup
     msg1 = 'Please ensure following environment variables are set ENVIRONMENT [int|test|stage|live], BROWSER[headless|ie|chrome|firefox] and HTTP_PROXY (if required)'
     msg2 = 'Please ensure the following environment variables are set PLATFORM, REMOTE_URL, REMOTE_BROWSER (browser to use on remote machine), HTTP_PROXY (if required), REMOTE_BROWSER_PROXY (if required) and BROWSER_VERSION (if required)'
 
-    [:environment, :browser].each { |item| !opts.has_key?(item) || opts[item] == nil ? raise(msg1) : '' }
+    [:environment, :browser].each { |item| !opts.key?(item) || opts[item].nil? ? raise(msg1) : '' }
 
     if custom_opts[:appium_platform]
-      [:url].each { |item| !opts.has_key?(item) || opts[item] == nil ? raise(msg2) : '' }
+      [:url].each { |item| !opts.key?(item) || opts[item].nil? ? raise(msg2) : '' }
     elsif opts[:browser] == 'remote'
-      [:url, :browser_name].each { |item| !opts.has_key?(item) || opts[item] == nil ? raise(msg2) : '' }
+      [:url, :browser_name].each { |item| !opts.key?(item) || opts[item].nil? ? raise(msg2) : '' }
     end
   end
 
@@ -110,7 +109,7 @@ class CapybaraSetup
       source_file = '#{certificate_prefix}#{cert_file}'
       source_path = "#{certificate_path}" + File::SEPARATOR + source_file
       dest_path = profile_path + File::SEPARATOR + cert_file
-      if !File.exist?(source_path)
+      unless File.exist?(source_path)
         raise 'Firefox cert db file #{source_path} does not exist.'
       end
       FileUtils.cp(source_path, dest_path)
@@ -161,8 +160,8 @@ class CapybaraSetup
     :selenium
   end
 
-  def add_custom_caps(caps, custom_opts)
-    sauce_time_limit = custom_opts.delete(:max_duration).to_i # note nil.to_i == 0
+  def add_custom_caps(_caps, custom_opts)
+    custom_opts.delete(:max_duration).to_i # note nil.to_i == 0
   end
 
   def add_browserstack_caps(caps, custom_opts)
@@ -190,7 +189,6 @@ class CapybaraSetup
     additional_prefs = JSON.parse(additional_prefs) if additional_prefs
     if additional_prefs && !profile_name
       profile = Selenium::WebDriver::Firefox::Profile.new
-      profile.native_events = true
     elsif profile_name == 'BBC_INTERNAL'
       profile = Selenium::WebDriver::Firefox::Profile.new
       if @proxy_host && @proxy_port
@@ -201,11 +199,10 @@ class CapybaraSetup
         profile['network.proxy.http_port'] = @proxy_port
         profile['network.proxy.ssl_port'] = @proxy_port
       end
-      profile.native_events = true
     else
       profile = Selenium::WebDriver::Firefox::Profile.from_name profile_name
-      profile.native_events = true
     end
+    profile.native_events = true
 
     if additional_prefs
       additional_prefs.each do |k, v|
