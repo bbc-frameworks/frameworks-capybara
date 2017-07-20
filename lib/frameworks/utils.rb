@@ -50,5 +50,12 @@ module FrameworksCapybara
       Capybara.page.switch_to_window(Capybara.page.windows.last)
       Capybara.page.windows.first.close
     end
+
+    def save_and_link_screenshot
+      FileUtils.mkdir_p('reports') unless File.directory?('reports')
+      current_time = Time.new.strftime('%Y-%m-%d-%H-%M-%S')
+      Capybara.current_session.driver.save_screenshot("./reports/Screenshot_#{current_time}.png")
+      embed "./reports/Screenshot_#{current_time}.png", 'image/png', "Actual screenshot of the error at #{current_url}"
+    end
   end
 end
