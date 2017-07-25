@@ -58,13 +58,13 @@ class ParallelTasks
 
     desc 'Run all examples'
     RSpec::Core::RakeTask.new(:spec) do |t|
-      t.rspec_opts = %w[--color -fprogress -fhtml -oreports/rspec.html]
+      t.rspec_opts = %w(--color -fprogress -fhtml -oreports/rspec.html)
     end
 
     desc 'Create some docs'
     YARD::Rake::YardocTask.new do |t|
       t.files   = ['lib/**/*.rb']
-      t.options = %w[--markup=markdown]
+      t.options = %w(--markup=markdown)
     end
 
     desc 'Feature documentation'

@@ -122,7 +122,7 @@ module Frameworks
 
       # This prevents Mechanize from raising a Mechanize::ResponseCodeError
       # when the HTTP Response Code is 404 or 503. This lets capybara continue the journey.
-      agent.agent.allowed_error_codes = %w[404 503]
+      agent.agent.allowed_error_codes = %w(404 503)
     end
 
     def new_mechanize(http_proxy = nil)

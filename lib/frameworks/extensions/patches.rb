@@ -8,7 +8,7 @@ module Capybara
   class Session
     include ShowMeTheCookies
     include FrameworksCapybara::Logger
-
+    
     alias old_visit visit
     def visit(url)
       Capybara.current_driver

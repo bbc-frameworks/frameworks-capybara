@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.email = ['']
   s.description = 'Gem to ease the pain of managing capybara driver config and provide a home for common utils and patches'
 
-  s.files = Dir.glob('{features,lib,bin,config,vendor,.bundle}/**/*') + %w[Gemfile Gemfile.lock]
+  s.files = Dir.glob('{features,lib,bin,config,vendor,.bundle}/**/*') + %w(Gemfile Gemfile.lock)
 
   s.require_paths = ['lib']
   s.rubygems_version = '2.4.2'

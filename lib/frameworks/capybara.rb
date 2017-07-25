@@ -230,13 +230,13 @@ class CapybaraSetup
     app = Proc.new do
       ['200', { 'Content-Type' => 'text/html' }, ['A barebones rack app.']]
     end
-    phantom_opts = %w[--ignore-ssl-errors=true]
+    phantom_opts = %w(--ignore-ssl-errors=true)
     phantom_opts.push "--ssl-client-certificate-file=#{ENV['FW_CERT_LOCATION']}" if ENV['FW_CERT_LOCATION']
     phantom_opts.push "--proxy=#{@proxy_host}:#{@proxy_port}" if @proxy_host && @proxy_port
     Capybara.app = app
     Capybara.run_server = false
     options = {
-      js_errors: false,
+      js_errors: true,
       timeout:   120,
       window_size: [1200, 1000],
       phantomjs_options: phantom_opts,
@@ -259,7 +259,7 @@ class CapybaraSetup
       caps = Selenium::WebDriver::Remote::Capabilities.chrome(
         'chromeOptions' => {
           'binary' => '/Users/tabibs01/Downloads/chrome-linux/chrome',
-          'args' => %w[headless no-sandbox disable-gpu]
+          'args' => %w(headless no-sandbox disable-gpu)
         }
       )
       Capybara::Selenium::Driver.new(app, browser: :chrome, desired_capabilities: caps)
