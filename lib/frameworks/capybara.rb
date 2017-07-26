@@ -250,23 +250,6 @@ class CapybaraSetup
     :poltergeist
   end
 
-  def register_headless_chromium_driver(_opts)
-    app = Proc.new do
-      ['200', { 'Content-Type' => 'text/html' }, ['A barebones rack app.']]
-    end
-    Capybara.register_driver :headless_chromium do |app|
-      Capybara.app_host = 'http://www.bbc.co.uk'
-      caps = Selenium::WebDriver::Remote::Capabilities.chrome(
-        'chromeOptions' => {
-          'binary' => '/Users/tabibs01/Downloads/chrome-linux/chrome',
-          'args' => %w(headless no-sandbox disable-gpu)
-        }
-      )
-      Capybara::Selenium::Driver.new(app, browser: :chrome, desired_capabilities: caps)
-    end
-    :headless_chromium
-  end
-
   def clean_opts(opts, *args)
     args.each do |arg|
       opts.delete arg
