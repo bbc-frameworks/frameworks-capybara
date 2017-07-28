@@ -70,14 +70,11 @@ class CapybaraSetup
     # always register in case we are using a configuration that swaps between drivers
     mech_driver = register_mechanize_driver(capybara_opts)
     poltergeist_driver = register_poltergeist_driver(capybara_opts)
-    headless_chromium_driver = register_headless_chromium_driver(capybara_opts)
     case capybara_opts[:browser]
     when :mechanize then
       @driver = mech_driver
     when :poltergeist then
       @driver = poltergeist_driver
-    when :headless_chromium then
-      @driver = headless_chromium_driver
     else
       @driver = register_selenium_driver(capybara_opts, selenium_remote_opts, custom_opts)
     end
