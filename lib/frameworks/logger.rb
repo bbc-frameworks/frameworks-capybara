@@ -4,7 +4,7 @@ module FrameworksCapybara
   # configure logging
   module Logger
     def log_level
-      log_levels = %w[warn info debug]
+      log_levels = %w(warn info debug)
       env_log_level = (ENV['LOG_LEVEL'] || '').downcase
       log_levels.include?(env_log_level) ? env_log_level.to_sym : :debug
     end
@@ -24,7 +24,7 @@ module FrameworksCapybara
       scheme = 'pldefault'
       Logging.color_scheme(
         scheme,
-        levels: { info: :green, warn: :yellow, error: :red },
+        levels: { info:  :green, warn:  :yellow, error: :red },
         date:    :cyan,
         logger:  :cyan,
         message: :cyan

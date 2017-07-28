@@ -1,4 +1,3 @@
-# parallel tasks
 class ParallelTasks
   include Rake::DSL if defined? Rake::DSL
 
@@ -48,7 +47,7 @@ class ParallelTasks
     end
 
     def write_confluence_report(passfail)
-      require 'erb'
+      require "erb"
       green = '#4CD672'
       red = '#EA4D61'
       template = File.read(File.dirname(__FILE__) + '/confluence.erb')
@@ -81,7 +80,7 @@ class ParallelTasks
     end
 
     desc 'Run cukes on production in parallel with browserstack chrome'
-    task :parallel_cuke do
+    task :parallel_cuke do |t|
       sh "#{bundle_exec}parallel_cucumber -n #{get_thread_count} -o '#{tags} #{env}' #{features_dir}"
     end
 
@@ -98,7 +97,7 @@ class ParallelTasks
       result = (selenium_successful || rerun_successful) == true ? 'pass' : 'fail'
       puts "Overall result is #{result}"
       write_confluence_report(result)
-      raise 'Cucumber Failure' if result == 'fail'
+      fail 'Cucumber Failure' if result == 'fail'
     end
 
     desc 'Remove all files from the ./reports and ./doc directory'
@@ -119,11 +118,11 @@ class ParallelTasks
         original_reports = Dir.entries junit_dir
         thread_reports = Dir.entries "#{junit_dir}#{thread}"
         thread_reports.reject { |f| File.directory?(f) }.each do |report|
-          if original_reports.include?(report)
+          if  original_reports.include?(report)
             sh "#{bundle_exec}junit_merge #{junit_dir}#{thread}/#{report} #{junit_dir}/#{report}"
           else
-            puts "copy #{junit_dir}#{thread}/#{report} to #{junit_dir}"
-            FileUtils.cp "#{junit_dir}#{thread}/#{report}", junit_dir
+            puts  "copy #{junit_dir}#{thread}/#{report} to #{junit_dir}"
+            FileUtils.cp  "#{junit_dir}#{thread}/#{report}", junit_dir
           end
         end
       end
