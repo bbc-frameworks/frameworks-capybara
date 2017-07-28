@@ -1,8 +1,8 @@
 require 'time'
 
 module FrameworksCapybara
-  # wait for elements methods
   module Wait
+    ##
     # Execute a block until it returns true.
     # Optionally pass a message and timeout (default 10 seconds).
     #
@@ -15,6 +15,7 @@ module FrameworksCapybara
       end
     end
 
+    ##
     # Execute a block containing RSpec assertion, catch failures and wait till it passes
     # Pass an exception message to be outputted on failure and a block
     # Optionally pass a timeout, sleep interval
@@ -39,13 +40,13 @@ module FrameworksCapybara
     # end
     #
     def wait_for_no_exception(exception_message, exception, timeout = Capybara.default_max_wait_time, sleep_interval = 1, &block)
-      raise 'You need to provide a block' unless block_given?
+      fail 'You need to provide a block' unless block_given?
       test_exception = 'check did not return within timeout window.'
       begin
         Timeout.timeout(timeout) do
           loop do
             begin
-              yield
+              block.call
               return true
             rescue exception => assertion_exception
               puts "#{exception_message} - rescuing: #{exception.to_s} and trying to call block again!"

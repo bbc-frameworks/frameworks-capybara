@@ -1,6 +1,5 @@
 # generic util methods
 module FrameworksCapybara
-  # generic util methods
   module Utils
     def rubyize(english_string)
       english_string.tr(' ', '_').downcase
@@ -18,8 +17,8 @@ module FrameworksCapybara
     def browser
       if Capybara.current_driver == :selenium
         Capybara.current_session.driver.browser.manage
-                .instance_variable_get('@bridge')
-                .instance_variable_get('@capabilities')[:browser_name]
+        .instance_variable_get('@bridge')
+        .instance_variable_get('@capabilities')[:browser_name]
       else
         Capybara.current_driver
       end
