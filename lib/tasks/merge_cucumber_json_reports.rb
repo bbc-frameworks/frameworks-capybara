@@ -31,8 +31,8 @@ class CucumberJSONMerger
   end
 
   def rerun
-    puts "Processing rerun json"
-    json_rerun = Dir.glob "reports/rerun.json"
+    puts 'Processing rerun json'
+    json_rerun = Dir.glob 'reports/rerun.json'
     if json_rerun.empty?
       puts 'no rerun file found'
     else

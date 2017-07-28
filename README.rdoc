@@ -10,10 +10,10 @@ The principle behind this gem is to factor out all the common setup code for reg
 
 Below are the current drivers that can be registered:
 
-* Selenium-Webdriver (Selenium2) - LOCAL: This can be used to drive 'in-browser' tests runnong on your local machine in IE, Firefox and Chrome (and any other browsers as and when they are added into the Selenium-Webdriver project)
+* Selenium-Webdriver (Selenium2) - LOCAL: This can be used to drive 'in-browser' tests running on your local machine in IE, Firefox and Chrome (and any other browsers as and when they are added into the Selenium-Webdriver project)
 
 
-* Selenium-Webdriver (Selenium2) - REMOTE: This can be used to drive 'in-browser' tests on a remote macine, this could be another macine on your local network which is running a Selenium-Webdriver server or indeed a cloud service such as 'Sauce Labs'
+* Selenium-Webdriver (Selenium2) - REMOTE: This can be used to drive 'in-browser' tests on a remote machine, this could be another machine on your local network which is running a Selenium-Webdriver server or indeed a cloud service such as 'Sauce Labs'
 
 * Mechanize-Caybara: This can be used, by setting BROWSER=mechanize
 
