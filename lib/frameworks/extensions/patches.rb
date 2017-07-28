@@ -1,20 +1,21 @@
 require 'show_me_the_cookies'
 require 'capybara'
 require 'frameworks/logger'
+
 # monkey patches live here - beware!
 module Capybara
   # override behaviour of visit to surpress bbc survey
   class Session
     include ShowMeTheCookies
     include FrameworksCapybara::Logger
-
-    alias_method :old_visit, :visit
+    
+    alias old_visit visit
     def visit(url)
+      Capybara.current_driver
       old_visit url
       return if [:mechanize, :poltergeist].include?(Capybara.current_driver)
       surpress_cookies_prompt
-      #reload_if_survey_appears
-      close_music_banner
+      # reload_if_survey_appears
     end
 
     def surpress_cookies_prompt
@@ -26,16 +27,11 @@ module Capybara
       reload = false
       within_frame('edr_l_first') do
         if has_selector?('#layer_wrap', wait: 1)
-          log.info 'Found survey, will now reload page - only true x browser solution for now'
+          log.info 'Found survey, will now reload the page'
           reload = true
         end
       end
       visit current_url if reload
-    end
-
-    def close_music_banner
-      close_banner_button = '#mn-prompt--where-is-playlister button'
-      find(close_banner_button).click if has_selector?(close_banner_button, wait: 1)
     end
   end
 end
