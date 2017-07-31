@@ -233,7 +233,6 @@ class CapybaraSetup
     Capybara.app = app
     Capybara.run_server = false
     options = {
-      js_errors: true,
       timeout:   120,
       window_size: [1200, 1000],
       phantomjs_options: phantom_opts,
