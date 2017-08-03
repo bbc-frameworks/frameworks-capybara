@@ -47,6 +47,13 @@ module FrameworksCapybara
       end
     end
 
+    def check_expected_section_item(section, table)
+        table.raw.flatten.each do |section_item|
+          section_method = "have_#{rubyize(section_item)}"
+          expect(section).to send(section_method) unless section_item.include? '(optional)'
+        end
+    end
+
     def switch_to_last_opened_window
       Capybara.page.switch_to_window(Capybara.page.windows.last)
       Capybara.page.windows.first.close
