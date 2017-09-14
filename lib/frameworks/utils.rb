@@ -48,10 +48,17 @@ module FrameworksCapybara
     end
 
     def check_expected_section_item(section, table)
-        table.raw.flatten.each do |section_item|
-          section_method = "have_#{rubyize(section_item)}"
-          expect(section).to send(section_method) unless section_item.include? '(optional)'
-        end
+      table.raw.flatten.each do |section_item|
+        section_method = "have_#{rubyize(section_item)}"
+        expect(section).to send(section_method) unless section_item.include? '(optional)'
+      end
+    end
+
+    def check_expected_section_translation(section, table)
+      table.rows_hash.each do |key, value|
+        element = key.downcase.tr(' ', '_').tr(',', '')
+        expect(section.send(element).text).to eql value
+      end
     end
 
     def switch_to_last_opened_window
