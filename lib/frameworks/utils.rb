@@ -73,11 +73,6 @@ module FrameworksCapybara
       end
     end
 
-    def return_random_element(section, elements)
-      section.send(elements).sample
-      playspace.recommendations.more_info.first
-    end
-
     def scroll_to_element(element)
       page.execute_script("arguments[0].scrollIntoView(true);", element)
     end
