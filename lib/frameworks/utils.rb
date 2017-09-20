@@ -66,6 +66,22 @@ module FrameworksCapybara
       Capybara.page.windows.first.close
     end
 
+    def wait_until_page_is_fully_loaded
+      Timeout.timeout(Capybara.default_max_wait_time) do
+        loop until (value = Capybara.page.evaluate_script('document.readyState').eql?('complete'))
+        value
+      end
+    end
+
+    def return_random_element(section, elements)
+      section.send(elements).sample
+      playspace.recommendations.more_info.first
+    end
+
+    def scroll_to_element(element)
+      page.execute_script("arguments[0].scrollIntoView(true);", element)
+    end
+
     def save_and_link_screenshot
       FileUtils.mkdir_p('reports') unless File.directory?('reports')
       current_time = Time.new.strftime('%Y-%m-%d-%H-%M-%S')
