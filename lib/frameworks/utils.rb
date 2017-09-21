@@ -61,9 +61,27 @@ module FrameworksCapybara
       end
     end
 
+    def check_expected_element_translation(page, table)
+      table.rows_hash.each do |key, value|
+        element = key.downcase.tr(' ', '_').tr(',', '')
+        expect(page.send(element).text).to eql value
+      end
+    end
+
     def switch_to_last_opened_window
       Capybara.page.switch_to_window(Capybara.page.windows.last)
       Capybara.page.windows.first.close
+    end
+
+    def wait_until_page_is_fully_loaded
+      Timeout.timeout(Capybara.default_max_wait_time) do
+        loop until (value = Capybara.page.evaluate_script('document.readyState').eql?('complete'))
+        value
+      end
+    end
+
+    def scroll_to_element(element)
+      page.execute_script("arguments[0].scrollIntoView(true);", element)
     end
 
     def save_and_link_screenshot
