@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency('capybara-mechanize')
   s.add_runtime_dependency('poltergeist')
   s.add_runtime_dependency('json')
-  s.add_runtime_dependency('cucumber')
+  s.add_runtime_dependency('cucumber', '~> 2.4.0')
   s.add_runtime_dependency('logging')
   s.add_runtime_dependency('show_me_the_cookies')
   s.add_runtime_dependency('w3c_validators')
