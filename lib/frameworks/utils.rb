@@ -15,6 +15,11 @@ module FrameworksCapybara
       Capybara.current_session.delete_cookie 'IDENTITIY_ENV'
     end
 
+    def set_cookie_for_uk
+      page.execute_script 'document.cookie="ckns_orb_fig_cache={%22uk%22:1%2C%22ck%22:1%2C%22ad%22:0%2C%22ap%22:0%2C%22tb%22:0%2C%22mb%22:0%2C%22eu%22:1}; path=/; domain=.bbc.co.uk";'
+      visit current_url
+    end
+
     def browser
       if Capybara.current_driver == :selenium
         Capybara.current_session.driver.browser.manage
