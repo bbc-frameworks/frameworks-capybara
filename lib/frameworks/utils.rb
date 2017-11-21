@@ -95,5 +95,34 @@ module FrameworksCapybara
       Capybara.current_session.driver.save_screenshot("./reports/Screenshot_#{current_time}.png")
       embed "./reports/Screenshot_#{current_time}.png", 'image/png', "Actual screenshot of the error at #{current_url}"
     end
+
+    def getting_console_errors(type)
+    case type
+    when 'errors'
+      errors = page.driver.browser.manage.logs.get(:browser).select {|e| e.level == "SEVERE"}.map(&:message).to_a
+       if errors.present?
+         puts "Below are the errors found."
+         raise StandardError, errors.join("\n\n")
+       else
+         puts "No Error found in console"
+       end
+     when 'warnings'
+       warnings = page.driver.browser.manage.logs.get(:browser).select {|e| e.level != "SEVERE"}.map(&:message).to_a
+       if warnings.present?
+         puts "Below are the warnings found."
+         raise StandardError, warnings.join("\n\n")
+       else
+         puts "No warnings found in console"
+       end
+     when 'all'
+       errors = page.driver.browser.manage.logs.get(:browser).map(&:message).join("\n\n")
+       if errors.present?
+         puts "Below are the errors/warnings found."
+         raise StandardError, errors
+       else
+         puts "No Error/warnings found in console"
+       end
+    end
+    end
   end
 end
