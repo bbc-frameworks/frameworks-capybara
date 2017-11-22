@@ -96,7 +96,7 @@ module FrameworksCapybara
       embed "./reports/Screenshot_#{current_time}.png", 'image/png', "Actual screenshot of the error at #{current_url}"
     end
 
-    def getting_console_errors(type)
+    def get_console_logs(type)
     case type
     when 'errors'
       errors = page.driver.browser.manage.logs.get(:browser).select {|e| e.level == "SEVERE"}.map(&:message).to_a
@@ -114,7 +114,7 @@ module FrameworksCapybara
        else
          puts "No warnings found in console"
        end
-     when 'all'
+     when 'errors_and_warnings'
        errors = page.driver.browser.manage.logs.get(:browser).map(&:message).join("\n\n")
        if errors.present?
          puts "Below are the errors/warnings found."
