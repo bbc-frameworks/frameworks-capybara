@@ -66,6 +66,13 @@ module FrameworksCapybara
       end
     end
 
+    def check_expected_section_translation_includes(section, table)
+      table.rows_hash.each do |key, value|
+        element = key.downcase.tr(' ', '_').tr(',', '')
+        expect(section.send(element).text).to include value
+      end
+    end
+
     def check_expected_element_translation(page, table)
       table.rows_hash.each do |key, value|
         element = key.downcase.tr(' ', '_').tr(',', '')
