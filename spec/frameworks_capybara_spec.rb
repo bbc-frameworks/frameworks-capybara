@@ -1,12 +1,12 @@
 require 'spec_helper'
 require 'securerandom'
-##
-#Monkey Patch
-#This is required because Capybara has module methods (singletons) which create
-#a session and then re-use this whenever Capybara is referenced in the current process. 
-#Therefore even creating new instances of CapybaraSetup will use the same session and driver instance
-#...not picking up changes in the different tests below.  
-#Hence the only option is to clean out the session before each test.
+
+# Monkey Patch
+# This is required because Capybara has module methods (singletons) which create
+# a session and then re-use this whenever Capybara is referenced in the current process.
+# Therefore even creating new instances of CapybaraSetup will use the same session and driver instance
+# not picking up changes in the different tests below.
+# Hence the only option is to clean out the session before each test.
 module Capybara
   class << self
     def delete_session
@@ -15,105 +15,104 @@ module Capybara
   end
 end
 
-shared_examples_for "Selenium Driver Options Array" do
-  it "should contain no nil values for unset options" do
-    #TODO: Test for nil elements in options - there shouldn't be any that we insert
-    #i.e. anything in our ENV options should not end up being nil in Selenium
-    Capybara.current_session.driver.options[:environment].should == nil
-    Capybara.current_session.driver.options[:http_proxy].should == nil
-    Capybara.current_session.driver.options[:webdriver_proxy_on].should == nil
-    Capybara.current_session.driver.options[:platform].should == nil
-    Capybara.current_session.driver.options[:browser_name].should == nil
-    Capybara.current_session.driver.options[:version].should == nil
-    Capybara.current_session.driver.options[:job_name].should == nil
-    Capybara.current_session.driver.options[:chrome_switches].should == nil
-    Capybara.current_session.driver.options[:firefox_prefs].should == nil
-    Capybara.current_session.driver.options[:max_duration].should == nil
+shared_examples_for 'Selenium Driver Options Array' do
+  it 'should contain no nil values for unset options' do
+    # TODO: Test for nil elements in options - there shouldn't be any that we insert
+    # i.e. anything in our ENV options should not end up being nil in Selenium
+    Capybara.current_session.driver.options[:environment].should eq nil
+    Capybara.current_session.driver.options[:http_proxy].should eq nil
+    Capybara.current_session.driver.options[:webdriver_proxy_on].should eq nil
+    Capybara.current_session.driver.options[:platform].should eq nil
+    Capybara.current_session.driver.options[:browser_name].should eq nil
+    Capybara.current_session.driver.options[:version].should eq nil
+    Capybara.current_session.driver.options[:job_name].should eq nil
+    Capybara.current_session.driver.options[:chrome_switches].should eq nil
+    Capybara.current_session.driver.options[:firefox_prefs].should eq nil
+    Capybara.current_session.driver.options[:max_duration].should eq nil
     Capybara.current_session.driver.options[:profile].should_not be_a_kind_of String
     Capybara.current_session.driver.options[:browser].should_not be_a_kind_of String
   end
 end
 
 describe CapybaraSetup do
-
   before(:each) do
     home = ENV['HOME']
     appdata = ENV['APPDATA']
     ENV.clear
-    ENV['HOME'] = home #Want to clear some env variables but HOME is used by Webdriver, therefore need to preserve it
+    ENV['HOME'] = home # Want to clear some env variables but HOME is used by Webdriver, therefore need to preserve it
     ENV['APPDATA'] = appdata
   end
 
-  describe "should validate options" do
+  describe 'should validate options' do
     before(:each) do
       Capybara.delete_session
     end
 
-    it "should require as a minimum ENVIRONMENT and BROWSER" do
-      lambda {CapybaraSetup.new}.should raise_error(RuntimeError,'Please ensure following environment variables are set ENVIRONMENT [int|test|stage|live], BROWSER[headless|ie|chrome|firefox] and HTTP_PROXY (if required)')
+    it 'should require as a minimum ENVIRONMENT and BROWSER' do
+      lambda { CapybaraSetup.new }.should raise_error(RuntimeError, 'Please ensure following environment variables are set ENVIRONMENT [int|test|stage|live], BROWSER[headless|ie|chrome|firefox] and HTTP_PROXY (if required)')
     end
 
-    it "should require as a minimum ENVIRONMENT, BROWSER and REMOTE_BROWSER if running a Remote Selenium Instance" do
+    it 'should require as a minimum ENVIRONMENT, BROWSER and REMOTE_BROWSER if running a Remote Selenium Instance' do
       ENV['BROWSER'] = 'remote'
       ENV['ENVIRONMENT'] = 'test'
-      lambda {CapybaraSetup.new}.should raise_error(RuntimeError,'Please ensure the following environment variables are set PLATFORM, REMOTE_URL, REMOTE_BROWSER (browser to use on remote machine), HTTP_PROXY (if required), REMOTE_BROWSER_PROXY (if required) and BROWSER_VERSION (if required)')
+      lambda { CapybaraSetup.new }.should raise_error(RuntimeError, 'Please ensure the following environment variables are set PLATFORM, REMOTE_URL, REMOTE_BROWSER (browser to use on remote machine), HTTP_PROXY (if required), REMOTE_BROWSER_PROXY (if required) and BROWSER_VERSION (if required)')
     end
 
-    it "should not error if ENVIRONMENT and BROWSER are provided" do
+    it 'should not error if ENVIRONMENT and BROWSER are provided' do
       ENV['BROWSER'] = 'headless'
       ENV['ENVIRONMENT'] = 'test'
-      lambda {CapybaraSetup.new}.should_not raise_error
+      lambda { CapybaraSetup.new }.should_not raise_error
     end
 
-    it "should not error if ENVIRONMENT, BROWSER and REMOTE_BROSWER are provided if running a Remote Selenium Instance" do
+    it 'should not error if ENVIRONMENT, BROWSER and REMOTE_BROSWER are provided if running a Remote Selenium Instance' do
       ENV['BROWSER'] = 'remote'
       ENV['ENVIRONMENT'] = 'test'
       ENV['REMOTE_BROWSER'] = 'test'
       ENV['REMOTE_URL'] = 'test'
-      lambda {CapybaraSetup.new}.should_not raise_error
+      lambda { CapybaraSetup.new }.should_not raise_error
     end
   end
 
-  describe "should allow Capybara drivers to be created" do
+  describe 'should allow Capybara drivers to be created' do
     before do
       ENV['ENVIRONMENT'] = 'test'
     end
 
-    describe "should allow Selenium driver to be created" do
-      context "with minimal Selenium driver" do
+    describe 'should allow Selenium driver to be created' do
+      context 'with minimal Selenium driver' do
         before do
           ENV['BROWSER'] = 'firefox'
         end
 
-        it "should be initialized correctly" do 
+        it 'should be initialized correctly' do
           Capybara.delete_session
-          CapybaraSetup.new.driver.should == :selenium
+          CapybaraSetup.new.driver.should eq :selenium
           Capybara.current_session.driver.should be_a_kind_of Capybara::Selenium::Driver
-          Capybara.current_session.driver.options[:browser].should == :firefox
+          Capybara.current_session.driver.options[:browser].should eq :firefox
         end
 
-        it_behaves_like "Selenium Driver Options Array"
+        it_behaves_like 'Selenium Driver Options Array'
       end
 
-      context "with no command-line arguments supplied" do
+      context 'with no command-line arguments supplied' do
         before do
           ENV['BROWSER'] = 'phantomjs'
         end
 
-        it "should be initialized correctly" do
+        it 'should be initialized correctly' do
           Capybara.delete_session
           expect(CapybaraSetup.new.driver).to eq :selenium
           expect(Capybara.current_session.driver.options[:args]).to be nil
         end
       end
 
-      context "with single command-line argument supplied" do
+      context 'with single command-line argument supplied' do
         before do
           ENV['BROWSER'] = 'phantomjs'
           ENV['BROWSER_CLI_ARGS'] = '--ignore-ssl-errors=true'
         end
 
-        it "should be initialized correctly" do
+        it 'should be initialized correctly' do
           Capybara.delete_session
           expect(CapybaraSetup.new.driver).to eq :selenium
           args = Capybara.current_session.driver.options[:args]
@@ -123,13 +122,13 @@ describe CapybaraSetup do
         end
       end
 
-      context "with multiple command-line arguments supplied" do
+      context 'with multiple command-line arguments supplied' do
         before do
           ENV['BROWSER'] = 'phantomjs'
           ENV['BROWSER_CLI_ARGS'] = '--ignore-ssl-errors=true --remote-debugger-port=9000'
         end
 
-        it "should be initialized correctly" do
+        it 'should be initialized correctly' do
           Capybara.delete_session
           expect(CapybaraSetup.new.driver).to eq :selenium
           args = Capybara.current_session.driver.options[:args]
@@ -140,25 +139,24 @@ describe CapybaraSetup do
         end
       end
 
-      context "with Selenium driver and default firefox profile (from profiles.ini)" do
+      context 'with Selenium driver and default firefox profile (from profiles.ini)' do
         before do
           ENV['BROWSER'] = 'firefox'
           ENV['FIREFOX_PROFILE'] = 'default'
         end
 
-        it "should be initialized correctly" do 
+        it 'should be initialized correctly' do
           Capybara.delete_session
-          CapybaraSetup.new.driver.should == :selenium
+          CapybaraSetup.new.driver.should eq :selenium
           Capybara.current_session.driver.should be_a_kind_of Capybara::Selenium::Driver
-          Capybara.current_session.driver.options[:browser].should == :firefox
+          Capybara.current_session.driver.options[:browser].should eq :firefox
           Capybara.current_session.driver.options[:profile].should be_a_kind_of Selenium::WebDriver::Firefox::Profile
-          Capybara.current_session.driver.options[:profile].instance_variable_get(:@model).should include "default"
+          Capybara.current_session.driver.options[:profile].instance_variable_get(:@model).should include 'default'
         end
-        it_behaves_like "Selenium Driver Options Array"
-
+        it_behaves_like 'Selenium Driver Options Array'
       end
 
-      context "with Selenium driver and programtically created profile" do
+      context 'with Selenium driver and programtically created profile' do
         before do
           ENV['BROWSER'] = 'firefox'
           ENV['FIREFOX_PROFILE'] = 'BBC_INTERNAL'
@@ -166,40 +164,39 @@ describe CapybaraSetup do
           ENV['PROXY_ON'] = 'false'
         end
 
-        it "should be initialized correctly" do 
+        it 'should be initialized correctly' do
           Capybara.delete_session
-          CapybaraSetup.new.driver.should == :selenium
+          CapybaraSetup.new.driver.should eq :selenium
           Capybara.current_session.driver.should be_a_kind_of Capybara::Selenium::Driver
-          Capybara.current_session.driver.options[:browser].should == :firefox
+          Capybara.current_session.driver.options[:browser].should eq :firefox
           Capybara.current_session.driver.options[:profile].should be_a_kind_of Selenium::WebDriver::Firefox::Profile
-          Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['network.proxy.type'].should == 1
-          Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['network.proxy.no_proxies_on'].should == '*.sandbox.dev.bbc.co.uk,*.sandbox.bbc.co.uk'
-          Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['network.proxy.http'].should == 'example.cache.co.uk'
-          Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['network.proxy.http_port'].should == 80
-          Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['network.proxy.ssl'].should == 'example.cache.co.uk'
-          Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['network.proxy.ssl_port'].should == 80
+          Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['network.proxy.type'].should eq 1
+          Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['network.proxy.no_proxies_on'].should eq '*.sandbox.dev.bbc.co.uk,*.sandbox.bbc.co.uk'
+          Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['network.proxy.http'].should eq 'example.cache.co.uk'
+          Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['network.proxy.http_port'].should eq 80
+          Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['network.proxy.ssl'].should eq 'example.cache.co.uk'
+          Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['network.proxy.ssl_port'].should eq 80
         end
-        it_behaves_like "Selenium Driver Options Array"
+        it_behaves_like 'Selenium Driver Options Array'
       end
 
-      context "with Selenium driver and custom chrome options" do
+      context 'with Selenium driver and custom chrome options' do
         before do
           ENV['BROWSER'] = 'chrome'
           ENV['CHROME_SWITCHES'] = '--user-agent=Mozilla/5.0 (iPad; U; CPU OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B334b Safari/531.21.10'
         end
 
-        it "should be initialized correctly" do 
+        it 'should be initialized correctly' do
           Capybara.delete_session
-          CapybaraSetup.new.driver.should == :selenium
+          CapybaraSetup.new.driver.should eq :selenium
           Capybara.current_session.driver.should be_a_kind_of Capybara::Selenium::Driver
-          Capybara.current_session.driver.options[:browser].should == :chrome
-          Capybara.current_session.driver.options[:switches].should == ['--user-agent=Mozilla/5.0 (iPad; U; CPU OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B334b Safari/531.21.10']
+          Capybara.current_session.driver.options[:browser].should eq :chrome
+          Capybara.current_session.driver.options[:switches].should eq ['--user-agent=Mozilla/5.0 (iPad; U; CPU OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B334b Safari/531.21.10']
         end
-        it_behaves_like "Selenium Driver Options Array"
+        it_behaves_like 'Selenium Driver Options Array'
       end
 
-
-      context "with Remote Selenium driver" do
+      context 'with Remote Selenium driver' do
         before do
           ENV['BROWSER'] = 'remote'
           ENV['REMOTE_BROWSER'] = 'firefox'
@@ -207,23 +204,23 @@ describe CapybaraSetup do
           ENV['REMOTE_URL'] = 'http://example.com'
         end
 
-        it "should be initialized correctly" do 
+        it 'should be initialized correctly' do
           Capybara.delete_session
-          CapybaraSetup.new.driver.should == :selenium
+          CapybaraSetup.new.driver.should eq :selenium
           Capybara.current_session.driver.should be_a_kind_of Capybara::Selenium::Driver
-          Capybara.current_session.driver.options[:browser].should == :remote
-          Capybara.current_session.driver.options[:url].should == 'http://example.com'
-          Capybara.current_session.driver.options[:http_client].should be_a_kind_of Selenium::WebDriver::Remote::Http::Default 
-          Capybara.current_session.driver.options[:http_client].instance_variable_get(:@proxy).should == nil
-          Capybara.current_session.driver.options[:desired_capabilities].should be_a_kind_of Selenium::WebDriver::Remote::Capabilities 
-          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:browser_name].should == :firefox
+          Capybara.current_session.driver.options[:browser].should eq :remote
+          Capybara.current_session.driver.options[:url].should eq 'http://example.com'
+          Capybara.current_session.driver.options[:http_client].should be_a_kind_of Selenium::WebDriver::Remote::Http::Default
+          Capybara.current_session.driver.options[:http_client].instance_variable_get(:@proxy).should eq nil
+          Capybara.current_session.driver.options[:desired_capabilities].should be_a_kind_of Selenium::WebDriver::Remote::Capabilities
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:browser_name].should eq :firefox
           Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].should be_a_kind_of Selenium::WebDriver::Firefox::Profile
           Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].instance_variable_get(:@model).should include 'default'
         end
-        it_behaves_like "Selenium Driver Options Array"
+        it_behaves_like 'Selenium Driver Options Array'
       end
 
-      context "with Remote Selenium driver and client proxy" do
+      context 'with Remote Selenium driver and client proxy' do
         before do
           ENV['BROWSER'] = 'remote'
           ENV['REMOTE_BROWSER'] = 'firefox'
@@ -232,20 +229,20 @@ describe CapybaraSetup do
           ENV['HTTP_PROXY'] = 'http://example.cache.co.uk:80'
         end
 
-        it "should be initialized correctly" do 
+        it 'should be initialized correctly' do
           Capybara.delete_session
-          CapybaraSetup.new.driver.should == :selenium
+          CapybaraSetup.new.driver.should eq :selenium
           Capybara.current_session.driver.should be_a_kind_of Capybara::Selenium::Driver
-          Capybara.current_session.driver.options[:browser].should == :remote
-          Capybara.current_session.driver.options[:url].should == 'http://example.com'
-          Capybara.current_session.driver.options[:http_client].should be_a_kind_of Selenium::WebDriver::Remote::Http::Default 
+          Capybara.current_session.driver.options[:browser].should eq :remote
+          Capybara.current_session.driver.options[:url].should eq 'http://example.com'
+          Capybara.current_session.driver.options[:http_client].should be_a_kind_of Selenium::WebDriver::Remote::Http::Default
           Capybara.current_session.driver.options[:http_client].instance_variable_get(:@proxy).should be_a_kind_of Selenium::WebDriver::Proxy
           Capybara.current_session.driver.options[:http_client].instance_variable_get(:@proxy).instance_variable_get(:@http).should == 'http://example.cache.co.uk:80'
         end
-        it_behaves_like "Selenium Driver Options Array"
+        it_behaves_like 'Selenium Driver Options Array'
       end
 
-      context "with Remote Selenium driver, programtically cretated Firefox profile using proxy but client not using proxy" do
+      context 'with Remote Selenium driver, programtically cretated Firefox profile using proxy but client not using proxy' do
         before do
           ENV['BROWSER'] = 'remote'
           ENV['REMOTE_BROWSER'] = 'firefox'
@@ -255,25 +252,25 @@ describe CapybaraSetup do
           ENV['PROXY_ON'] = 'false'
         end
 
-        it "should be initialized correctly" do 
+        it 'should be initialized correctly' do
           Capybara.delete_session
-          CapybaraSetup.new.driver.should == :selenium
+          CapybaraSetup.new.driver.should eq :selenium
           Capybara.current_session.driver.should be_a_kind_of Capybara::Selenium::Driver
-          Capybara.current_session.driver.options[:browser].should == :remote
+          Capybara.current_session.driver.options[:browser].should eq :remote
           Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].should be_a_kind_of Selenium::WebDriver::Firefox::Profile
-          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].instance_variable_get(:@additional_prefs)['network.proxy.type'].should == 1
-          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].instance_variable_get(:@additional_prefs)['network.proxy.no_proxies_on'].should == '*.sandbox.dev.bbc.co.uk,*.sandbox.bbc.co.uk'
-          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].instance_variable_get(:@additional_prefs)['network.proxy.http'].should == 'example.cache.co.uk'
-          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].instance_variable_get(:@additional_prefs)['network.proxy.http_port'].should == 80
-          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].instance_variable_get(:@additional_prefs)['network.proxy.ssl'].should == 'example.cache.co.uk'
-          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].instance_variable_get(:@additional_prefs)['network.proxy.ssl_port'].should == 80
-          Capybara.current_session.driver.options[:http_client].should be_a_kind_of Selenium::WebDriver::Remote::Http::Default 
-          Capybara.current_session.driver.options[:http_client].instance_variable_get(:@proxy).should == nil
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].instance_variable_get(:@additional_prefs)['network.proxy.type'].should eq 1
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].instance_variable_get(:@additional_prefs)['network.proxy.no_proxies_on'].should eq '*.sandbox.dev.bbc.co.uk,*.sandbox.bbc.co.uk'
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].instance_variable_get(:@additional_prefs)['network.proxy.http'].should eq 'example.cache.co.uk'
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].instance_variable_get(:@additional_prefs)['network.proxy.http_port'].should eq 80
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].instance_variable_get(:@additional_prefs)['network.proxy.ssl'].should eq 'example.cache.co.uk'
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].instance_variable_get(:@additional_prefs)['network.proxy.ssl_port'].should eq 80
+          Capybara.current_session.driver.options[:http_client].should be_a_kind_of Selenium::WebDriver::Remote::Http::Default
+          Capybara.current_session.driver.options[:http_client].instance_variable_get(:@proxy).should eq nil
         end
-        it_behaves_like "Selenium Driver Options Array"
+        it_behaves_like 'Selenium Driver Options Array'
       end
 
-      context "with Remote Selenium driver (specifying platform and browser version) and default Custom Capabilites (e.g. for Sauce Labs)" do
+      context 'with Remote Selenium driver (specifying platform and browser version) and default Custom Capabilites (e.g. for Sauce Labs)' do
         before do
           ENV['BROWSER'] = 'remote'
           ENV['REMOTE_BROWSER'] = 'firefox'
@@ -283,27 +280,25 @@ describe CapybaraSetup do
           ENV['REMOTE_URL'] = 'http://saucelabs.com'
         end
 
-        it "should be initialized correctly" do 
+        it 'should be initialized correctly' do
           Capybara.delete_session
-          CapybaraSetup.new.driver.should == :selenium
+          CapybaraSetup.new.driver.should eq :selenium
           Capybara.current_session.driver.should be_a_kind_of Capybara::Selenium::Driver
-          Capybara.current_session.driver.options[:browser].should == :remote
-          Capybara.current_session.driver.options[:url].should == 'http://saucelabs.com'
-          Capybara.current_session.driver.options[:http_client].should be_a_kind_of Selenium::WebDriver::Remote::Http::Default 
-          Capybara.current_session.driver.options[:http_client].instance_variable_get(:@proxy).should == nil
-          Capybara.current_session.driver.options[:desired_capabilities].should be_a_kind_of Selenium::WebDriver::Remote::Capabilities 
-          #Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@custom_capabilities)[:'job-name'].should == 'frameworks-unamed-job' 
-          #Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@custom_capabilities)[:'max-duration'].should == 1800 
-          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:browser_name].should == :firefox
-          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:browser_version].should == '4'
-          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:os].should == 'windows'
+          Capybara.current_session.driver.options[:browser].should eq :remote
+          Capybara.current_session.driver.options[:url].should eq 'http://saucelabs.com'
+          Capybara.current_session.driver.options[:http_client].should be_a_kind_of Selenium::WebDriver::Remote::Http::Default
+          Capybara.current_session.driver.options[:http_client].instance_variable_get(:@proxy).should eq nil
+          Capybara.current_session.driver.options[:desired_capabilities].should be_a_kind_of Selenium::WebDriver::Remote::Capabilities
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:browser_name].should eq :firefox
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:browser_version].should eq '4'
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:os].should eq 'windows'
           Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].should be_a_kind_of Selenium::WebDriver::Firefox::Profile
           Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].instance_variable_get(:@model).should include 'default'
         end
-        it_behaves_like "Selenium Driver Options Array"
+        it_behaves_like 'Selenium Driver Options Array'
       end
 
-      context "with Selenium driver and hardcoded bbc internal profile and additional firefox preferences" do
+      context 'with Selenium driver and hardcoded bbc internal profile and additional firefox preferences' do
         before do
           ENV['BROWSER'] = 'firefox'
           ENV['HTTP_PROXY'] = 'http://example.cache.co.uk:80'
@@ -311,55 +306,53 @@ describe CapybaraSetup do
           ENV['FIREFOX_PREFS'] = '{"javascript.enabled":false}'
         end
 
-        it "should be initialized correctly" do 
+        it 'should be initialized correctly' do
           Capybara.delete_session
-          CapybaraSetup.new.driver.should == :selenium
+          CapybaraSetup.new.driver.should eq :selenium
           Capybara.current_session.driver.should be_a_kind_of Capybara::Selenium::Driver
-          Capybara.current_session.driver.options[:browser].should == :firefox
+          Capybara.current_session.driver.options[:browser].should eq :firefox
           Capybara.current_session.driver.options[:profile].should be_a_kind_of Selenium::WebDriver::Firefox::Profile
-          Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['javascript.enabled'].should == false
+          Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['javascript.enabled'].should eq false
         end
-        it_behaves_like "Selenium Driver Options Array"
+        it_behaves_like 'Selenium Driver Options Array'
       end
 
-
-      context "with Selenium driver and additional firefox preferences" do
+      context 'with Selenium driver and additional firefox preferences' do
         before do
           ENV['BROWSER'] = 'firefox'
           ENV['FIREFOX_PROFILE'] = 'default'
           ENV['FIREFOX_PREFS'] = '{"javascript.enabled":false}'
         end
 
-        it "should be initialized correctly" do 
+        it 'should be initialized correctly' do
           Capybara.delete_session
-          CapybaraSetup.new.driver.should == :selenium
+          CapybaraSetup.new.driver.should eq :selenium
           Capybara.current_session.driver.should be_a_kind_of Capybara::Selenium::Driver
-          Capybara.current_session.driver.options[:browser].should == :firefox
+          Capybara.current_session.driver.options[:browser].should eq :firefox
           Capybara.current_session.driver.options[:profile].should be_a_kind_of Selenium::WebDriver::Firefox::Profile
-          Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['javascript.enabled'].should == false
+          Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['javascript.enabled'].should eq false
         end
-        it_behaves_like "Selenium Driver Options Array"
+        it_behaves_like 'Selenium Driver Options Array'
       end
 
-
-      context "with Selenium driver and new profile and custom prefs" do
+      context 'with Selenium driver and new profile and custom prefs' do
         before do
           ENV['BROWSER'] = 'firefox'
           ENV['FIREFOX_PREFS'] = '{"javascript.enabled":false}'
         end
 
-        it "should be initialized correctly" do 
+        it 'should be initialized correctly' do
           Capybara.delete_session
-          CapybaraSetup.new.driver.should == :selenium
+          CapybaraSetup.new.driver.should eq :selenium
           Capybara.current_session.driver.should be_a_kind_of Capybara::Selenium::Driver
-          Capybara.current_session.driver.options[:browser].should == :firefox
+          Capybara.current_session.driver.options[:browser].should eq :firefox
           Capybara.current_session.driver.options[:profile].should be_a_kind_of Selenium::WebDriver::Firefox::Profile
-          Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['javascript.enabled'].should == false
+          Capybara.current_session.driver.options[:profile].instance_variable_get(:@additional_prefs)['javascript.enabled'].should eq false
         end
-        it_behaves_like "Selenium Driver Options Array"
+        it_behaves_like 'Selenium Driver Options Array'
       end
 
-      context "with Remote Selenium driver and specified Chrome Switches" do
+      context 'with Remote Selenium driver and specified Chrome Switches' do
         before do
           ENV['BROWSER'] = 'remote'
           ENV['REMOTE_BROWSER'] = 'chrome'
@@ -367,23 +360,23 @@ describe CapybaraSetup do
           ENV['CHROME_SWITCHES'] = '--user-agent=Mozilla/5.0 (iPad; U; CPU OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B334b Safari/531.21.10'
         end
 
-        it "should be initialized correctly" do 
+        it 'should be initialized correctly' do
           Capybara.delete_session
-          CapybaraSetup.new.driver.should == :selenium
+          CapybaraSetup.new.driver.should eq :selenium
           Capybara.current_session.driver.should be_a_kind_of Capybara::Selenium::Driver
-          Capybara.current_session.driver.options[:browser].should == :remote
-          Capybara.current_session.driver.options[:switches].should == nil
-          Capybara.current_session.driver.options[:url].should == 'http://saucelabs.com'
-          Capybara.current_session.driver.options[:http_client].should be_a_kind_of Selenium::WebDriver::Remote::Http::Default 
-          Capybara.current_session.driver.options[:http_client].instance_variable_get(:@proxy).should == nil
-          Capybara.current_session.driver.options[:desired_capabilities].should be_a_kind_of Selenium::WebDriver::Remote::Capabilities 
-          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:browser_name].should == :chrome
-          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)['chrome.switches'].should == ['--user-agent=Mozilla/5.0 (iPad; U; CPU OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B334b Safari/531.21.10'] 
+          Capybara.current_session.driver.options[:browser].should eq :remote
+          Capybara.current_session.driver.options[:switches].should eq nil
+          Capybara.current_session.driver.options[:url].should eq 'http://saucelabs.com'
+          Capybara.current_session.driver.options[:http_client].should be_a_kind_of Selenium::WebDriver::Remote::Http::Default
+          Capybara.current_session.driver.options[:http_client].instance_variable_get(:@proxy).should eq nil
+          Capybara.current_session.driver.options[:desired_capabilities].should be_a_kind_of Selenium::WebDriver::Remote::Capabilities
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:browser_name].should eq :chrome
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)['chrome.switches'].should eq ['--user-agent=Mozilla/5.0 (iPad; U; CPU OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B334b Safari/531.21.10']
         end
-        it_behaves_like "Selenium Driver Options Array"
+        it_behaves_like 'Selenium Driver Options Array'
       end
 
-      context "with Remote Selenium driver and specified Custom Capabilites (e.g. for Sauce Labs)" do
+      context 'with Remote Selenium driver and specified Custom Capabilites (e.g. for Sauce Labs)' do
         before do
           ENV['BROWSER'] = 'remote'
           ENV['REMOTE_BROWSER'] = 'firefox'
@@ -394,44 +387,42 @@ describe CapybaraSetup do
           ENV['REMOTE_URL'] = 'http://saucelabs.com'
         end
 
-        it "should be initialized correctly" do 
+        it 'should be initialized correctly' do
           Capybara.delete_session
-          CapybaraSetup.new.driver.should == :selenium
+          CapybaraSetup.new.driver.should eq :selenium
           Capybara.current_session.driver.should be_a_kind_of Capybara::Selenium::Driver
-          Capybara.current_session.driver.options[:browser].should == :remote
-          Capybara.current_session.driver.options[:url].should == 'http://saucelabs.com'
-          Capybara.current_session.driver.options[:http_client].should be_a_kind_of Selenium::WebDriver::Remote::Http::Default 
-          Capybara.current_session.driver.options[:http_client].instance_variable_get(:@proxy).should == nil
-          Capybara.current_session.driver.options[:desired_capabilities].should be_a_kind_of Selenium::WebDriver::Remote::Capabilities 
-          #Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@custom_capabilities)[:'job-name'].should == 'myjobname' 
-          #Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@custom_capabilities)[:'max-duration'].should == 2000 
-          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:browser_name].should == :firefox
+          Capybara.current_session.driver.options[:browser].should eq :remote
+          Capybara.current_session.driver.options[:url].should eq 'http://saucelabs.com'
+          Capybara.current_session.driver.options[:http_client].should be_a_kind_of Selenium::WebDriver::Remote::Http::Default
+          Capybara.current_session.driver.options[:http_client].instance_variable_get(:@proxy).should eq nil
+          Capybara.current_session.driver.options[:desired_capabilities].should be_a_kind_of Selenium::WebDriver::Remote::Capabilities
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:browser_name].should eq :firefox
           Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].should be_a_kind_of Selenium::WebDriver::Firefox::Profile
           Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:firefox_profile].instance_variable_get(:@model).should include 'default'
         end
-        it_behaves_like "Selenium Driver Options Array"
+        it_behaves_like 'Selenium Driver Options Array'
       end
 
-      context "with Remote Selenium driver and most minimal Capabilites for BrowserStack" do
+      context 'with Remote Selenium driver and most minimal Capabilites for BrowserStack' do
         before do
           ENV['BROWSER'] = 'remote'
           ENV['REMOTE_BROWSER'] = 'ie'
           ENV['REMOTE_URL'] = 'http://hub.browserstack.com'
         end
 
-        it "should be initialized correctly" do
+        it 'should be initialized correctly' do
           Capybara.delete_session
-          CapybaraSetup.new.driver.should == :selenium
+          CapybaraSetup.new.driver.should eq :selenium
           Capybara.current_session.driver.should be_a_kind_of Capybara::Selenium::Driver
-          Capybara.current_session.driver.options[:browser].should == :remote
-          Capybara.current_session.driver.options[:url].should == ENV['REMOTE_URL']
+          Capybara.current_session.driver.options[:browser].should eq :remote
+          Capybara.current_session.driver.options[:url].should eq ENV['REMOTE_URL']
           Capybara.current_session.driver.options[:desired_capabilities].should be_a_kind_of Selenium::WebDriver::Remote::Capabilities
-          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:'browserstack.debug'].should == 'true'
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:'browserstack.debug'].should eq 'true'
         end
-        it_behaves_like "Selenium Driver Options Array"
+        it_behaves_like 'Selenium Driver Options Array'
       end
 
-      context "with Remote Selenium driver and specified Custom Capabilites for BrowserStack" do
+      context 'with Remote Selenium driver and specified Custom Capabilites for BrowserStack' do
         before do
           ENV['BROWSER'] = 'remote'
           ENV['BS_BUILD'] = 'browserstack build 1'
@@ -447,68 +438,117 @@ describe CapybaraSetup do
           ENV['REMOTE_URL'] = 'http://hub.browserstack.com'
         end
 
-        it "should be initialized correctly" do
+        it 'should be initialized correctly' do
           Capybara.delete_session
-          CapybaraSetup.new.driver.should == :selenium
+          CapybaraSetup.new.driver.should eq :selenium
           Capybara.current_session.driver.should be_a_kind_of Capybara::Selenium::Driver
-          Capybara.current_session.driver.options[:browser].should == :remote
+          Capybara.current_session.driver.options[:browser].should eq :remote
+          Capybara.current_session.driver.options[:url].should eq ENV['REMOTE_URL']
+          Capybara.current_session.driver.options[:http_client].should be_a_kind_of Selenium::WebDriver::Remote::Http::Default
+          Capybara.current_session.driver.options[:http_client].instance_variable_get(:@proxy).should eq nil
+          Capybara.current_session.driver.options[:desired_capabilities].should be_a_kind_of Selenium::WebDriver::Remote::Capabilities
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:build].should eq ENV['BS_BUILD']
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:'browserstack.debug'].should eq ENV['BS_DEBUG']
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:device].should eq ENV['BS_DEVICE']
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:deviceOrientation].should eq ENV['BS_DEVICE_ORIENTATION']
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:project].should eq ENV['BS_PROJECT']
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:resolution].should eq ENV['BS_RESOLUTION']
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:os].should eq ENV['PLATFORM']
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:os_version].should eq ENV['PLATFORM_VERSION']
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:browser_name].should eq :iPhone
+          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:browser_version].should eq ENV['REMOTE_BROWSER_VERSION']
+        end
+        it_behaves_like 'Selenium Driver Options Array'
+      end
+
+      context 'with Remote Selenium driver and specified Custom Capabilites for Appium' do
+        before do
+          ENV['BROWSER'] = 'remote'
+          ENV['REMOTE_URL'] = 'http://127.0.0.1:4273'
+          ENV['APPIUM_PLATFORM'] = 'Android'
+          ENV['APPIUM_DEVICE'] = 'android'
+          ENV['APPIUM_BROWSER'] = 'chrome'
+          ENV['APPIUM_UDID'] = 'abd234'
+        end
+
+        it 'should be initialized correctly' do
+          Capybara.delete_session
+          CapybaraSetup.new.driver.should eq :selenium
+          Capybara.current_session.driver.should be_a_kind_of Capybara::Selenium::Driver
+          Capybara.current_session.driver.options[:browser].should eq :remote
           Capybara.current_session.driver.options[:url].should == ENV['REMOTE_URL']
           Capybara.current_session.driver.options[:http_client].should be_a_kind_of Selenium::WebDriver::Remote::Http::Default
-          Capybara.current_session.driver.options[:http_client].instance_variable_get(:@proxy).should == nil
+          Capybara.current_session.driver.options[:http_client].instance_variable_get(:@proxy).should eq nil
           Capybara.current_session.driver.options[:desired_capabilities].should be_a_kind_of Selenium::WebDriver::Remote::Capabilities
-          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:build].should == ENV['BS_BUILD']
-          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:'browserstack.debug'].should == ENV['BS_DEBUG']
-          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:device].should == ENV['BS_DEVICE']
-          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:deviceOrientation].should == ENV['BS_DEVICE_ORIENTATION']
-          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:project].should == ENV['BS_PROJECT']
-          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:resolution].should == ENV['BS_RESOLUTION']
-          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:os].should == ENV['PLATFORM']
-          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:os_version].should == ENV['PLATFORM_VERSION']
-          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:browser_name].should == :iPhone
-          Capybara.current_session.driver.options[:desired_capabilities].instance_variable_get(:@capabilities)[:browser_version].should == ENV['REMOTE_BROWSER_VERSION']
         end
-        it_behaves_like "Selenium Driver Options Array"
+        it_behaves_like 'Selenium Driver Options Array'
       end
     end
 
-    describe "should allow Mechanize driver to be created" do
-      context "with minimal Mechanize driver" do
+    describe 'should allow Mechanize driver to be created' do
+      context 'with minimal Mechanize driver' do
         before do
           ENV['BROWSER'] = 'mechanize'
         end
 
-        it "should be initialized correctly" do 
+        it 'should be initialized correctly' do
           Capybara.delete_session
           CapybaraSetup.new.driver.should == :mechanize
           Capybara.current_session.driver.should be_a_kind_of Capybara::Mechanize::Driver
         end
 
-        context "with maximal Mechanize driver" do
+        context 'with maximal Mechanize driver' do
           before do
             ENV['BROWSER'] = 'mechanize'
             ENV['ENVIRONMENT'] = 'test'
             ENV['HTTP_PROXY'] = 'http://example.cache.co.uk:80'
           end
 
-          it "should be initialized correctly" do
+          it 'should be initialized correctly' do
             Capybara.delete_session
-            CapybaraSetup.new.driver.should == :mechanize
+            CapybaraSetup.new.driver.should eq :mechanize
             Capybara.current_session.driver.should be_a_kind_of Capybara::Mechanize::Driver
-            #note can no longer unit test this due to change in Capybara wiping brower instance
-            #Capybara.current_session.driver.browser.agent.proxy_addr.should == 'example.cache.co.uk'
-            #Capybara.current_session.driver.browser.agent.proxy_port.should == 80
-
+            # note can no longer unit test this due to change in Capybara wiping brower instance
+            # Capybara.current_session.driver.browser.agent.proxy_addr.should == 'example.cache.co.uk'
+            # Capybara.current_session.driver.browser.agent.proxy_port.should == 80
           end
         end
       end
 
-      describe "should permit certificate files to be incorporated into firefox profiles" do
+    describe 'should allow Poltergeist driver to be created' do
+      context 'with minimal Poltergeist driver' do
+        before do
+          ENV['BROWSER'] = 'poltergeist'
+        end
 
-        context "integration tests for update_firefox_profile_with_certificates() method" do
+        it 'should be initialized correctly' do
+          Capybara.delete_session
+          CapybaraSetup.new.driver.should eq :poltergeist
+          Capybara.current_session.driver.should be_a_kind_of Capybara::Poltergeist::Driver
+        end
+
+        context 'with maximal Poltergeist driver' do
           before do
-            def write_random_data(file_path) 
+            ENV['BROWSER'] = 'poltergeist'
+            ENV['ENVIRONMENT'] = 'test'
+            ENV['HTTP_PROXY'] = 'http://example.cache.co.uk:80'
+          end
+
+          it 'should be initialized correctly' do
+            Capybara.delete_session
+            CapybaraSetup.new.driver.should eq :poltergeist
+            Capybara.current_session.driver.should be_a_kind_of Capybara::Poltergeist::Driver
+          end
+        end
+      end
+    end
+
+      describe 'should permit certificate files to be incorporated into firefox profiles' do
+        context 'integration tests for update_firefox_profile_with_certificates() method' do
+          before do
+            def write_random_data(file_path)
               file_data = SecureRandom.hex
-              File.open(file_path, "w") { |a_file|
+              File.open(file_path, 'w') { |a_file|
                 a_file.write(file_data)
               }
               file_data
@@ -517,10 +557,10 @@ describe CapybaraSetup do
             def compare_file_data(profile_path, file_name, expected_data)
               profile_file = profile_path + File::SEPARATOR + file_name
               actual_data = nil
-              File.open(profile_file, "r") { |a_file|
+              File.open(profile_file, 'r') { |a_file|
                 actual_data = a_file.read
               }
-              expected_data.should == actual_data 
+              expected_data.should == actual_data
             end
 
             ENV['BROWSER'] = 'firefox'
@@ -536,16 +576,16 @@ describe CapybaraSetup do
             FileUtils.remove_entry @cert_dir
           end
 
-          it "should raise an exception if the cert8.db file is missing in the source directory" do
+          it 'should raise an exception if the cert8.db file is missing in the source directory' do
             profile = Selenium::WebDriver::Firefox::Profile.new
 
-            key3_data = write_random_data(@key3_db)
-            secmod_data = write_random_data(@secmod_db)
-           
+            write_random_data(@key3_db)
+            write_random_data(@secmod_db)
+
             an_exception = nil
-            begin 
+            begin
               CapybaraSetup.new.instance_exec(profile, @cert_dir) { |profile, certificate_path|
-                update_firefox_profile_with_certificates(profile, certificate_path) 
+                update_firefox_profile_with_certificates(profile, certificate_path)
               }
             rescue RuntimeError => e
               an_exception = e
@@ -554,34 +594,15 @@ describe CapybaraSetup do
             an_exception.should_not be_nil
           end
 
-          it "should raise an exception if the key3.db file is missing in the source directory" do
+          it 'should raise an exception if the key3.db file is missing in the source directory' do
             profile = Selenium::WebDriver::Firefox::Profile.new
 
-            cert8_data = write_random_data(@cert8_db)
-            secmod_data = write_random_data(@secmod_db)
-           
+            write_random_data(@cert8_db)
+            write_random_data(@secmod_db)
             an_exception = nil
-            begin 
+            begin
               CapybaraSetup.new.instance_exec(profile, @cert_dir) { |profile, certificate_path|
-                update_firefox_profile_with_certificates(profile, certificate_path) 
-              }
-            rescue RuntimeError => e
-              an_exception = e
-            end
-
-            an_exception.should_not be_nil
-          end
-          
-          it "should raise an exception if the secmod.db file is missing in the source directory" do
-            profile = Selenium::WebDriver::Firefox::Profile.new
-
-            cert8_data = write_random_data(@cert8_db)
-            key3_data = write_random_data(@key3_db)
-  
-            an_exception = nil
-            begin 
-              CapybaraSetup.new.instance_exec(profile, @cert_dir) { |profile, certificate_path|
-                update_firefox_profile_with_certificates(profile, certificate_path) 
+                update_firefox_profile_with_certificates(profile, certificate_path)
               }
             rescue RuntimeError => e
               an_exception = e
@@ -590,8 +611,24 @@ describe CapybaraSetup do
             an_exception.should_not be_nil
           end
 
-          it "should update a firefox profile with valid references to certificate db files" do
-       
+          it 'should raise an exception if the secmod.db file is missing in the source directory' do
+            profile = Selenium::WebDriver::Firefox::Profile.new
+
+            write_random_data(@cert8_db)
+            write_random_data(@key3_db)
+            an_exception = nil
+            begin
+              CapybaraSetup.new.instance_exec(profile, @cert_dir) { |profile, certificate_path|
+                update_firefox_profile_with_certificates(profile, certificate_path)
+              }
+            rescue RuntimeError => e
+              an_exception = e
+            end
+
+            an_exception.should_not be_nil
+          end
+
+          it 'should update a firefox profile with valid references to certificate db files' do
             profile = Selenium::WebDriver::Firefox::Profile.new
 
             cert8_data = write_random_data(@cert8_db)
@@ -600,7 +637,7 @@ describe CapybaraSetup do
 
             setup = CapybaraSetup.new
             result = setup.instance_exec(profile, @cert_dir) { |profile, certificate_path|
-              update_firefox_profile_with_certificates(profile, certificate_path) 
+              update_firefox_profile_with_certificates(profile, certificate_path)
             }
             profile_path = result.layout_on_disk
             compare_file_data(profile_path, 'cert8.db', cert8_data)
@@ -608,41 +645,36 @@ describe CapybaraSetup do
             compare_file_data(profile_path, 'secmod.db', secmod_data)
           end
 
-          it "should update a firefox profile with references to certificate db files with prefixes" do
-       
+          it 'should update a firefox profile with references to certificate db files with prefixes' do
             profile = Selenium::WebDriver::Firefox::Profile.new
             cert_prefix = 'a'
             @cert8_db = @cert_dir + File::SEPARATOR + cert_prefix + 'cert8.db'
             @key3_db = @cert_dir + File::SEPARATOR + cert_prefix + 'key3.db'
             @secmod_db = @cert_dir + File::SEPARATOR + cert_prefix + 'secmod.db'
- 
             cert8_data = write_random_data(@cert8_db)
             key3_data = write_random_data(@key3_db)
             secmod_data = write_random_data(@secmod_db)
 
             setup = CapybaraSetup.new
-            result = setup.instance_exec(profile, @cert_dir, cert_prefix) { |profile, certificate_path, certificate_prefix, result|
-              update_firefox_profile_with_certificates(profile, certificate_path, certificate_prefix) 
+            result = setup.instance_exec(profile, @cert_dir, cert_prefix) { |profile, certificate_path, certificate_prefix, _result|
+              update_firefox_profile_with_certificates(profile, certificate_path, certificate_prefix)
             }
             profile_path = result.layout_on_disk
             compare_file_data(profile_path, 'cert8.db', cert8_data)
             compare_file_data(profile_path, 'key3.db', key3_data)
             compare_file_data(profile_path, 'secmod.db', secmod_data)
           end
-
         end
-
       end
 
-      describe "The BBC-INTERNAL firefox profile should be set up with the correct proxy settings whether working behind a proxy or not" do
-
-        context "no proxy settings provided" do
+      describe 'The BBC-INTERNAL firefox profile should be set up with the correct proxy settings whether working behind a proxy or not' do
+        context 'no proxy settings provided' do
           before do
             ENV['BROWSER'] = 'firefox'
             ENV['ENVIRONMENT'] = 'test'
           end
 
-          it "should create the firefox profile settings correctly" do
+          it 'should create the firefox profile settings correctly' do
             setup = CapybaraSetup.new
             profile = setup.instance_exec('BBC_INTERNAL', nil) { |profile_name, additional_prefs|
               create_profile(profile_name, additional_prefs)
@@ -654,24 +686,24 @@ describe CapybaraSetup do
           end
         end
 
-        context "proxy settings provided" do
+        context 'proxy settings provided' do
           before do
             @proxy_host = 'example.cache.co.uk'
             @proxy_port = 6789
             ENV['BROWSER'] = 'firefox'
             ENV['ENVIRONMENT'] = 'test'
-            ENV['HTTP_PROXY'] = "http://#{@proxy_host}:#{@proxy_port}"
+            ENV['HTTP_PROXY'] = 'http://#{@proxy_host}:#{@proxy_port}'
           end
 
-          it "should create the firefox profile correctly" do
+          it 'should create the firefox profile correctly' do
             setup = CapybaraSetup.new
             profile = setup.instance_exec('BBC_INTERNAL', nil) { |profile_name, additional_prefs|
               create_profile(profile_name, additional_prefs)
             }
 
-            profile.instance_variable_get('@additional_prefs')['network.proxy.type'].should == 1    
-            profile.instance_variable_get('@additional_prefs')['network.proxy.http'].should == @proxy_host
-            profile.instance_variable_get('@additional_prefs')['network.proxy.http_port'].should == @proxy_port
+            profile.instance_variable_get('@additional_prefs')['network.proxy.type'].should eq 1
+            profile.instance_variable_get('@additional_prefs')['network.proxy.http'].should eq @proxy_host
+            profile.instance_variable_get('@additional_prefs')['network.proxy.http_port'].should eq @proxy_port
           end
         end
       end
